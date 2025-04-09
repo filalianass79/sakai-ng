@@ -1,0 +1,58 @@
+<div class="image-upload-container" [ngClass]="styleClass">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+  
+  <!-- Aperçu de l'image -->
+  <div *ngIf="showPreview && imageUrl" class="image-preview mb-12">
+    <img [src]="imageUrl" [style.width]="previewWidth" [style.height]="previewHeight" alt="Image preview" />
+  </div>
+  <div *ngIf="!imageUrl" class="image-preview mb-12">
+    <img [src]="'assets/images/logo.png'" [style.width]="previewWidth" [style.height]="previewHeight" alt="Image preview" />
+  </div>
+  
+  <!-- Indicateur de chargement -->
+  <div *ngIf="loading" class="loading-spinner">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="4"></p-progressSpinner>
+  </div>
+  
+  <!-- Sélection de fichier -->
+
+   <!--(uploadHandler)="onUpload($event,fileUpload)"-->
+   <!--  (uploadHandler)="onSelect($event)"-->
+  <div class="inline-flex card-container ">
+    <div class="flex-1 p-2 rounded-border">
+      <p-fileUpload 
+      [style]="{'width': '20px', 'height':'20px' }"
+      #fileUpload mode="basic" name="files[]"  accept="image/*"   
+      [auto]="true"
+      [customUpload]="true"
+      [maxFileSize]="2000000"
+      invalidFileSizeMessageSummary="problème de taille"
+      invalidFileSizeMessageDetail="le fichier doit être < 2Mb"
+      (uploadHandler)="onUpload($event,fileUpload)"    >
+      </p-fileUpload>  
+    </div>
+    <div class="flex-1 p-2 rounded-border">
+      <button 
+        pButton
+        type="button"
+        [disabled]="!this.imageUrl"
+        icon="pi pi-trash"
+        class="p-button-danger"
+        (click)="$event.stopPropagation(); clearSelection()"
+        [style]="{ width: '20px', height: '20px' }"
+      ></button>
+    </div>
+    <div class="flex-1 p-2 rounded-border">
+      <button 
+        pButton
+        [disabled]="!this.imageUrl"
+        type="button"
+        icon="pi pi-download"
+        class="p-button-secondary"
+        (click)="$event.stopPropagation(); download()"
+        [style]="{ width: '20px', height: '20px' }"
+      ></button>
+    </div>
+  </div>
+</div> 

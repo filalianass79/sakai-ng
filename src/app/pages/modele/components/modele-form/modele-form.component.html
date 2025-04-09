@@ -1,0 +1,225 @@
+  <p-toast></p-toast>
+
+  <div class="bg-surface-50 dark:bg-surface-900 p-2 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      <p-card styleClass="shadow">
+        <!-- En-tête avec navigation et titre -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <button pButton 
+              icon="pi pi-arrow-left" 
+              class="p-button-rounded p-button-outlined mr-12" 
+              (click)="goBack()"
+              pTooltip="Retour à la liste"
+            ></button>
+            <h1 class="text-primary-900 dark:text-primary-200 font-bold text-3xl lg:text-4xl m-0">
+              {{isEditMode ? 'Modifier' : 'Créer'}} une modele
+            </h1>
+          </div>
+        </div>
+
+        <form [formGroup]="modeleForm" (ngSubmit)="onSubmit()" class="space-y-2">
+          <!-- Section Informations générales -->
+          <p-panel styleClass="mb-2">
+            <ng-template pTemplate="header">
+              <div class="flex items-center">
+                <i class="pi pi-info-circle mr-2 text-primary-500"></i>
+                <span class="text-primary-800 dark:text-primary-300 font-medium text-xl">Informations générales</span>
+              </div>
+            </ng-template>
+            
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+              <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                <p-card styleClass="mb-2 shadow-sm">
+                  <ng-template pTemplate="header">
+                    <div class="flex items-center mb-2">
+                      <i class="pi pi-image mr-2 text-primary-500"></i>
+                      <span class="text-primary-700 font-medium">Logo</span>
+                    </div>
+                  </ng-template>
+                    <app-image-upload *ngIf="modele.id || !isEditMode"
+                    [entityType]="'modele'" 
+                    [entityId]="modele.id!" 
+                    [imageName]="'logo'" 
+                    [currentImage]="modele.logo" 
+                    [autoUpload]="true"
+                    (onImageSelected)="onLogoSelected($event)"
+                    (onUploadComplete)="onLogoUploaded($event)"
+                    (onImageDeleted)="onLogoDeleted()"
+                    class="w-full">
+                  </app-image-upload>
+                </p-card>
+              </div>
+
+              <div class="col-span-12 md:col-span-6 lg:col-span-8">
+                <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+                  <div class="col-span-12">
+                    <div class="field">
+                      <label for="nom" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Modele *</label>
+                      <input id="nom" type="text" pInputText formControlName="nom" class="w-full p-inputtext-lg">
+                      <small *ngIf="modeleForm.get('nom')?.hasError('required') && modeleForm.get('nom')?.touched" 
+                             class="p-error block mt-1">Le nom est requis</small>
+                    </div>
+
+                    <div class="field">
+                      <label for="marque" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Marque *</label>
+                        <p-select id="marque" [options]="marques" formControlName="marque" [filter]="true" filterBy="marque.nom"
+                                placeholder="Sélectionner une marque" label="marque.nom"  optionLabel="nom"
+                                class="w-full"></p-select>
+                      <small class="p-error" *ngIf="modeleForm.get('marque')?.invalid && modeleForm.get('marque')?.touched">
+                          La marque est requise
+                      </small>
+                    </div>
+
+                    <div class="field">
+                        <label for="categorie" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Catégorie *</label>
+                        <p-select id="categorie" [options]="categories" formControlName="categorie" [filter]="true" filterBy="categorie.nom"
+                                  placeholder="Sélectionner une catégorie" label="categorie.nom" optionLabel="nom"
+                                  class="w-full"></p-select>
+                        <small class="p-error" *ngIf="modeleForm.get('categorie')?.invalid && modeleForm.get('categorie')?.touched">
+                            La catégorie est requise
+                        </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Colonne droite -->
+            <div class="grid">
+              <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                 
+                    <!-- Caractéristiques techniques -->
+                    <div class="card">
+                        <h5>Caractéristiques techniques</h5>
+                        <div class="grid grid-cols-12 gap-6">
+                            <div class="col-span-6">
+                                <div class="field">
+                                    <label for="typeCarburant">Type de carburant*</label>
+                                    <p-select id="typeCarburant" [options]="typeCarburants" formControlName="typeCarburant"
+                                              placeholder="Sélectionner" class="w-full"></p-select>
+                                </div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="field">
+                                    <label for="typeTransmission">Transmission*</label>
+                                    <p-select id="typeTransmission" [options]="typeTransmissions" formControlName="typeTransmission"
+                                              placeholder="Sélectionner" class="w-full"></p-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-12 gap-4">
+                            <div class="col-span-4">
+                                <div class="field">
+                                    <label for="nbreValises">Nombre de valises*</label>
+                                    <p-inputNumber id="nbreValises" formControlName="nbreValises" [min]="0"
+                                                class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="field">
+                                    <label for="nbreSacs">Nombre de sacs*</label>
+                                    <p-inputNumber id="nbreSacs" formControlName="nbreSacs" [min]="0"
+                                                class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="field">
+                                    <label for="volumeCoffre">Volume du coffre*</label>
+                                    <p-inputNumber id="volumeCoffre" formControlName="volumeCoffre" [min]="0"
+                                                class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-4">
+                          <div class="col-span-4">
+                              <div class="field">
+                                  <label for="nbrePortes">Nombre de portes*</label>
+                                  <p-inputNumber id="nbrePortes" formControlName="nbrePortes" [min]="2" [max]="7"
+                                              class="w-full"></p-inputNumber>
+                              </div>
+                          </div>
+                          <div class="col-span-4">
+                              <div class="field">
+                                  <label for="nbrePlaces">Nombre de places*</label>
+                                  <p-inputNumber id="nbrePlaces" formControlName="nbrePlaces" [min]="2" [max]="9"
+                                              class="w-full"></p-inputNumber>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <!-- Maintenance -->
+                    <div class="card">
+                        <h5>Maintenance</h5>
+                        <div class="grid grid-cols-12 gap-4">
+                            <div class="col-span-6">
+                                <div class="field">
+                                    <label for="nbreKmVidange">Kilométrage vidange*</label>
+                                    <p-inputNumber id="nbreKmVidange" formControlName="nbreKmVidange" [min]="0"
+                                                class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="col-span-6">
+                                <div class="field">
+                                    <label for="nbreJoursVidange">Jours entre vidanges*</label>
+                                    <p-inputNumber id="nbreJoursVidange" formControlName="nbreJoursVidange" [min]="0"
+                                                class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-12 gap-4">
+                            <div class="col-span-6">
+                                <div class="field">
+                                    <label for="nbreKmPneus">Kilométrage pneus*</label>
+                                    <p-inputNumber id="nbreKmPneus" formControlName="nbreKmPneus" [min]="0"
+                                                class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="col-span-2">
+                                <div class="field">
+                                  <label for="chaineChangeable">Chaîne changeable</label>
+                                  <div class="field-checkbox">
+                                    <p-checkbox formControlName="chaineChangeable" [binary]="true" 
+                                              inputId="chaineChangeable"></p-checkbox>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="field" *ngIf="modeleForm.get('chaineChangeable')?.value">
+                                    <label for="nbreKmChaine">Kilométrage chaîne*</label>
+                                    <p-inputNumber id="nbreKmChaine" formControlName="nbreKmChaine" [min]="0"
+                                        class="w-full"></p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 
+
+              </div>
+            </div>
+        
+          </p-panel>
+
+
+
+          <!-- Boutons d'action -->
+          <div class="flex justify-end gap-2 pt-12">
+            <button pButton 
+                    type="button" 
+                    label="Annuler" 
+                    class="p-button-outlined"
+                    (click)="goBack()">
+            </button>
+            <button pButton 
+                    type="submit" 
+                    label="Enregistrer" 
+                    [disabled]="!modeleForm.valid"
+                    class="p-button-primary">
+            </button>
+          </div>
+        </form>
+      </p-card>
+    </div>
+  </div>

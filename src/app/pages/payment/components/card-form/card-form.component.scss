@@ -1,0 +1,183 @@
+.card-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card-form-header {
+  text-align: center;
+  margin-bottom: 20px;
+  
+  h2 {
+    margin: 0;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.card-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Styles pour la visualisation de la carte */
+.credit-card-visual {
+  background: linear-gradient(135deg, #4a6cf7 0%, #2c3e9f 100%);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.credit-card-chip {
+  width: 50px;
+  height: 40px;
+  background: linear-gradient(135deg, #e6b800 0%, #ffcc00 100%);
+  border-radius: 6px;
+  margin-bottom: 20px;
+  position: relative;
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  &::before {
+    top: 10px;
+    left: 5px;
+    right: 5px;
+    height: 8px;
+    border-radius: 4px;
+  }
+  
+  &::after {
+    top: 25px;
+    left: 5px;
+    right: 5px;
+    height: 8px;
+    border-radius: 4px;
+  }
+}
+
+.credit-card-number {
+  font-size: 22px;
+  letter-spacing: 2px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 20px;
+}
+
+.credit-card-details {
+  display: flex;
+  justify-content: space-between;
+  
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 5px;
+  }
+  
+  .value {
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+}
+
+/* Styles pour les champs du formulaire */
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  label {
+    font-weight: 500;
+    color: #555;
+  }
+  
+  input {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s;
+    
+    &:focus {
+      border-color: #4a6cf7;
+      box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+    }
+    
+    &.ng-invalid.ng-dirty {
+      border-color: #f44336;
+    }
+  }
+  
+  .p-error {
+    color: #f44336;
+    font-size: 12px;
+  }
+}
+
+.checkbox-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  
+  label {
+    margin-bottom: 0;
+  }
+}
+
+/* Styles pour l'élément de carte Stripe */
+.card-element {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: white;
+  transition: border-color 0.3s;
+  
+  &:focus-within {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+  }
+}
+
+/* Styles pour les boutons d'action */
+.card-form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 15px;
+  
+  button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+  }
+} 

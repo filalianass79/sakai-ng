@@ -1,0 +1,81 @@
+<div class="card-form-container">
+  <p-toast></p-toast>
+  
+  <p-card styleClass="card-form-card">
+    <ng-template pTemplate="header">
+      <div class="card-form-header">
+        <h2>Ajouter une carte bancaire</h2>
+      </div>
+    </ng-template>
+    
+    <form [formGroup]="cardForm" (ngSubmit)="submitCard()">
+      <div class="card-form-body">
+        <!-- Carte visuelle -->
+        <div class="credit-card-visual">
+          <div class="credit-card-chip"></div>
+          <div class="credit-card-number">
+            {{ cardForm.get('cardNumber')?.value || '**** **** **** ****' }}
+          </div>
+          <div class="credit-card-details">
+            <div class="credit-card-holder">
+              <div class="label">Titulaire</div>
+              <div class="value">{{ cardForm.get('cardholderName')?.value || 'NOM PRÉNOM' }}</div>
+            </div>
+            <div class="credit-card-expiry">
+              <div class="label">Expire</div>
+              <div class="value">{{ cardForm.get('expiryDate')?.value || 'MM/AA' }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Champs du formulaire -->
+        <div class="form-fields">
+          <div class="form-field">
+            <label for="cardholderName">Nom du titulaire</label>
+            <input 
+              id="cardholderName" 
+              type="text" 
+              pInputText 
+              formControlName="cardholderName" 
+              placeholder="Nom tel qu'il apparaît sur la carte"
+              [ngClass]="{'ng-invalid ng-dirty': cardForm.get('cardholderName')?.invalid && cardForm.get('cardholderName')?.touched}"
+            />
+            <small *ngIf="cardForm.get('cardholderName')?.invalid && cardForm.get('cardholderName')?.touched" class="p-error">
+              Le nom du titulaire est requis
+            </small>
+          </div>
+          
+          <!-- Élément Stripe pour la carte -->
+          <div class="form-field">
+            <label>Numéro de carte</label>
+            <div id="card-element" class="card-element"></div>
+            <small *ngIf="cardErrors" class="p-error">{{ cardErrors }}</small>
+          </div>
+          
+          <div class="form-field checkbox-field">
+            <p-checkbox formControlName="saveCard" binary="true" inputId="saveCard"></p-checkbox>
+            <label for="saveCard">Enregistrer cette carte pour mes futurs paiements</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-form-actions">
+        <button 
+          pButton 
+          type="button" 
+          label="Annuler" 
+          class="p-button-outlined p-button-secondary" 
+          (click)="cancel()"
+          [disabled]="loading"
+        ></button>
+        <button 
+          pButton 
+          type="submit" 
+          label="Ajouter la carte" 
+          [loading]="loading"
+          [disabled]="cardForm.invalid || loading"
+        ></button>
+      </div>
+    </form>
+  </p-card>
+</div> 

@@ -1,0 +1,63 @@
+.card-management-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h2 {
+    margin: 0;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.card-list {
+  margin-bottom: 20px;
+  
+  .card-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    i {
+      font-size: 1.2rem;
+      color: #4a6cf7;
+    }
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 5px;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+  }
+  
+  p {
+    margin: 0 0 20px 0;
+    color: #666;
+  }
+} 

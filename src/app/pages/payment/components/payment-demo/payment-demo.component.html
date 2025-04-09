@@ -1,0 +1,108 @@
+<div class="payment-demo-container">
+  <p-toast></p-toast>
+  
+  <h1>Démonstration du module de paiement</h1>
+  
+  <p-card *ngIf="!showPaymentForm" styleClass="mb-12">
+    <h3>Configuration du paiement</h3>
+    
+    <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+      <div class="col-span-12 md:col-span-6">
+        <div class="field">
+          <label for="amount">Montant</label>
+          <p-inputNumber id="amount" [(ngModel)]="amount" mode="currency" currency="EUR" locale="fr-FR" [minFractionDigits]="2"></p-inputNumber>
+        </div>
+      </div>
+      
+      <div class="col-span-12 md:col-span-6">
+        <div class="field">
+          <label for="currency">Devise</label>
+          <input type="text" pInputText id="currency" [(ngModel)]="currency" />
+        </div>
+      </div>
+      
+      <div class="col-span-12 md:col-span-6">
+        <div class="field">
+          <label for="entityType">Type d'entité</label>
+          <input type="text" pInputText id="entityType" [(ngModel)]="entityType" />
+        </div>
+      </div>
+      
+      <div class="col-span-12 md:col-span-6">
+        <div class="field">
+          <label for="entityId">ID d'entité</label>
+          <input type="text" pInputText id="entityId" [(ngModel)]="entityId" />
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-end">
+      <p-button label="Procéder au paiement" icon="pi pi-credit-card" (click)="startPayment()"></p-button>
+    </div>
+  </p-card>
+  
+  <div *ngIf="showPaymentForm">
+    <app-payment-form
+      [amount]="amount"
+      [currency]="currency"
+      [entityType]="entityType"
+      [entityId]="entityId"
+      (paymentComplete)="onPaymentComplete($event)"
+      (paymentCancelled)="onPaymentCancelled()"
+    ></app-payment-form>
+  </div>
+  
+  <p-card *ngIf="lastTransaction" styleClass="mt-12">
+    <h3>Dernière transaction</h3>
+    
+    <div class="transaction-details">
+      <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+        <div class="col-span-12 md:col-span-6">
+          <div class="field">
+            <label>ID de transaction</label>
+            <div class="value">{{lastTransaction.id}}</div>
+          </div>
+        </div>
+        
+        <div class="col-span-12 md:col-span-6">
+          <div class="field">
+            <label>Montant</label>
+            <div class="value">{{lastTransaction.amount | currency:lastTransaction.currency}}</div>
+          </div>
+        </div>
+        
+        <div class="col-span-12 md:col-span-6">
+          <div class="field">
+            <label>Méthode de paiement</label>
+            <div class="value">{{lastTransaction.paymentMethod}}</div>
+          </div>
+        </div>
+        
+        <div class="col-span-12 md:col-span-6">
+          <div class="field">
+            <label>Statut</label>
+            <div class="value">{{lastTransaction.status}}</div>
+          </div>
+        </div>
+        
+        <div class="col-span-12 md:col-span-6">
+          <div class="field">
+            <label>Date de création</label>
+            <div class="value">{{lastTransaction.createdAt | date:'medium'}}</div>
+          </div>
+        </div>
+        
+        <div class="col-span-12 md:col-span-6">
+          <div class="field">
+            <label>Date de mise à jour</label>
+            <div class="value">{{lastTransaction.updatedAt | date:'medium'}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-end">
+      <p-button label="Réinitialiser" icon="pi pi-refresh" (click)="resetDemo()" styleClass="p-button-secondary"></p-button>
+    </div>
+  </p-card>
+</div> 

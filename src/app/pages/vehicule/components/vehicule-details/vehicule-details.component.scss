@@ -1,0 +1,54 @@
+:host ::ng-deep {
+  .p-tabview-nav-container {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--surface-50);
+    
+    .p-tabview-nav {
+      border-bottom: 1px solid var(--surface-200);
+    }
+  }
+  
+  .p-tag {
+    font-weight: 600;
+  }
+  
+  .bg-surface-100 {
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: var(--surface-200);
+    }
+  }
+  
+  .p-card {
+    .p-card-content {
+      padding: 0;
+    }
+  }
+  
+  .dark-mode {
+    .bg-surface-100 {
+      background-color: var(--surface-700);
+      
+      &:hover {
+        background-color: var(--surface-600);
+      }
+    }
+  }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.document-card {
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+} 

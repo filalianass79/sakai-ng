@@ -1,0 +1,68 @@
+<div class="payment-container">
+  <div class="payment-header">
+    <h2>Paiement sécurisé</h2>
+    <p *ngIf="amount > 0">Montant à payer: {{amount | currency:currency}}</p>
+  </div>
+
+  <p-card *ngIf="!transaction">
+    <form [formGroup]="paymentForm" (ngSubmit)="initializePayment()">
+      <div class="field">
+        <label for="paymentMethod">Méthode de paiement</label>
+        <p-selectButton [options]="[
+          {label: 'Carte bancaire', value: paymentMethods.STRIPE, icon: 'pi pi-credit-card'},
+          {label: 'PayPal', value: paymentMethods.PAYPAL, icon: 'pi pi-paypal'}
+        ]" formControlName="paymentMethod" optionLabel="label" optionValue="value"></p-selectButton>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" pInputText id="email" formControlName="email" class="w-full" />
+        <small *ngIf="paymentForm.get('email')?.invalid && paymentForm.get('email')?.touched" class="p-error">
+          Email valide requis
+        </small>
+      </div>
+
+      <div class="field" *ngIf="selectedPaymentMethod === paymentMethods.STRIPE">
+        <label for="cardholderName">Nom du titulaire de la carte</label>
+        <input type="text" pInputText id="cardholderName" formControlName="cardholderName" class="w-full" />
+        <small *ngIf="paymentForm.get('cardholderName')?.invalid && paymentForm.get('cardholderName')?.touched" class="p-error">
+          Nom du titulaire requis
+        </small>
+      </div>
+
+      <div class="payment-actions">
+        <p-button type="submit" label="Continuer" icon="pi pi-arrow-right" [loading]="loading"></p-button>
+        <p-button type="button" label="Annuler" icon="pi pi-times" styleClass="p-button-secondary" (click)="cancelPayment()" [disabled]="loading"></p-button>
+      </div>
+    </form>
+  </p-card>
+
+  <p-card *ngIf="transaction">
+    <div class="payment-processing">
+      <h3>Finaliser le paiement</h3>
+      
+      <!-- Stripe Payment Form -->
+      <div *ngIf="selectedPaymentMethod === paymentMethods.STRIPE" class="stripe-container">
+        <div class="card-element-container">
+          <label>Informations de carte</label>
+          <div id="card-element" class="card-element"></div>
+          <div *ngIf="cardErrors" class="card-errors p-error">{{cardErrors}}</div>
+        </div>
+        
+        <div class="payment-actions">
+          <p-button type="button" label="Payer" icon="pi pi-check" (click)="processStripePayment()" [loading]="loading"></p-button>
+          <p-button type="button" label="Annuler" icon="pi pi-times" styleClass="p-button-secondary" (click)="cancelPayment()" [disabled]="loading"></p-button>
+        </div>
+      </div>
+      
+      <!-- PayPal Payment -->
+      <div *ngIf="selectedPaymentMethod === paymentMethods.PAYPAL" class="paypal-container">
+        <div id="paypal-button-container"></div>
+        
+        <div class="payment-actions mt-12">
+          <p-button type="button" label="Annuler" icon="pi pi-times" styleClass="p-button-secondary" (click)="cancelPayment()" [disabled]="loading"></p-button>
+        </div>
+      </div>
+    </div>
+  </p-card>
+</div> 

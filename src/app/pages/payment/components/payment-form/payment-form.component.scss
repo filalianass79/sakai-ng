@@ -1,0 +1,61 @@
+.payment-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.payment-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.payment-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.card-element-container {
+  margin-bottom: 1.5rem;
+}
+
+.card-element {
+  padding: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  min-height: 40px;
+}
+
+.card-errors {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.stripe-container, .paypal-container {
+  margin-top: 1rem;
+}
+
+#paypal-button-container {
+  min-height: 150px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .payment-container {
+    padding: 0.5rem;
+  }
+  
+  .payment-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .payment-actions button {
+    width: 100%;
+  }
+} 

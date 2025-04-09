@@ -1,0 +1,277 @@
+<p-toast position="top-center"></p-toast>
+
+<div class="bg-surface-50 dark:bg-surface-900 p-12 min-h-screen">
+  <div class="max-w-8xl mx-auto">
+    <p-card styleClass="shadow">
+      <div class="flex justify-between items-center mb-12">
+        <h1 class="text-3xl font-bold text-surface-900 dark:text-surface-0">
+          Détails du Véhicule
+        </h1>
+        <div class="flex gap-2">
+          <p-button icon="pi pi-pencil" label="Modifier" (onClick)="editVehicule()" styleClass="p-button-info"></p-button>
+          <p-button icon="pi pi-arrow-left" label="Retour" (onClick)="goBack()" [outlined]="true"></p-button>
+        </div>
+      </div>
+      
+      <div *ngIf="loading" class="flex justify-center my-12">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+      </div>
+      
+      <div *ngIf="!loading && vehicule">
+        <p-tabView>
+          <!-- Onglet Informations principales -->
+          <p-tabPanel header="Informations principales">
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12 mb-12">
+              <div class="col-span-12 md:col-span-4">
+                <div class="flex flex-col h-full">
+                  <img [src]="vehicule.photo1Url || 'assets/images/car-placeholder.png'" 
+                       [alt]="vehicule.immatriculation" 
+                       class="w-full h-64 object-cover rounded-lg shadow-md mb-12">
+                  
+                  <div class="flex gap-2 flex-wrap">
+                    <p-tag [value]="vehicule.vendu ? 'Vendu' : 'Disponible'" 
+                          [severity]="getSeverityForVendu()">
+                    </p-tag>
+                    <p-tag [value]="vehicule.provisoire ? 'Provisoire' : 'Définitif'" 
+                          [severity]="getSeverityForProvisoire()">
+                    </p-tag>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-span-12 md:col-span-8">
+                <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+                  <div class="col-span-12">
+                    <h2 class="text-2xl font-semibold mb-12 flex items-center">
+                      <span class="mr-2">{{ vehicule.marqueNom }} {{ vehicule.modeleNom }}</span>
+                      <span class="text-sm text-surface-600 font-normal">({{ vehicule.categorieNom }})</span>
+                    </h2>
+                    <p-divider></p-divider>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Immatriculation</h3>
+                    <p class="text-xl">{{ vehicule.immatriculation }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">N° de Châssis</h3>
+                    <p class="text-xl">{{ vehicule.chassis }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">W.W.</h3>
+                    <p>{{ vehicule.ww }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Couleur</h3>
+                    <p>{{ vehicule.couleur }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Puissance</h3>
+                    <p>{{ vehicule.puissance }} ch ({{ vehicule.puissanceFiscal }} CV)</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Places</h3>
+                    <p>{{ vehicule.nombrePlace }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Carburant</h3>
+                    <p>{{ vehicule.carburant }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Transmission</h3>
+                    <p>{{ vehicule.tansmission }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Kilométrage Initial</h3>
+                    <p>{{ vehicule.kilometrageInitial }} km</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Date Mise en Circulation</h3>
+                    <p>{{ vehicule.dateMiseEnCirculation | date:'dd/MM/yyyy' }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Date Acquisition</h3>
+                    <p>{{ vehicule.dateAcquisition | date:'dd/MM/yyyy' }}</p>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6">
+                    <h3 class="font-medium text-surface-700">Expiration Carte Grise</h3>
+                    <p>{{ vehicule.dateExpirationCarteGrise | date:'dd/MM/yyyy' }}</p>
+                  </div>
+                  
+                  <div class="col-span-12">
+                    <h3 class="font-medium text-surface-700">Financement</h3>
+                    <p>{{ vehicule.financement || 'Non spécifié' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+          
+          <!-- Onglet Informations d'entretien -->
+          <p-tabPanel header="Informations d'entretien">
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+              <div class="col-span-12">
+                <div class="bg-surface-100 p-12 rounded-lg">
+                  <h3 class="text-xl font-medium mb-12">État et Suivi</h3>
+                  <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+                    <div class="col-span-12 md:col-span-6">
+                      <h4 class="font-medium text-surface-700">État actuel</h4>
+                      <p>{{ vehicule.etatActuel || 'Non spécifié' }}</p>
+                    </div>
+                    
+                    <div class="col-span-12 md:col-span-6">
+                      <h4 class="font-medium text-surface-700">Vendu</h4>
+                      <p>{{ vehicule.vendu ? 'Oui' : 'Non' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-span-12">
+                <div class="bg-surface-100 p-12 rounded-lg">
+                  <h3 class="text-xl font-medium mb-12">Entretien</h3>
+                  <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+                    <div class="col-span-12 md:col-span-6">
+                      <h4 class="font-medium text-surface-700">Kilométrage dernière vidange</h4>
+                      <p>{{ vehicule.kilometrageVidange || 0 }} km</p>
+                    </div>
+                    
+                    <div class="col-span-12 md:col-span-6">
+                      <h4 class="font-medium text-surface-700">Date dernière vidange</h4>
+                      <p>{{ vehicule.dateVidange ? (vehicule.dateVidange | date:'dd/MM/yyyy') : 'Non spécifiée' }}</p>
+                    </div>
+                    
+                    <div class="col-span-12 md:col-span-6">
+                      <h4 class="font-medium text-surface-700">Kilométrage derniers pneus</h4>
+                      <p>{{ vehicule.kilometragePneu1 || 0 }} km</p>
+                    </div>
+                    
+                    <div class="col-span-12 md:col-span-6">
+                      <h4 class="font-medium text-surface-700">Kilométrage dernière chaîne</h4>
+                      <p>{{ vehicule.kilometrageChaine || 0 }} km</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-span-12">
+                <div class="bg-surface-100 p-12 rounded-lg">
+                  <h3 class="text-xl font-medium mb-12">Échéances</h3>
+                  <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+                    <div class="col-span-12 md:col-span-4">
+                      <h4 class="font-medium text-surface-700">Prochaine assurance</h4>
+                      <p>{{ vehicule.dateProchaineassurance ? (vehicule.dateProchaineassurance | date:'dd/MM/yyyy') : 'Non spécifiée' }}</p>
+                    </div>
+                    
+                    <div class="col-span-12 md:col-span-4">
+                      <h4 class="font-medium text-surface-700">Prochaine visite technique</h4>
+                      <p>{{ vehicule.dateProchainevisite ? (vehicule.dateProchainevisite | date:'dd/MM/yyyy') : 'Non spécifiée' }}</p>
+                    </div>
+                    
+                    <div class="col-span-12 md:col-span-4">
+                      <h4 class="font-medium text-surface-700">Prochaine vignette</h4>
+                      <p>{{ vehicule.dateProchainevignette ? (vehicule.dateProchainevignette | date:'dd/MM/yyyy') : 'Non spécifiée' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-span-12">
+                <div class="bg-surface-100 p-12 rounded-lg">
+                  <h3 class="text-xl font-medium mb-12">Observations</h3>
+                  <p class="whitespace-pre-line">{{ vehicule.observations || 'Aucune observation' }}</p>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+          
+          <!-- Onglet Photos et Documents -->
+          <p-tabPanel header="Photos et Documents">
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+              <div class="col-span-12">
+                <h3 class="text-xl font-medium mb-12">Photos</h3>
+                <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.photo1Url">
+                    <img [src]="vehicule.photo1Url" alt="Photo 1" class="w-full h-64 object-cover rounded-lg shadow-md">
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.photo2Url">
+                    <img [src]="vehicule.photo2Url" alt="Photo 2" class="w-full h-64 object-cover rounded-lg shadow-md">
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.photo3Url">
+                    <img [src]="vehicule.photo3Url" alt="Photo 3" class="w-full h-64 object-cover rounded-lg shadow-md">
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.photo4Url">
+                    <img [src]="vehicule.photo4Url" alt="Photo 4" class="w-full h-64 object-cover rounded-lg shadow-md">
+                  </div>
+                  
+                  <div class="col-span-12" *ngIf="!vehicule.photo1Url && !vehicule.photo2Url && !vehicule.photo3Url && !vehicule.photo4Url">
+                    <p class="text-center text-surface-600 py-20">Aucune photo disponible</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-span-12">
+                <h3 class="text-xl font-medium mb-12">Documents</h3>
+                <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12">
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.carteGriseRUrl">
+                    <div class="bg-surface-100 p-12 rounded-lg h-full">
+                      <h4 class="font-medium text-surface-700 mb-2">Carte Grise (Recto)</h4>
+                      <a [href]="vehicule.carteGriseRUrl" target="_blank" class="flex items-center justify-center p-12 bg-surface-200 rounded-lg hover:bg-surface-300 transition-colors">
+                        <i class="pi pi-file-pdf text-4xl text-red-500"></i>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.carteGriseVUrl">
+                    <div class="bg-surface-100 p-12 rounded-lg h-full">
+                      <h4 class="font-medium text-surface-700 mb-2">Carte Grise (Verso)</h4>
+                      <a [href]="vehicule.carteGriseVUrl" target="_blank" class="flex items-center justify-center p-12 bg-surface-200 rounded-lg hover:bg-surface-300 transition-colors">
+                        <i class="pi pi-file-pdf text-4xl text-red-500"></i>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.factureUrl">
+                    <div class="bg-surface-100 p-12 rounded-lg h-full">
+                      <h4 class="font-medium text-surface-700 mb-2">Facture</h4>
+                      <a [href]="vehicule.factureUrl" target="_blank" class="flex items-center justify-center p-12 bg-surface-200 rounded-lg hover:bg-surface-300 transition-colors">
+                        <i class="pi pi-file-pdf text-4xl text-red-500"></i>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div class="col-span-12 md:col-span-6 lg:col-span-3" *ngIf="vehicule.autorisationUrl">
+                    <div class="bg-surface-100 p-12 rounded-lg h-full">
+                      <h4 class="font-medium text-surface-700 mb-2">Autorisation</h4>
+                      <a [href]="vehicule.autorisationUrl" target="_blank" class="flex items-center justify-center p-12 bg-surface-200 rounded-lg hover:bg-surface-300 transition-colors">
+                        <i class="pi pi-file-pdf text-4xl text-red-500"></i>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div class="col-span-12" *ngIf="!vehicule.carteGriseRUrl && !vehicule.carteGriseVUrl && !vehicule.factureUrl && !vehicule.autorisationUrl">
+                    <p class="text-center text-surface-600 py-20">Aucun document disponible</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </p-card>
+  </div>
+</div> 

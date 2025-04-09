@@ -1,0 +1,41 @@
+.payment-demo-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.value {
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.transaction-details {
+  margin: 1.5rem 0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .payment-demo-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+} 

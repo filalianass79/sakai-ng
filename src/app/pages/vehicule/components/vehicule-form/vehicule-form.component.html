@@ -1,0 +1,363 @@
+<p-toast position="top-center"></p-toast>
+
+<div class="bg-surface-50 dark:bg-surface-900 p-12 min-h-screen">
+  <div class="max-w-8xl mx-auto">
+    <p-card styleClass="shadow">
+      <div class="flex justify-between items-center mb-12">
+        <h1 class="text-3xl font-bold text-surface-900 dark:text-surface-0">
+          {{ isEditMode ? 'Modifier le Véhicule' : 'Nouveau Véhicule' }}
+        </h1>
+        <p-button icon="pi pi-arrow-left" label="Retour" (onClick)="goBack()" outlined="true"></p-button>
+      </div>
+      
+      <div *ngIf="loading" class="flex justify-center my-12">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+      </div>
+      
+      <div *ngIf="!loading">
+        <form [formGroup]="vehiculeForm" (ngSubmit)="onSubmit()">
+          <p-tabView>
+            <!-- Onglet Informations de base -->
+            <p-tabPanel header="Informations de base">
+              <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12 mb-12">
+                <div class="col-span-12 md:col-span-4">
+                  <label for="ww" class="block mb-2 font-medium">W.W.</label>
+                  <input id="ww" type="text" pInputText formControlName="ww" class="w-full" placeholder="W.W.">
+                  <small *ngIf="vehiculeForm.get('ww')?.invalid && vehiculeForm.get('ww')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="immatriculation" class="block mb-2 font-medium">Immatriculation</label>
+                  <input id="immatriculation" type="text" pInputText formControlName="immatriculation" class="w-full" placeholder="12345-A-6">
+                  <small *ngIf="vehiculeForm.get('immatriculation')?.invalid && vehiculeForm.get('immatriculation')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="chassis" class="block mb-2 font-medium">Numéro de Châssis</label>
+                  <input id="chassis" type="text" pInputText formControlName="chassis" class="w-full" placeholder="VF38DXXXXXXXX">
+                  <small *ngIf="vehiculeForm.get('chassis')?.invalid && vehiculeForm.get('chassis')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="modeleId" class="block mb-2 font-medium">Modèle</label>
+                  <p-dropdown id="modeleId" formControlName="modeleId" [options]="modeles" optionLabel="nom" optionValue="id" 
+                    [filter]="true" filterBy="nom" [showClear]="true" placeholder="Choisir un modèle" class="w-full">
+                    <ng-template pTemplate="item" let-modele>
+                      {{ modele.marqueNom }} - {{ modele.nom }} ({{ modele.categorieNom }})
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem" let-modele>
+                      {{ modele?.marqueNom }} - {{ modele?.nom }}
+                    </ng-template>
+                  </p-dropdown>
+                  <small *ngIf="vehiculeForm.get('modeleId')?.invalid && vehiculeForm.get('modeleId')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="puissanceFiscal" class="block mb-2 font-medium">Puissance Fiscale (CV)</label>
+                  <p-inputNumber id="puissanceFiscal" formControlName="puissanceFiscal" [showButtons]="true" [min]="0" class="w-full"></p-inputNumber>
+                  <small *ngIf="vehiculeForm.get('puissanceFiscal')?.invalid && vehiculeForm.get('puissanceFiscal')?.touched" class="text-red-500">
+                    Ce champ est requis et doit être supérieur ou égal à 0
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="puissance" class="block mb-2 font-medium">Puissance (ch)</label>
+                  <p-inputNumber id="puissance" formControlName="puissance" [showButtons]="true" [min]="0" class="w-full"></p-inputNumber>
+                  <small *ngIf="vehiculeForm.get('puissance')?.invalid && vehiculeForm.get('puissance')?.touched" class="text-red-500">
+                    Ce champ est requis et doit être supérieur ou égal à 0
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="nombrePlace" class="block mb-2 font-medium">Nombre de places</label>
+                  <p-inputNumber id="nombrePlace" formControlName="nombrePlace" [showButtons]="true" [min]="1" class="w-full"></p-inputNumber>
+                  <small *ngIf="vehiculeForm.get('nombrePlace')?.invalid && vehiculeForm.get('nombrePlace')?.touched" class="text-red-500">
+                    Ce champ est requis et doit être supérieur ou égal à 1
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="couleur" class="block mb-2 font-medium">Couleur</label>
+                  <input id="couleur" type="text" pInputText formControlName="couleur" class="w-full" placeholder="Blanc">
+                  <small *ngIf="vehiculeForm.get('couleur')?.invalid && vehiculeForm.get('couleur')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="kilometrageInitial" class="block mb-2 font-medium">Kilométrage Initial</label>
+                  <p-inputNumber id="kilometrageInitial" formControlName="kilometrageInitial" [showButtons]="true" [min]="0" class="w-full"></p-inputNumber>
+                  <small *ngIf="vehiculeForm.get('kilometrageInitial')?.invalid && vehiculeForm.get('kilometrageInitial')?.touched" class="text-red-500">
+                    Ce champ est requis et doit être supérieur ou égal à 0
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="carburant" class="block mb-2 font-medium">Carburant</label>
+                  <p-dropdown id="carburant" formControlName="carburant" [options]="carburants" optionLabel="label" optionValue="value" class="w-full"></p-dropdown>
+                  <small *ngIf="vehiculeForm.get('carburant')?.invalid && vehiculeForm.get('carburant')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="tansmission" class="block mb-2 font-medium">Transmission</label>
+                  <p-dropdown id="tansmission" formControlName="tansmission" [options]="transmissions" optionLabel="label" optionValue="value" class="w-full"></p-dropdown>
+                  <small *ngIf="vehiculeForm.get('tansmission')?.invalid && vehiculeForm.get('tansmission')?.touched" class="text-red-500">
+                    Ce champ est requis
+                  </small>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="provisoire" class="block mb-2 font-medium">Provisoire</label>
+                  <p-selectButton id="provisoire" formControlName="provisoire" [options]="provisoireOptions" optionLabel="label" optionValue="value"></p-selectButton>
+                </div>
+
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateExpirationCarteGrise" class="block mb-2 font-medium">Date d'expiration carte grise</label>
+                  <p-calendar id="dateExpirationCarteGrise" formControlName="dateExpirationCarteGrise" [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateAcquisition" class="block mb-2 font-medium">Date d'acquisition</label>
+                  <p-calendar id="dateAcquisition" formControlName="dateAcquisition" [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateMiseEnCirculation" class="block mb-2 font-medium">Date de mise en circulation</label>
+                  <p-calendar id="dateMiseEnCirculation" formControlName="dateMiseEnCirculation" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label for="financement" class="block mb-2 font-medium">Financement</label>
+                  <input id="financement" type="text" pInputText formControlName="financement" class="w-full" placeholder="Type de financement">
+                </div>
+              </div>
+            </p-tabPanel>
+            
+            <!-- Onglet Informations complémentaires -->
+            <p-tabPanel header="Informations complémentaires">
+              <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12 mb-12">
+                <div class="col-span-12 md:col-span-4">
+                  <label for="vendu" class="block mb-2 font-medium">Vendu</label>
+                  <p-selectButton id="vendu" formControlName="vendu" [options]="venduOptions" optionLabel="label" optionValue="value"></p-selectButton>
+                </div>
+                
+                <div class="col-span-12 md:col-span-8">
+                  <label for="etatActuel" class="block mb-2 font-medium">État actuel</label>
+                  <input id="etatActuel" type="text" pInputText formControlName="etatActuel" class="w-full" placeholder="État actuel du véhicule">
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="kilometrageVidange" class="block mb-2 font-medium">Kilométrage dernière vidange</label>
+                  <p-inputNumber id="kilometrageVidange" formControlName="kilometrageVidange" [showButtons]="true" [min]="0" class="w-full"></p-inputNumber>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateVidange" class="block mb-2 font-medium">Date dernière vidange</label>
+                  <p-calendar id="dateVidange" formControlName="dateVidange" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="kilometragePneu1" class="block mb-2 font-medium">Kilométrage derniers pneus</label>
+                  <p-inputNumber id="kilometragePneu1" formControlName="kilometragePneu1" [showButtons]="true" [min]="0" class="w-full"></p-inputNumber>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="kilometrageChaine" class="block mb-2 font-medium">Kilométrage dernière chaîne</label>
+                  <p-inputNumber id="kilometrageChaine" formControlName="kilometrageChaine" [showButtons]="true" [min]="0" class="w-full"></p-inputNumber>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateProchaineassurance" class="block mb-2 font-medium">Date prochaine assurance</label>
+                  <p-calendar id="dateProchaineassurance" formControlName="dateProchaineassurance" [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateProchainevisite" class="block mb-2 font-medium">Date prochaine visite technique</label>
+                  <p-calendar id="dateProchainevisite" formControlName="dateProchainevisite" [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12 md:col-span-4">
+                  <label for="dateProchainevignette" class="block mb-2 font-medium">Date prochaine vignette</label>
+                  <p-calendar id="dateProchainevignette" formControlName="dateProchainevignette" [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-full"></p-calendar>
+                </div>
+                
+                <div class="col-span-12">
+                  <label for="observations" class="block mb-2 font-medium">Observations</label>
+                  <textarea id="observations" pInputTextarea formControlName="observations" class="w-full" rows="5" placeholder="Observations sur le véhicule"></textarea>
+                </div>
+              </div>
+            </p-tabPanel>
+            
+            <!-- Onglet Photos et documents -->
+            <p-tabPanel header="Photos et documents">
+              <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 gap-12 mb-12">
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Photo principale</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.photo1Url" [src]="vehicule.photo1Url" alt="Photo principale" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner une image" 
+                      [auto]="true"
+                      accept="image/*" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onPhoto1Selected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Photo secondaire 1</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.photo2Url" [src]="vehicule.photo2Url" alt="Photo secondaire 1" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner une image" 
+                      [auto]="true"
+                      accept="image/*" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onPhoto2Selected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Photo secondaire 2</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.photo3Url" [src]="vehicule.photo3Url" alt="Photo secondaire 2" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner une image" 
+                      [auto]="true"
+                      accept="image/*" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onPhoto3Selected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Photo secondaire 3</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.photo4Url" [src]="vehicule.photo4Url" alt="Photo secondaire 3" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner une image" 
+                      [auto]="true"
+                      accept="image/*" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onPhoto4Selected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Carte grise (recto)</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.carteGriseRUrl" [src]="vehicule.carteGriseRUrl" alt="Carte grise recto" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner un document" 
+                      [auto]="true"
+                      accept="image/*,application/pdf" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onCarteGriseRSelected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Carte grise (verso)</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.carteGriseVUrl" [src]="vehicule.carteGriseVUrl" alt="Carte grise verso" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner un document" 
+                      [auto]="true"
+                      accept="image/*,application/pdf" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onCarteGriseVSelected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Facture</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.factureUrl" [src]="vehicule.factureUrl" alt="Facture" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner un document" 
+                      [auto]="true"
+                      accept="image/*,application/pdf" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onFactureSelected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+                
+                <div class="col-span-12 md:col-span-6">
+                  <label class="block mb-2 font-medium">Autorisation</label>
+                  
+                  <div class="flex flex-col gap-2">
+                    <img *ngIf="vehicule.autorisationUrl" [src]="vehicule.autorisationUrl" alt="Autorisation" class="max-w-full h-auto max-h-64 rounded-md shadow-sm">
+                    
+                    <p-fileUpload 
+                      mode="basic" 
+                      chooseLabel="Sélectionner un document" 
+                      [auto]="true"
+                      accept="image/*,application/pdf" 
+                      [maxFileSize]="5000000"
+                      (onSelect)="onAutorisationSelected($event)"
+                    ></p-fileUpload>
+                  </div>
+                </div>
+              </div>
+            </p-tabPanel>
+          </p-tabView>
+          
+          <div class="flex justify-end gap-2 mt-12">
+            <p-button 
+              label="Annuler" 
+              icon="pi pi-times" 
+              (onClick)="cancel()" 
+              [outlined]="true"
+              styleClass="w-auto"
+            ></p-button>
+            <p-button 
+              type="submit" 
+              label="Enregistrer" 
+              icon="pi pi-check" 
+              styleClass="w-auto"
+              [loading]="submitting"
+            ></p-button>
+          </div>
+        </form>
+      </div>
+    </p-card>
+  </div>
+</div> 

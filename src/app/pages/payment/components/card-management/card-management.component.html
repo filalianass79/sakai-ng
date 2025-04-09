@@ -1,0 +1,62 @@
+<div class="card-management-container">
+  <p-toast></p-toast>
+  
+  <p-card *ngIf="!showCardForm" styleClass="card-management-card">
+    <ng-template pTemplate="header">
+      <div class="card-management-header">
+        <h2>Mes moyens de paiement</h2>
+        <button pButton icon="pi pi-plus" label="Ajouter une carte" (click)="addNewCard()"></button>
+      </div>
+    </ng-template>
+    
+    <div class="card-list" *ngIf="savedCards.length > 0">
+      <p-table [value]="savedCards" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Type</th>
+            <th>Numéro</th>
+            <th>Titulaire</th>
+            <th>Expiration</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-card>
+          <tr>
+            <td>
+              <div class="card-brand">
+                <i [ngClass]="getCardIcon(card.brand)"></i>
+                <span>{{ card.brand | titlecase }}</span>
+              </div>
+            </td>
+            <td>•••• •••• •••• {{ card.last4 }}</td>
+            <td>{{ card.holderName }}</td>
+            <td>{{ formatExpiry(card.expMonth, card.expYear) }}</td>
+            <td>
+              <div class="card-actions">
+                <button pButton icon="pi pi-star" class="p-button-rounded p-button-text p-button-sm" 
+                  (click)="setDefaultCard(card)" pTooltip="Définir comme carte par défaut"></button>
+                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger p-button-sm" 
+                  (click)="deleteCard(card)" pTooltip="Supprimer cette carte"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    
+    <div class="empty-state" *ngIf="savedCards.length === 0">
+      <div class="empty-icon">
+        <i class="pi pi-credit-card"></i>
+      </div>
+      <h3>Aucune carte enregistrée</h3>
+      <p>Ajoutez une carte bancaire pour faciliter vos futurs paiements</p>
+      <button pButton label="Ajouter une carte" icon="pi pi-plus" (click)="addNewCard()"></button>
+    </div>
+  </p-card>
+  
+  <app-card-form 
+    *ngIf="showCardForm"
+    (cardAdded)="onCardAdded($event)"
+    (cancelled)="onCardFormCancelled()">
+  </app-card-form>
+</div> 

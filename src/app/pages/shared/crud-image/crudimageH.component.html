@@ -1,0 +1,47 @@
+<div  class=" text-center px-2 py-2">
+    <p-image *ngIf="url"
+    [src]="url" alt="" width="100%" height="auto" [preview]="true">
+    </p-image>
+    <p-image  *ngIf="!url"
+    [src]="imageNameVideFromParent" alt="" width="100%" height="auto" >
+    </p-image>
+</div>
+<div  *ngIf="showButtonImage==true" class="text-center px-2 py-0 m-0">
+  <div class="inline-flex card-container ">
+    <div class="flex-1 p-2 rounded-border">
+      <p-fileUpload 
+      [style]="{'width': '20px', 'height':'20px' }"
+      #fileUpload mode="basic" name="files[]"  accept="image/*"   
+      [auto]="true"
+      [customUpload]="true"
+      [maxFileSize]="2000000"
+      invalidFileSizeMessageSummary="problème de taille"
+      invalidFileSizeMessageDetail="le fichier doit être < 2Mb"
+      (uploadHandler)="onUpload($event,fileUpload)">
+      </p-fileUpload>  
+    </div>
+    <div class="flex-1 p-2 rounded-border">
+      <button 
+        pButton
+        [disabled]="!this.imageName"
+        icon="pi pi-trash"
+        class="p-button-danger"
+        (click)="deleteFileFromS3(this.imageName)"
+        [style]="{ width: '20px', height: '20px' }"
+      ></button>
+    </div>
+    <div class="flex-1 p-2 rounded-border">
+      <button 
+        pButton
+        [disabled]="!this.imageName"
+        icon="pi pi-download"
+        class="p-button-secondary"
+        (click)="downloadFileFromS3(this.imageName)"
+        [style]="{ width: '20px', height: '20px' }"
+      ></button>
+    </div>
+  </div>
+</div>
+
+       
+

@@ -1,0 +1,164 @@
+<div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+  <div class="col-span-12">
+    <div class="card">
+      <h5>Extraction de données par OCR</h5>
+      <p>Téléchargez un document (PDF ou image) pour extraire automatiquement les informations</p>
+      
+      <p-toast></p-toast>
+      
+      <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+        <!-- Upload Section -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <p-card header="1. Télécharger un document" styleClass="h-full">
+            <p-fileUpload #fileUpload 
+              [showUploadButton]="false"
+              [showCancelButton]="false"
+              (onSelect)="onUpload($event)"
+              accept="image/*,application/pdf"
+              [maxFileSize]="5000000"
+              chooseLabel="Sélectionner un fichier"
+              invalidFileSizeMessageSummary="Fichier trop volumineux"
+              invalidFileSizeMessageDetail="La taille maximale est de 5MB"
+              invalidFileTypeMessageSummary="Type de fichier non valide"
+              invalidFileTypeMessageDetail="Seuls les fichiers PDF et images sont acceptés">
+            </p-fileUpload>
+            
+            <div class="flex justify-between mt-12">
+              <p-button label="Effacer" icon="pi pi-trash" severity="secondary" (onClick)="clear()"></p-button>
+            </div>
+          </p-card>
+        </div>
+        
+        <!-- Preview Section -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <p-card header="2. Aperçu du document" styleClass="h-full">
+            <div *ngIf="imagePreviewUrl" class="flex items-center justify-center">
+              <!-- Afficher une image si c'est une image -->
+              <img *ngIf="uploadedFile && uploadedFile.type.startsWith('image/')" 
+                #previewImage 
+                [src]="imagePreviewUrl" 
+                class="w-full max-h-80" 
+                alt="Document preview" />
+              
+              <!-- Afficher un PDF si c'est un PDF -->
+              <object *ngIf="uploadedFile && uploadedFile.type === 'application/pdf' && safePdfUrl"
+                [data]="safePdfUrl"
+                type="application/pdf"
+                class="w-full"
+                style="height: 300px;">
+                <div class="text-center text-surface-500 dark:text-surface-300 p-12">
+                  <i class="pi pi-file-pdf text-4xl mb-2"></i>
+                  <p>Impossible d'afficher le PDF directement. <a [href]="safePdfUrl" target="_blank">Ouvrir dans un nouvel onglet</a></p>
+                </div>
+              </object>
+            </div>
+            <div *ngIf="!imagePreviewUrl" class="flex items-center justify-center h-80">
+              <div class="text-center text-surface-500 dark:text-surface-300">
+                <i class="pi pi-image text-6xl mb-12"></i>
+                <div>Aucun document sélectionné</div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+        
+        <!-- Process Section -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+          <p-card header="3. Traiter le document" styleClass="h-full">
+            <div class="mb-12">
+              <p-button label="Traiter avec Tesseract.js" 
+                icon="pi pi-search" 
+                styleClass="w-full mb-2"
+                [disabled]="!uploadedFile || isProcessing || (uploadedFile && uploadedFile.type === 'application/pdf')"
+                (onClick)="processWithTesseract()">
+              </p-button>
+              
+              <p-button label="Traiter avec le backend" 
+                icon="pi pi-server" 
+                styleClass="w-full"
+                [disabled]="!uploadedFile || isProcessing"
+                (onClick)="processWithBackend()">
+              </p-button>
+            </div>
+            
+            <div *ngIf="isProcessing" class="mt-12">
+              <p>Traitement en cours...</p>
+              <p-progressBar [value]="progress"></p-progressBar>
+            </div>
+          </p-card>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="col-span-12">
+          <p-divider></p-divider>
+          <h5>Résultats de l'extraction</h5>
+        </div>
+        
+        <!-- Extracted Text -->
+        <div class="col-span-12 md:col-span-6">
+          <p-card header="Texte extrait" styleClass="h-full">
+            <p-scrollPanel [style]="{width: '100%', height: '300px'}">
+              <div class="p-2 text-sm">
+                <pre>{{ extractedText }}</pre>
+              </div>
+            </p-scrollPanel>
+          </p-card>
+        </div>
+        
+        <!-- Extracted Fields -->
+        <div class="col-span-12 md:col-span-6">
+          <p-card header="Champs détectés" styleClass="h-full">
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="raisonSocial" class="block mb-2">Raison Sociale</label>
+                <input id="raisonSocial" type="text" pInputText [(ngModel)]="extractedFields.raisonSocial" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="identifiantFiscal" class="block mb-2">Identifiant Fiscal</label>
+                <input id="identifiantFiscal" type="text" pInputText [(ngModel)]="extractedFields.identifiantFiscal" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="ice" class="block mb-2">ICE</label>
+                <input id="ice" type="text" pInputText [(ngModel)]="extractedFields.ice" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="registreCommerce" class="block mb-2">Registre de Commerce</label>
+                <input id="registreCommerce" type="text" pInputText [(ngModel)]="extractedFields.registreCommerce" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 field">
+                <label for="adresse" class="block mb-2">Adresse</label>
+                <textarea id="adresse" pInputTextarea [(ngModel)]="extractedFields.adresse" class="w-full" rows="2"></textarea>
+              </div>
+              
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="ville" class="block mb-2">Ville</label>
+                <input id="ville" type="text" pInputText [(ngModel)]="extractedFields.ville" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="email" class="block mb-2">Email</label>
+                <input id="email" type="text" pInputText [(ngModel)]="extractedFields.email" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 md:col-span-6 field">
+                <label for="telephone" class="block mb-2">Téléphone</label>
+                <input id="telephone" type="text" pInputText [(ngModel)]="extractedFields.telephone" class="w-full" />
+              </div>
+              
+              <div class="col-span-12 flex justify-end">
+                <p-button label="Remplir le formulaire" 
+                  icon="pi pi-file-edit" 
+                  [disabled]="!extractedText"
+                  (onClick)="fillForm()">
+                </p-button>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

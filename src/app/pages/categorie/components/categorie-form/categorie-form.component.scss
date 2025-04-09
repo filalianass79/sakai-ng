@@ -1,0 +1,79 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep {
+  .p-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    
+    .p-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .p-card-content {
+      padding: 0;
+    }
+  }
+  
+  .p-dropdown {
+    width: 100%;
+  }
+  
+  .p-calendar {
+    width: 100%;
+  }
+  
+  .p-inputtext {
+    width: 100%;
+  }
+  
+  .p-inputtextarea {
+    width: 100%;
+  }
+  
+  .p-button {
+    margin-left: 0.5rem;
+  }
+}
+
+.text-danger {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+} 

@@ -1,0 +1,252 @@
+  <p-toast></p-toast>
+
+  <div class="bg-surface-50 dark:bg-surface-900 p-2 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      <p-card styleClass="shadow">
+        <!-- En-tête avec navigation et titre -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <button pButton 
+              icon="pi pi-arrow-left" 
+              class="p-button-rounded p-button-outlined mr-12" 
+              (click)="goBack()"
+              pTooltip="Retour à la liste"
+            ></button>
+            <h1 class="text-primary-900 dark:text-primary-200 font-bold text-3xl lg:text-4xl m-0">
+              {{isEditMode ? 'Modifier' : 'Créer'}} une société
+            </h1>
+          </div>
+        </div>
+
+        <form [formGroup]="companyForm" (ngSubmit)="onSubmit()" class="space-y-2">
+          <!-- Section Informations générales -->
+          <p-panel styleClass="mb-2">
+            <ng-template pTemplate="header">
+              <div class="flex items-center">
+                <i class="pi pi-info-circle mr-2 text-primary-500"></i>
+                <span class="text-primary-800 dark:text-primary-300 font-medium text-xl">Informations générales</span>
+              </div>
+            </ng-template>
+            
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+              <div class="col-span-12 md:col-span-3 lg:col-span-3">
+                <p-card styleClass="mb-2 shadow-sm">
+                  <ng-template pTemplate="header">
+                    <div class="flex items-center mb-2">
+                      <i class="pi pi-image mr-2 text-primary-500"></i>
+                      <span class="text-primary-700 font-medium">Logo</span>
+                    </div>
+                  </ng-template>
+                  <!--   (onUploadComplete)="onLogoUploaded($event)"
+                    [autoUpload]="true"
+                    (onUploadError)="onLogoUploadError($event)"
+                    (onImageSelected)="onLogoSelected($event)"
+                    (onImageDeleted)="onLogoDeleted()"-->
+                  <app-image-upload *ngIf="company.id || !isEditMode"
+                    [entityType]="'company'" 
+                    [entityId]="company.id!" 
+                    [imageName]="'logo'" 
+                    [currentImage]="company.logo" 
+                    [autoUpload]="true"
+                    (onImageSelected)="onLogoSelected($event)"
+                    (onUploadComplete)="onLogoUploaded($event)"
+                    (onImageDeleted)="onLogoDeleted()"
+                    class="w-full">
+                  </app-image-upload>
+                </p-card>
+              </div>
+
+              <div class="col-span-12 md:col-span-9 lg:col-span-9">
+                <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+                  <div class="col-span-12">
+                    <div class="field">
+                      <label for="raisonSociale" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Raison Sociale *</label>
+                      <input id="raisonSociale" type="text" pInputText formControlName="raisonSociale" class="w-full p-inputtext-lg">
+                      <small *ngIf="companyForm.get('raisonSociale')?.hasError('required') && companyForm.get('raisonSociale')?.touched" 
+                             class="p-error block mt-1">La raison sociale est requise</small>
+                    </div>
+                  </div>
+
+                  <div class="col-span-12">
+                    <div class="field">
+                      <label for="activite" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Activité *</label>
+                      <input id="activite" type="text" pInputText formControlName="activite" class="w-full p-inputtext-lg">
+                      <small *ngIf="companyForm.get('activite')?.hasError('required') && companyForm.get('activite')?.touched" 
+                             class="p-error block mt-1">L'activité est requise</small>
+                    </div>
+                  </div>
+
+                  <div class="col-span-12 md:col-span-6">
+                    <div class="field">
+                      <label for="formeJuridique" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Forme Juridique *</label>
+                      <p-select id="formeJuridique" 
+                              [options]="formesJuridiques" 
+                              formControlName="formeJuridique" 
+                              [style]="{'width':'100%'}"
+                              class="w-full">
+                      </p-select>
+                      <small *ngIf="companyForm.get('formeJuridique')?.hasError('required') && companyForm.get('formeJuridique')?.touched" 
+                             class="p-error block mt-1">La forme juridique est requise</small>
+                    </div>
+                  </div>
+
+                  <div class="col-span-12 md:col-span-6">
+                    <div class="field">
+                      <label for="dateDeCreation" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Date de Création *</label>
+                      <p-datepicker id="dateDeCreation" 
+                                formControlName="dateDeCreation" 
+                                dateFormat="dd/mm/yy"
+                                [style]="{'width':'100%'}"
+                                showIcon
+                                iconDisplay="input"
+                                class="w-full">
+                      </p-datepicker>
+                      <small *ngIf="companyForm.get('dateDeCreation')?.hasError('required') && companyForm.get('dateDeCreation')?.touched" 
+                             class="p-error block mt-1">La date de création est requise</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+
+          <!-- Section Informations fiscales -->
+          <p-panel styleClass="mb-2">
+            <ng-template pTemplate="header">
+              <div class="flex items-center">
+                <i class="pi pi-file mr-2 text-primary-500"></i>
+                <span class="text-primary-800 dark:text-primary-300 font-medium text-xl">Informations fiscales</span>
+              </div>
+            </ng-template>
+            
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+              <div class="col-span-12 md:col-span-4">
+                <div class="field">
+                  <label for="idFiscal" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Identifiant Fiscal</label>
+                  <input id="idFiscal" type="text" pInputText formControlName="idFiscal" class="w-full p-inputtext-lg">
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-4">
+                <div class="field">
+                  <label for="ice" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">ICE</label>
+                  <input id="ice" type="text" pInputText formControlName="ice" class="w-full p-inputtext-lg">
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-4">
+                <div class="field">
+                  <label for="taxeProfessionnelle" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Taxe Professionnelle</label>
+                  <input id="taxeProfessionnelle" type="text" pInputText formControlName="taxeProfessionnelle" class="w-full p-inputtext-lg">
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-4">
+                <div class="field">
+                  <label for="registreDeCommerce" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Registre de Commerce</label>
+                  <input id="registreDeCommerce" type="text" pInputText formControlName="registreDeCommerce" class="w-full p-inputtext-lg">
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-4">
+                <div class="field">
+                  <label for="villeRegistreDeCommerce" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Ville du RC</label>
+                  <input id="villeRegistreDeCommerce" type="text" pInputText formControlName="villeRegistreDeCommerce" class="w-full p-inputtext-lg">
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-4">
+                <div class="field">
+                  <label for="cnss" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">CNSS</label>
+                  <input id="cnss" type="text" pInputText formControlName="cnss" class="w-full p-inputtext-lg">
+                </div>
+              </div>
+            </div>
+          </p-panel>
+
+          <!-- Section Coordonnées -->
+          <p-panel styleClass="mb-2">
+            <ng-template pTemplate="header">
+              <div class="flex items-center">
+                <i class="pi pi-map-marker mr-2 text-primary-500"></i>
+                <span class="text-primary-800 dark:text-primary-300 font-medium text-xl">Coordonnées</span>
+              </div>
+            </ng-template>
+            
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+              <div class="col-span-12 md:col-span-9">
+                <div class="field">
+                  <label for="adresse" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Adresse *</label>
+                  <input id="adresse" type="text" pInputText formControlName="adresse" class="w-full p-inputtext-lg">
+                  <small *ngIf="companyForm.get('adresse')?.hasError('required') && companyForm.get('adresse')?.touched" 
+                         class="p-error block mt-1">L'adresse est requise</small>
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-3">
+                <div class="field">
+                  <label for="ville" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Ville *</label>
+                  <input id="ville" type="text" pInputText formControlName="ville" class="w-full p-inputtext-lg">
+                  <small *ngIf="companyForm.get('ville')?.hasError('required') && companyForm.get('ville')?.touched" 
+                         class="p-error block mt-1">La ville est requise</small>
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-6">
+                <div class="field">
+                  <label for="email" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Email *</label>
+                  <input id="email" type="email" pInputText formControlName="email" class="w-full p-inputtext-lg">
+                  <small *ngIf="companyForm.get('email')?.hasError('required') && companyForm.get('email')?.touched" 
+                         class="p-error block mt-1">L'email est requis</small>
+                  <small *ngIf="companyForm.get('email')?.hasError('email') && companyForm.get('email')?.touched" 
+                         class="p-error block mt-1">L'email n'est pas valide</small>
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-3">
+                <div class="field">
+                  <label for="fixe" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Téléphone Fixe</label>
+                  <p-inputMask id="fixe" 
+                             mask="99.99.99.99.99"
+                             formControlName="fixe"
+                             placeholder="__.__.__.__.__"
+                             [style]="{'width':'100%'}"
+                             class="w-full">
+                  </p-inputMask>
+                </div>
+              </div>
+
+              <div class="col-span-12 md:col-span-3">
+                <div class="field">
+                  <label for="gsm" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Téléphone gsm</label>
+                  <p-inputMask id="gsm" 
+                             mask="99.99.99.99.99"
+                             formControlName="gsm"
+                             placeholder="__.__.__.__.__"
+                             [style]="{'width':'100%'}"
+                             class="w-full">
+                  </p-inputMask>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+
+          <!-- Boutons d'action -->
+          <div class="flex justify-end gap-2 pt-12">
+            <button pButton 
+                    type="button" 
+                    label="Annuler" 
+                    class="p-button-outlined"
+                    (click)="goBack()">
+            </button>
+            <button pButton 
+                    type="submit" 
+                    label="Enregistrer" 
+                    [disabled]="!companyForm.valid"
+                    class="p-button-primary">
+            </button>
+          </div>
+        </form>
+      </p-card>
+    </div>
+  </div>

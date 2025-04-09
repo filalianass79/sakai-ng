@@ -1,0 +1,30 @@
+export interface Societe {
+    id?: number;
+    raisonSocial: string;
+    activite: string;
+    formeJuridique: string;
+    dateDeCreation: Date;
+    idFiscal: string;
+    taxeProfessionnelle: string;
+    registreDeCommerce: string;
+    villeRegistreDeCommerce: string;
+    ice: string;
+    adresse: string;
+    ville: string;
+    email: string;
+    fixe: string;
+    fax: string;
+    gsm: string;
+    cnss: string;
+    logo: string;
+    papierEnTete: string;
+    enTete: string;
+    piedPage: string;
+    creerPar?: string;
+    isVisible?: boolean;
+    dateCreation?: Date;
+    modifierPar?: string;
+    dateModification?: Date;
+    archiverPar?: string;
+    dateArchivage?: Date;
+} 

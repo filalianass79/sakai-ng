@@ -1,0 +1,38 @@
+:host ::ng-deep {
+  .p-inputnumber, .p-dropdown, .p-calendar {
+    width: 100%;
+  }
+  
+  .p-fileupload-buttonbar {
+    padding: 0.5rem;
+    background-color: transparent;
+    border: none;
+  }
+  
+  .p-fileupload-content {
+    padding: 0.5rem;
+    background-color: transparent;
+    border: none;
+  }
+  
+  .p-tabview-nav-container {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--surface-50);
+
+    .p-tabview-nav {
+      border-bottom: 1px solid var(--surface-200);
+    }
+  }
+  
+  .p-selectbutton {
+    .p-button {
+      &.p-highlight {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color-text);
+      }
+    }
+  }
+} 

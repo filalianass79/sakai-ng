@@ -1,0 +1,101 @@
+  <p-toast></p-toast>
+
+  <div class="bg-surface-50 dark:bg-surface-900 p-2 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      <p-card styleClass="shadow">
+        <!-- En-tête avec navigation et titre -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <button pButton 
+              icon="pi pi-arrow-left" 
+              class="p-button-rounded p-button-outlined mr-12" 
+              (click)="goBack()"
+              pTooltip="Retour à la liste"
+            ></button>
+            <h1 class="text-primary-900 dark:text-primary-200 font-bold text-3xl lg:text-4xl m-0">
+              {{isEditMode ? 'Modifier' : 'Créer'}} une marque
+            </h1>
+          </div>
+        </div>
+
+        <form [formGroup]="marqueForm" (ngSubmit)="onSubmit()" class="space-y-2">
+          <!-- Section Informations générales -->
+          <p-panel styleClass="mb-2">
+            <ng-template pTemplate="header">
+              <div class="flex items-center">
+                <i class="pi pi-info-circle mr-2 text-primary-500"></i>
+                <span class="text-primary-800 dark:text-primary-300 font-medium text-xl">Informations générales</span>
+              </div>
+            </ng-template>
+            
+            <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+              <div class="col-span-12 md:col-span-3 lg:col-span-3">
+                <p-card styleClass="mb-2 shadow-sm">
+                  <ng-template pTemplate="header">
+                    <div class="flex items-center mb-2">
+                      <i class="pi pi-image mr-2 text-primary-500"></i>
+                      <span class="text-primary-700 font-medium">Logo</span>
+                    </div>
+                  </ng-template>
+                    <app-image-upload *ngIf="marque.id || !isEditMode"
+                    [entityType]="'marque'" 
+                    [entityId]="marque.id!" 
+                    [imageName]="'logo'" 
+                    [currentImage]="marque.logo" 
+                    [autoUpload]="true"
+                    (onImageSelected)="onLogoSelected($event)"
+                    (onUploadComplete)="onLogoUploaded($event)"
+                    (onImageDeleted)="onLogoDeleted()"
+                    class="w-full">
+                  </app-image-upload>
+                </p-card>
+              </div>
+
+              <div class="col-span-12 md:col-span-9 lg:col-span-9">
+                <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+                  <div class="col-span-12">
+                    <div class="field">
+                      <label for="nom" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Marque *</label>
+                      <input id="nom" type="text" pInputText formControlName="nom" class="w-full p-inputtext-lg">
+                      <small *ngIf="marqueForm.get('nom')?.hasError('required') && marqueForm.get('nom')?.touched" 
+                             class="p-error block mt-1">La raison sociale est requise</small>
+                    </div>
+
+                    <div class="field">
+                      <label for="pays" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Pays</label>
+                      <input id="pays" type="text" pInputText formControlName="pays" class="w-full p-inputtext-lg">
+                    </div>
+                    
+                    <div class="field">
+                      <label for="description" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Description</label>
+                      <input id="description" type="text" pInputText formControlName="description" class="w-full p-inputtext-lg">
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          </p-panel>
+
+
+
+          <!-- Boutons d'action -->
+          <div class="flex justify-end gap-2 pt-12">
+            <button pButton 
+                    type="button" 
+                    label="Annuler" 
+                    class="p-button-outlined"
+                    (click)="goBack()">
+            </button>
+            <button pButton 
+                    type="submit" 
+                    label="Enregistrer" 
+                    [disabled]="!marqueForm.valid"
+                    class="p-button-primary">
+            </button>
+          </div>
+        </form>
+      </p-card>
+    </div>
+  </div>

@@ -1,0 +1,148 @@
+<div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6">
+  <div class="col-span-12">
+    <p-toast position="top-center"></p-toast>
+    <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+    <div class="card">
+      <p-toolbar styleClass="mb-12">
+        <ng-template pTemplate="left">
+          <div class="card-title mb-0 text-xl font-semibold">
+            Véhicules Archivés
+          </div>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <div class="flex">
+            <button pButton pRipple label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger mr-2" (click)="exportPdf()"></button>
+            <button pButton pRipple label="Export Excel" icon="pi pi-file-excel" class="p-button-success mr-2" (click)="exportExcel()"></button>
+            <button pButton pRipple label="Export CSV" icon="pi pi-download" class="p-button-info" (click)="exportCSV()"></button>
+          </div>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table 
+        #dt
+        [value]="vehicules" 
+        [paginator]="true" 
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '35rem' }"
+        [(selection)]="selectedVehicules"
+        [rowHover]="true"
+        dataKey="id"
+        [loading]="loading"
+        [globalFilterFields]="['immatriculation', 'marqueNom', 'modeleNom', 'categorieNom', 'couleur', 'carburant']"
+        [sortMode]="'multiple'"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} véhicules archivés"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-striped p-datatable-sm"
+        [reorderableColumns]="true"
+        [resizableColumns]="true"
+        stateStorage="local"
+        stateKey="vehicules-archives-table-state"
+      >
+        <ng-template pTemplate="caption">
+          <div class="flex items-center justify-between">
+            <p-button 
+              [outlined]="true" 
+              icon="pi pi-filter-slash" 
+              label="Clear" 
+              (click)="clear(dt)"
+            ></p-button>
+            
+            <p-multiSelect
+              [options]="cols"
+              [(ngModel)]="selectedColumns"
+              optionLabel="header"
+              selectedItemsLabel="{0} colonnes sélectionnées"
+              [style]="{ minWidth: '200px' }"
+              placeholder="Choisir les colonnes"
+            ></p-multiSelect>
+
+            <div class="flex items-center justify-between">
+              <div class="mr-2" *ngIf="checked">
+                Masquer filtre
+              </div>
+              <div class="mr-2" *ngIf="!checked">
+                Afficher filtre
+              </div>
+              <p-toggleSwitch [(ngModel)]="checked"></p-toggleSwitch>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" [(ngModel)]="globalFilter" placeholder="Rechercher..." class="w-full" 
+                (input)="onGlobalFilter(dt, $event)"/>
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of selectedColumns" [pSortableColumn]="col.field">
+              {{ col.header }}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+            <th>Actions</th>
+          </tr>
+          <tr *ngIf="checked">
+            <th *ngFor="let col of selectedColumns">
+              <p-columnFilter [type]="col.filterType || 'text'" [field]="col.field" display="menu" [showMatchModes]="true" [showOperator]="true"></p-columnFilter>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-vehicule>
+          <tr>
+            <td *ngFor="let col of selectedColumns">
+              <ng-container [ngSwitch]="col.field">
+                <ng-container *ngSwitchCase="'vendu'">
+                  <p-tag [value]="getStatusLabel(vehicule[col.field])" [severity]="getStatusSeverity(vehicule[col.field])"></p-tag>
+                </ng-container>
+                <ng-container *ngSwitchCase="'provisoire'">
+                  <p-tag [value]="getImmaLabel(vehicule[col.field])" [severity]="getImmaSeverity(vehicule[col.field])"></p-tag>
+                </ng-container>
+                <ng-container *ngSwitchCase="'dateAchat'">
+                  {{ vehicule[col.field] | date: 'dd/MM/yyyy' }}
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{ vehicule[col.field] }}
+                </ng-container>
+              </ng-container>
+            </td>
+            <td>
+              <div class="flex">
+                <button 
+                  pButton 
+                  pRipple 
+                  icon="pi pi-eye" 
+                  class="p-button-rounded p-button-info mr-2" 
+                  pTooltip="Voir" 
+                  tooltipPosition="top"
+                  (click)="viewVehicule(vehicule)"
+                ></button>
+                <button 
+                  pButton 
+                  pRipple 
+                  icon="pi pi-undo" 
+                  class="p-button-rounded p-button-success" 
+                  pTooltip="Restaurer" 
+                  tooltipPosition="top"
+                  (click)="restoreVehicule(vehicule)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="text-center">Aucun véhicule archivé trouvé.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div> 

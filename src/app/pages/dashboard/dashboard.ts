@@ -9,7 +9,7 @@ import { RevenueStreamWidget } from './components/revenuestreamwidget';
     selector: 'app-dashboard',
     imports: [StatsWidget, RecentSalesWidget, BestSellingWidget, RevenueStreamWidget, NotificationsWidget],
     template: `
-        <div class="grid grid-cols-12 gap-8">
+        <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12 grid-cols-12 gap-20">
             <app-stats-widget class="contents" />
             <div class="col-span-12 xl:col-span-6">
                 <app-recent-sales-widget />

@@ -27,23 +27,97 @@ export class AppMenu {
             {
                 label: 'UI Components',
                 items: [
-                    { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
-                    { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
-                    { label: 'Button', icon: 'pi pi-fw pi-mobile', class: 'rotated-icon', routerLink: ['/uikit/button'] },
-                    { label: 'Table', icon: 'pi pi-fw pi-table', routerLink: ['/uikit/table'] },
-                    { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/uikit/list'] },
-                    { label: 'Tree', icon: 'pi pi-fw pi-share-alt', routerLink: ['/uikit/tree'] },
-                    { label: 'Panel', icon: 'pi pi-fw pi-tablet', routerLink: ['/uikit/panel'] },
-                    { label: 'Overlay', icon: 'pi pi-fw pi-clone', routerLink: ['/uikit/overlay'] },
-                    { label: 'Media', icon: 'pi pi-fw pi-image', routerLink: ['/uikit/media'] },
-                    { label: 'Menu', icon: 'pi pi-fw pi-bars', routerLink: ['/uikit/menu'] },
-                    { label: 'Message', icon: 'pi pi-fw pi-comment', routerLink: ['/uikit/message'] },
-                    { label: 'File', icon: 'pi pi-fw pi-file', routerLink: ['/uikit/file'] },
-                    { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] },
-                    { label: 'Timeline', icon: 'pi pi-fw pi-calendar', routerLink: ['/uikit/timeline'] },
-                    { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] }
-                ]
+                    { label: 'Ocr', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/ocr/ocr'] },
+                    { label: 'Payment', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/payment/payment-demo'] },
+                    { label: 'Payment Form', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/payment/payment-form'] },
+                    { label: 'Card Form', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/payment/card-form'] },
+                    { label: 'Card Management', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/payment/card-management'] },
+                    { label: 'Register', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/auth/register'] },
+                    { label: 'Profil', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/auth/profile'] },
+                    { label: 'Edit Profile', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/auth/profile/edit'] },
+                    { label: 'Change Password', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/auth/profile/change-password'] },
+                    { label: 'Reservation', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/reservations/list-reservation'] }
+                    ]
+            },                     
+            {
+                        label: 'Paramétrage',
+                        items: [
+                               { label: 'Paramétrage',
+                                icon: 'pi pi-fw pi-user',
+                                items: [
+                                    {
+                                        label: 'Société',
+                                        icon: 'pi pi-fw pi-sign-in',
+                                        routerLink: ['/dashboard/societes/list-societes']
+                                    },
+                                    {
+                                        label: 'Utilisateur',
+                                        icon: 'pi pi-fw pi-times-circle',
+                                        routerLink: ['/dashboard/users/list-users']
+                                    },
+                                    {
+                                        label: 'Companies',
+                                        icon: 'pi pi-fw pi-sign-in',
+                                        routerLink: ['/dashboard/companies/list-companies']
+                                    },
+                                    {
+                                        label: 'Gammes',
+                                        icon: 'pi pi-fw pi-sign-in',
+                                        routerLink: ['/dashboard/gammes/list-gammes']
+                                    },
+                                    {
+                                        label: 'Marques',
+                                        icon: 'pi pi-fw pi-sign-in',
+                                        routerLink: ['/dashboard/marques/list-marques']
+                                    },
+                                    {
+                                        label: 'Categories',
+                                        icon: 'pi pi-fw pi-sign-in',
+                                        routerLink: ['/dashboard/categories/list-categories']
+                                    },
+                                    {
+                                        label: 'Modeles',
+                                        icon: 'pi pi-fw pi-sign-in',
+                                        routerLink: ['/dashboard/modeles/list-modeles']
+                                    }
+
+                                ]
+                                },
+                                { label: 'Sociétés supprimées', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/societes/list-societes-archives'] },
+                                { label: 'Entreprises supprimées', icon: 'pi pi-fw pi-id-card', routerLink: ['/dashboard/companies/list-companies-archives'] }
+                                ]
             },
+
+
+            
+            {
+                label: 'Véhicules',
+                items: [
+                       { label: 'Marques',
+                        icon: 'pi pi-fw pi-user',
+                        items: [
+                            {
+                                label: 'Marques',
+                                icon: 'pi pi-fw pi-sign-in',
+                                routerLink: ['/dashboard/vehicules/list-marques']
+                            },
+                            {
+                                label: 'Modeles',
+                                icon: 'pi pi-fw pi-times-circle',
+                                routerLink: ['/dashboard/vehicules/list-modeles']
+                            },
+                            {
+                                label: 'Categories',
+                                icon: 'pi pi-fw pi-sign-in',
+                                routerLink: ['/dashboard/vehicules/list-categories']
+                            }
+
+                        ]
+                        },
+                    ]
+    },
+              
+             
             {
                 label: 'Pages',
                 icon: 'pi pi-fw pi-briefcase',
@@ -137,21 +211,31 @@ export class AppMenu {
                 ]
             },
             {
-                label: 'Get Started',
+                label: 'Get Raramétrage Site Web',
                 items: [
                     {
-                        label: 'Documentation',
+                        label: 'Définir les saisons',
                         icon: 'pi pi-fw pi-book',
-                        routerLink: ['/documentation']
+                        routerLink: ['/dashboard/parametragesiteweb/saisons']
                     },
                     {
-                        label: 'View Source',
-                        icon: 'pi pi-fw pi-github',
-                        url: 'https://github.com/primefaces/sakai-ng',
-                        target: '_blank'
+                        label: 'définir les tarifs',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/parametragesiteweb/tarifs']
+                    },
+                    {
+                        label: 'les choisir les modèles',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/parametragesiteweb/modeles']
+                    },
+                    {
+                        label: 'carte grise',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/carte-grise']
                     }
                 ]
-            }
-        ];
+            },
+        ]
     }
 }
+
