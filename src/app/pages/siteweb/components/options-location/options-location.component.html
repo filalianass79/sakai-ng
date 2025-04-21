@@ -1,0 +1,89 @@
+<div class="options-container">
+  <!-- En-tête de la section -->
+  <header class="section-header">
+    <h2 class="section-title">Confort & Connectivité</h2>
+    <p class="section-subtitle">Des options destinées à vous faciliter la conduite du véhicule</p>
+  </header>
+
+  <!-- Grille des options -->
+  <div class="options-grid">
+    <div class="option-card" *ngFor="let option of options">
+      <!-- Badge Limité 
+      <div class="relative" *ngIf="option.canBeLot">
+        <span class="badge-limited">LIMITÉ</span>
+      </div>
+      --> 
+      <!-- Contenu principal de la carte -->
+      <div class="card-content">
+        <!-- Image et informations -->
+        <div class="content-wrapper">
+          <div class="image-container">
+            <img [src]="option.image" 
+                 [alt]="option.title"
+                 class="option-image"
+                 loading="lazy">
+          </div>
+          <div class="info-container">
+            <h3 class="option-title">{{option.title}}</h3>
+            <p class="option-description">{{option.description}}</p>
+          </div>
+        </div>
+
+        <!-- Prix -->
+        <div class="price-container justify-content-between">
+          <span class="price">{{option.price}} € <span class="period">/jour</span></span>
+          <span class="text-sm text-gray-500">{{option.autre}}</span>
+        </div>
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="action-buttons">
+        <!-- Bouton simple pour les options non-lot -->
+        <button *ngIf="!option.canBeLot" 
+                class="option-button" 
+                [class.selected]="isSelected(option.id)"
+                (click)="toggleOption(option.id);afficherOptions()">
+          {{isSelected(option.id) ? 'RETIRER' : 'AJOUTER'}}
+        </button>
+
+        <!-- Contrôles de quantité pour les options en lot -->
+        <div *ngIf="option.canBeLot" class="quantity-controls">
+          <button pButton 
+                  class="p-button-outlined p-button-secondary" 
+                  icon="pi pi-minus"
+                  [disabled]="getNbreOptions(option) === 0"
+                  (click)="decrementNbreOptions(option)"
+                  [attr.aria-label]="'Diminuer la quantité de ' + option.title">
+          </button>
+          <span class="quantity-display" role="status" aria-live="polite">
+            {{getNbreOptions(option)}}
+          </span>
+          <button pButton 
+                  class="p-button-outlined p-button-secondary" 
+                  icon="pi pi-plus"
+                  (click)="incrementNbreOptions(option)"
+                  [disabled]="getNbreOptions(option) >= option.max"
+                  [attr.aria-label]="'Augmenter la quantité de ' + option.title">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section total -->
+  <div class="total-section" *ngIf="selectedOptions.length > 0">
+    <div class="total-content">
+      <span class="total-label">Total des options</span>
+      <span class="total-amount">{{getTotalPrice().toFixed(2)}} DH / Jour</span>
+    </div>
+  </div>
+  <!-- Bouton pour valider les options -->
+  <button pButton 
+          class="p-button-outlined p-button-secondary" 
+          icon="pi pi-check"
+          (click)="onSelectOptions()">
+    Valider les options
+  </button>
+</div>
+
+

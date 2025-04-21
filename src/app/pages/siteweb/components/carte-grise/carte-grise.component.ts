@@ -543,7 +543,7 @@ export class CarteGriseComponent implements OnInit {
       
       if (!this.ctxRecto || !this.originalImageRecto) return;
       
-      // Détecter automatiquement l'orientation initiale
+      // Détecter AUTOMATIQUEment l'orientation initiale
       this.isPortraitRecto = this.originalImageRecto.height > this.originalImageRecto.width;
       this.adjustCanvasForOrientationRecto();
     };
@@ -659,7 +659,7 @@ export class CarteGriseComponent implements OnInit {
     if (this.fileUploadRecto) {
       this.fileUploadRecto.clear();
     }
-    // On ne réinitialise pas complètement le formulaire pour permettre la correction manuelle
+    // On ne réinitialise pas complètement le formulaire pour permettre la correction MANUELLE
   }
 
   cleanExtractedText(text: string): string {
@@ -958,7 +958,7 @@ export class CarteGriseComponent implements OnInit {
       
       if (!this.ctxVerso || !this.originalImageVerso) return;
       
-      // Détecter automatiquement l'orientation initiale
+      // Détecter AUTOMATIQUEment l'orientation initiale
       this.isPortraitVerso = this.originalImageVerso.height > this.originalImageVerso.width;
       this.adjustCanvasForOrientationVerso();
     };
@@ -1074,7 +1074,7 @@ export class CarteGriseComponent implements OnInit {
     if (this.fileUploadVerso) {
       this.fileUploadVerso.clear();
     }
-    // On ne réinitialise pas complètement le formulaire pour permettre la correction manuelle
+    // On ne réinitialise pas complètement le formulaire pour permettre la correction MANUELLE
   }
 
   extractVersoInformation(text: string) {
@@ -1122,7 +1122,7 @@ export class CarteGriseComponent implements OnInit {
         return `${prefix}-${letter}-${suffix}`;
       }
       
-      // Cas 3: Extraction manuelle (pour les cas où OCR a mal détecté le format)
+      // Cas 3: Extraction MANUELLE (pour les cas où OCR a mal détecté le format)
       // Chercher d'abord 5 chiffres
       const digitMatch = clean.match(/(\d{4,6})/);
       if (digitMatch) {

@@ -1,0 +1,1324 @@
+// Variables
+$primary-color: rgb(219, 124, 8);
+$primary-light: rgb(252, 191, 7);
+$primary-gradient: linear-gradient(135deg, $primary-color, $primary-light);
+$secondary-color: #636360;
+$text-color: #333;
+$light-text: #666;
+$border-color: #ddd;
+$light-bg: #f9f9f9;
+$white: #fff;
+$transition: all 0.3s ease;
+$shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+$card-radius: 12px;
+$warning-color: $primary-color;
+
+// Importer les fonctions de couleur SASS
+@use "sass:color";
+
+.landing-wrapper {
+  font-family: var(--font-family);
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+}
+
+.topbar-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 15px rgba(236, 112, 10, 0.08);
+  border-bottom: 1px solid rgba(236, 112, 10, 0.05);
+  transition: all 0.3s ease;
+}
+
+// Header section
+.header-section {
+  background: linear-gradient(135deg, rgba(13,20,46,0.9) 0%, rgba(27,38,82,0.85) 100%);
+  position: relative;
+  color: white;
+  height: 250px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  margin-bottom: 2rem;
+  border-radius: 0;
+
+  @media (max-width: 768px) {
+    height: 200px;
+  }
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+
+  @media (max-width: 992px) {
+    padding: 1rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.8rem 1.2rem;
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.header-text-container {
+  flex: 0 0 50%;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    flex: 0 0 100%;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+  }
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+  text-align: center;
+  color: #fff;
+  
+  @media (max-width: 992px) {
+    font-size: 1.8rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .highlight {
+    color: $primary-light;
+  }
+}
+
+.header-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, $primary-color, $primary-light);
+  margin: 0.5rem auto;
+  
+  @media (max-width: 768px) {
+    margin: 0 auto 0.5rem auto;
+    width: 50px;
+    height: 2px;
+  }
+}
+
+.header-description {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+  text-align: center;
+  
+  @media (max-width: 992px) {
+    font-size: 0.85rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.header-image-container {
+  flex: 0 0 50%;
+  max-width: 50%;
+  height: 100%;
+  min-height: 200px;
+  position: relative;
+  
+  @media (max-width: 992px) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  @media (max-width: 768px) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+.header-image-wrapper {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.header-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(13,20,46,0.3) 0%, rgba(27,38,82,0.5) 100%);
+}
+
+// Main content
+.vehicles-main-content {
+  flex: 1;
+  padding: 2rem;
+  background-image: linear-gradient(120deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
+  background-color: #f8f9fa;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  
+  @media (max-width: 992px) {
+    padding: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.vehicles-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(236, 112, 10, 0.12);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  
+  @media (max-width: 992px) {
+    padding: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+}
+
+// Header actions
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.1rem;
+  margin-bottom: 0.1rem;
+  border-bottom: 1px solid $secondary-color;
+  border-radius: 0;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .filter-toggle {
+    flex: 0 0 auto;
+    
+    ::ng-deep .p-button {
+      background-color: $border-color;
+      border: none;
+      
+      .p-badge {
+        background: $primary-light;
+        color: var(--primary-color-text);
+      }
+    }
+  }
+  
+  .search-container {
+    flex: 1;
+    margin: 0 1rem;
+    
+    input {
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    @media (max-width: 768px) {
+      margin: 0 0.5rem;
+      
+      input {
+        max-width: 100%;
+      }
+    }
+  }
+  
+  .view-controls {
+    display: flex;
+    gap: 0.5rem;
+    
+    button {
+      background: none;
+      border: none;
+      color: $light-text;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 5px;
+      transition: $transition;
+      
+      &.active {
+        color: $primary-color;
+        background-color: rgba($primary-color, 0.1);
+      }
+      
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    .filter-toggle {
+      order: 1;
+      width: 100%;
+      margin-bottom: 0.5rem;
+      
+      ::ng-deep .p-button {
+        width: 100%;
+      }
+    }
+    
+    .search-container {
+      order: 2;
+      width: 70%;
+      margin: 0;
+    }
+    
+    .view-controls {
+      order: 3;
+      width: 30%;
+      justify-content: flex-end;
+    }
+  }
+}
+
+// Filters section
+.filters-section {
+  background: var(--surface-card, $white);
+  border-radius: var(--border-radius, $card-radius);
+  box-shadow: var(--card-shadow, $shadow);
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  
+  &.hidden {
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .filters-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.1rem;
+    padding: 0.1rem;
+    
+    @media (min-width: 768px) {
+      gap: 1rem;
+      padding: 1rem;
+    }
+    
+    .filter-column {
+      display: flex;
+      flex-direction: column;
+      
+      .filter-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        
+        i {
+          color: $primary-light;
+          font-size: 2rem;
+        }
+        
+        h3 {
+          margin: 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: $secondary-color;
+          position: relative;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: $primary-light;
+          }
+        }
+      }
+      
+      .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        
+        .checkbox-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          ::ng-deep .p-checkbox {
+            .p-checkbox-box {
+              &.p-highlight {
+                background: var(--primary-color, $primary-light);
+                border-color: var(--primary-color, $primary-light);
+              }
+            }
+          }
+          
+          .checkbox-label {
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.9rem;
+            color: $text-color;
+          }
+        }
+      }
+    }
+  }
+  
+  .price-filter {
+    padding: 0 0.1rem 0.1rem;
+    
+    @media (min-width: 768px) {
+      padding: 0 1rem 1rem;
+    }
+    
+    .filter-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      
+      i {
+        color: $primary-light;
+        font-size: 2rem;
+      }
+      
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: $secondary-color;
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 50%;
+          height: 2px;
+          background: $primary-light;
+        }
+      }
+    }
+    
+    .price-range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      color: $light-text;
+    }
+  }
+  
+  .filter-actions {
+    background: $white;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid $border-color;
+    gap: 1rem;
+    
+    ::ng-deep {
+      .p-button {
+        height: 3rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        transition: all 0.2s ease-in-out;
+        
+        &.p-button-outlined {
+          border: 1px solid $secondary-color;
+          color: $secondary-color;
+          background: transparent;
+          
+          &:hover:not(:disabled) {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: $secondary-color;
+          }
+          
+          &:disabled {
+            border-color: #ccc;
+            color: #999;
+          }
+        }
+        
+        &.p-button-warning, &.p-button-primary {
+          background: $primary-color;
+          border-color: $primary-color;
+          color: $white;
+          
+          &:hover:not(:disabled) {
+            background: color.adjust($primary-color, $lightness: -10%);
+            border-color: color.adjust($primary-color, $lightness: -10%);
+          }
+          
+          &:disabled {
+            background: #ccc;
+            border-color: #ccc;
+          }
+        }
+        
+        .p-button-icon {
+          font-size: 1rem;
+        }
+      }
+    }
+    
+    @media (max-width: 768px) {
+      padding: 0.75rem;
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Vehicles grid
+.vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+}
+
+// Vehicle card
+.vehicle-card {
+  background-color: $white;
+  border-radius: $card-radius;
+  overflow: hidden;
+  box-shadow: $shadow;
+  transition: $transition;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    
+    .vehicle-image img {
+      transform: scale(1.05);
+    }
+  }
+  
+  .availability-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+    
+    &.available {
+      background-color: rgba(46, 204, 113, 0.9);
+      color: white;
+    }
+    
+    &.unavailable {
+      background-color: rgba(231, 76, 60, 0.9);
+      color: white;
+    }
+  }
+  
+  .vehicle-image {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    
+    .city-badge {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      
+      i {
+        font-size: 0.85rem;
+        color: $primary-light;
+      }
+    }
+  }
+  
+  .vehicle-details {
+    padding: 1.25rem;
+    
+    .vehicle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      
+      .vehicle-title {
+        flex: 1;
+        
+        h3 {
+          margin: 0 0 0.25rem;
+          font-size: 1.25rem;
+          color: $secondary-color;
+          font-weight: 600;
+        }
+        
+        .vehicle-category {
+          color: $light-text;
+          font-size: 0.85rem;
+          text-transform: capitalize;
+        }
+      }
+      
+      .vehicle-price {
+        text-align: right;
+        
+        .price-amount {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: $primary-color;
+        }
+        
+        .price-period {
+          font-size: 0.75rem;
+          color: $light-text;
+        }
+      }
+    }
+    
+    .vehicle-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      border-top: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
+      padding: 0.75rem 0;
+      
+      .feature {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: $text-color;
+        
+        i {
+          color: $primary-color;
+          font-size: 1rem;
+        }
+      }
+    }
+    
+    .vehicle-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      
+      .details-button {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Vehicle list view
+.vehicles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  
+  .vehicle-list-item {
+    background-color: $white;
+    border-radius: $card-radius;
+    overflow: hidden;
+    box-shadow: $shadow;
+    transition: $transition;
+    display: flex;
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      
+      .vehicle-image img {
+        transform: scale(1.05);
+      }
+    }
+    
+    .vehicle-image {
+      width: 300px;
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+      
+      @media (max-width: 992px) {
+        width: 240px;
+      }
+      
+      @media (max-width: 768px) {
+        width: 100%;
+        height: 180px;
+      }
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+      
+      .availability-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+        
+        &.available {
+          background-color: rgba(46, 204, 113, 0.9);
+          color: white;
+        }
+        
+        &.unavailable {
+          background-color: rgba(231, 76, 60, 0.9);
+          color: white;
+        }
+      }
+      
+      .city-badge {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        
+        i {
+          font-size: 0.85rem;
+          color: $primary-light;
+        }
+      }
+    }
+    
+    .vehicle-content {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      
+      .vehicle-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        
+        .vehicle-title {
+          flex: 1;
+          
+          h3 {
+            margin: 0 0 0.25rem;
+            font-size: 1.3rem;
+            color: $secondary-color;
+            font-weight: 600;
+          }
+          
+          .vehicle-category {
+            color: $light-text;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+          }
+        }
+        
+        .vehicle-price {
+          text-align: right;
+          
+          .price-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $primary-color;
+          }
+          
+          .price-period {
+            font-size: 0.8rem;
+            color: $light-text;
+          }
+        }
+      }
+      
+      .vehicle-description {
+        font-size: 0.9rem;
+        color: $light-text;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+        flex: 1;
+        
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+      
+      .vehicle-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        
+        .feature {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.85rem;
+          color: $text-color;
+          
+          i {
+            color: $primary-color;
+            font-size: 1rem;
+          }
+        }
+      }
+      
+      .vehicle-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        
+        @media (max-width: 576px) {
+          flex-direction: column;
+          
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+}
+
+// Empty state
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  
+  i {
+    font-size: 3rem;
+    color: $light-text;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    color: $secondary-color;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: $light-text;
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+  }
+}
+
+// Vehicle details dialog
+:host ::ng-deep {
+  .p-dialog {
+    .p-dialog-header {
+      background-color: $secondary-color;
+      color: white;
+      
+      .p-dialog-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      
+      .p-dialog-header-icon {
+        color: white;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          color: white;
+        }
+      }
+    }
+    
+    .p-dialog-content {
+      padding: 0;
+      
+      .vehicle-dialog-content {
+        .vehicle-dialog-image {
+          height: 300px;
+          overflow: hidden;
+          position: relative;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          
+          .availability-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 2;
+            
+            &.available {
+              background-color: rgba(46, 204, 113, 0.9);
+              color: white;
+            }
+            
+            &.unavailable {
+              background-color: rgba(231, 76, 60, 0.9);
+              color: white;
+            }
+          }
+        }
+        
+        .vehicle-dialog-details {
+          padding: 2rem;
+          
+          .detail-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            
+            .detail-col {
+              flex: 1;
+              min-width: 250px;
+              
+              h4 {
+                font-size: 1.1rem;
+                color: $secondary-color;
+                margin: 0 0 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid $primary-light;
+                display: inline-block;
+              }
+              
+              .info-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                
+                .info-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 0.75rem;
+                  
+                  i {
+                    color: $primary-color;
+                    font-size: 1.1rem;
+                    width: 20px;
+                    text-align: center;
+                  }
+                  
+                  .info-label {
+                    font-weight: 500;
+                    color: $secondary-color;
+                    min-width: 100px;
+                  }
+                  
+                  .info-value {
+                    color: $text-color;
+                  }
+                }
+              }
+            }
+          }
+          
+          .price-section {
+            background-color: $light-bg;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            
+            h4 {
+              font-size: 1.1rem;
+              color: $secondary-color;
+              margin: 0 0 1rem;
+            }
+            
+            .price-options {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 1rem;
+              
+              .price-option {
+                flex: 1;
+                min-width: 150px;
+                background-color: white;
+                border-radius: 8px;
+                padding: 1rem;
+                text-align: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                
+                .price-period {
+                  font-size: 0.9rem;
+                  color: $light-text;
+                  margin-bottom: 0.5rem;
+                }
+                
+                .price-amount {
+                  font-size: 1.5rem;
+                  font-weight: 700;
+                  color: $primary-color;
+                }
+              }
+            }
+          }
+          
+          .features-section {
+            margin-bottom: 1.5rem;
+            
+            h4 {
+              font-size: 1.1rem;
+              color: $secondary-color;
+              margin: 0 0 1rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid $primary-light;
+              display: inline-block;
+            }
+            
+            .feature-list {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 1rem;
+              
+              .feature-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background-color: $light-bg;
+                border-radius: 5px;
+                font-size: 0.9rem;
+                
+                i {
+                  color: $primary-color;
+                }
+              }
+            }
+          }
+          
+          .description-section {
+            margin-bottom: 1.5rem;
+            
+            h4 {
+              font-size: 1.1rem;
+              color: $secondary-color;
+              margin: 0 0 1rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid $primary-light;
+              display: inline-block;
+            }
+            
+            p {
+              line-height: 1.6;
+              color: $text-color;
+            }
+          }
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      padding: 1.5rem;
+      border-top: 1px solid $border-color;
+      
+      button {
+        min-width: 150px;
+        
+        @media (max-width: 576px) {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// PrimeNG styling overrides
+:host ::ng-deep {
+  .p-button {
+    background: $primary-color;
+    border-color: $primary-color;
+    
+    &:hover {
+      background: color.adjust($primary-color, $lightness: -10%);
+      border-color: color.adjust($primary-color, $lightness: -10%);
+    }
+    
+    &.p-button-outlined {
+      background: transparent;
+      color: $primary-color;
+      
+      &:hover {
+        background: rgba($primary-color, 0.05);
+      }
+    }
+    
+    &.p-button-text {
+      color: $primary-color;
+      background: transparent;
+      border: none;
+      
+      &:hover {
+        background: rgba($primary-color, 0.05);
+        color: $primary-color;
+      }
+    }
+  }
+  
+  .p-inputtext:enabled:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 1px rgba($primary-color, 0.2);
+  }
+  
+  .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+    background: $primary-color;
+  }
+  
+  .p-slider .p-slider-range {
+    background: $primary-color;
+  }
+  
+  .p-slider .p-slider-handle {
+    border-color: $primary-color;
+    
+    &:hover {
+      background: $primary-color;
+      border-color: $primary-color;
+    }
+  }
+  
+  .p-card {
+    box-shadow: $shadow;
+  }
+  
+  .p-selectbutton .p-button.p-highlight {
+    background: $primary-color;
+    border-color: $primary-color;
+  }
+}
+
+// Responsive fixes
+@media (max-width: 576px) {
+  .vehicles-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .filters-section {
+    padding: 1rem;
+  }
+}
+
+// Selected options panel
+.selected-options-panel {
+  background-color: $white;
+  border-radius: $card-radius;
+  box-shadow: $shadow;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  
+  .selected-options-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid $border-color;
+    
+    i {
+      color: $primary-light;
+      font-size: 1.2rem;
+    }
+    
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $secondary-color;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 50%;
+        height: 2px;
+        background: $primary-light;
+      }
+    }
+  }
+  
+  .selected-options-content {
+    padding: 1rem;
+    
+    .options-group {
+      margin-bottom: 1rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .options-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        
+        i {
+          color: $primary-color;
+          font-size: 1rem;
+        }
+        
+        span {
+          font-weight: 500;
+          color: $secondary-color;
+        }
+      }
+      
+      .options-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        
+        .options-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background-color: $light-bg;
+          padding: 0.4rem 0.8rem;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          color: $text-color;
+          border: 1px solid $border-color;
+          
+          i {
+            cursor: pointer;
+            color: $light-text;
+            transition: color 0.2s ease;
+            
+            &:hover {
+              color: $warning-color;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .selected-options-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: $light-bg;
+    border-top: 1px solid $border-color;
+    
+    .results-count {
+      font-weight: 600;
+      color: $secondary-color;
+    }
+    
+    .price-range {
+      font-size: 0.9rem;
+      color: $primary-color;
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+} 

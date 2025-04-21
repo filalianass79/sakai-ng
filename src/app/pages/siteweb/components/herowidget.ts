@@ -4,12 +4,12 @@ import { RippleModule } from 'primeng/ripple';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
-import { DateRangePickerComponent } from './date-range-picker/date-range-picker.component';
 import { Reservation } from '../../reservation/models/reservation.model';
+import { InfosReservationComponent } from './infos-reservation/infos-reservation.component';
 @Component({
     selector: 'hero-widget',
     standalone: true,
-    imports: [ButtonModule, RippleModule, CommonModule, CardModule, DateRangePickerComponent],
+    imports: [ButtonModule, RippleModule, CommonModule, CardModule, InfosReservationComponent],
     template: `
         <div id="hero" class="landing-hero">
             <div class="hero-background"></div>
@@ -35,7 +35,14 @@ import { Reservation } from '../../reservation/models/reservation.model';
                         <span>Présence dans toutes les villes et aéroports du Maroc</span>
                     </div>
                 </div>
+                        
+                            <app-infos-reservation
+                                [minDate]="minDate"
+                                [reservation]="reservation"
+                                (chercherVehicule)="onChercherVehicule($event)">
+                            </app-infos-reservation>
             </div>
+                        
             
             <!-- Service Selection Cards -->
             <div class="services-section">
@@ -97,11 +104,11 @@ import { Reservation } from '../../reservation/models/reservation.model';
                             <div class="card-image">
                                 <img src="/assets/images/image2.png" alt="Notre flotte de véhicules" class="car-image" />
                             </div>
-                            <app-date-range-picker
+                            <app-infos-reservation
                                 [minDate]="minDate"
                                 [reservation]="reservation"
-                                (reserverVehicule)="onReserverVehicule($event)">
-                            </app-date-range-picker>
+                                (chercherVehicule)="onChercherVehicule($event)">
+                            </app-infos-reservation>
                         </div>
                     </div>
                 </div>
@@ -822,7 +829,7 @@ export class HeroWidget {
     }
 
     
-onReserverVehicule(event: Reservation) {
+onChercherVehicule(event: Reservation) {
     // Stocker les données de réservation dans la variable reservation
     this.reservation = {
         dateDepart: event.dateDepart,
@@ -832,7 +839,7 @@ onReserverVehicule(event: Reservation) {
         agenceDepart: event.agenceDepart,
         agenceRetour: event.agenceRetour,
         age: event.age,
-        codePromo: event.codePromo
+        codePromo: event.codePromo,
     };
     localStorage.setItem('reservation', JSON.stringify(this.reservation));
     this.router.navigate(['/parcauto'],{state:{reservation:this.reservation}});

@@ -1,0 +1,142 @@
+<div class="landing-wrapper overflow-hidden">
+    <topbar-widget class="topbar-wrapper" />
+    
+    <div class="agencies-main-content">
+        <div class="agencies-container">
+            <!-- Header moderne et élégant avec hauteur réduite -->
+            <div class="header-section">
+                <div class="header-content">
+                    <div class="header-text-container">
+                        <h1 class="header-title">Nos agences <span class="highlight">Perfect Car</span></h1>
+                        <div class="header-divider"></div>
+                        <p class="header-description">Découvrez nos agences à travers le Maroc et trouvez celle qui est la plus proche de vous.</p>
+                        <div class="header-badges">
+                            <div class="badge">
+                                <i class="pi pi-map-marker"></i>
+                                <span>5 Agences au Maroc</span>
+                            </div>
+                            <div class="badge">
+                                <i class="pi pi-car"></i>
+                                <span>Premium Service</span>
+                            </div>
+                            <div class="badge">
+                                <i class="pi pi-check-circle"></i>
+                                <span>Support 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-image-container">
+                        <div class="header-image-wrapper">
+                            <img src="assets/images/header.jpg" alt="Réseau d'agences Perfect Car" class="header-image">
+                            <div class="header-image-overlay"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agencies-content">
+                <!-- Liste des agences -->
+                <div class="agencies-list">
+                    <div *ngFor="let agency of agencies; let i = index" 
+                        class="agency-card" 
+                        [class.active]="selectedAgency?.id === agency.id"
+                        (click)="selectAgency(agency)"
+                        [style.--index]="i">
+                        <div class="agency-image">
+                            <img [src]="agency.imageUrl" [alt]="agency.name">
+                        </div>
+                        <div class="agency-details">
+                            <h3>{{ agency.name }}</h3>
+                            <p class="agency-location"><i class="pi pi-map-marker"></i> {{ agency.city }}</p>
+                            <p class="agency-address"><i class="pi pi-home"></i> {{ agency.address }}</p>
+                            <p class="agency-phone"><i class="pi pi-phone"></i> {{ agency.phone }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Détails de l'agence sélectionnée -->
+                <div *ngIf="selectedAgency" class="agency-details-container">
+                    <!-- Mobile indicator that appears only on mobile -->
+                    <div class="mobile-indicator">
+                        <div class="indicator-line"></div>
+                        <span>Détails de l'agence</span>
+                        <div class="indicator-line"></div>
+                    </div>
+                    
+                    <div class="agency-details-header">
+                        <h2>{{ selectedAgency.name }}</h2>
+                        <p>{{ selectedAgency.description }}</p>
+                    </div>
+
+                    <div class="agency-details-content">
+                        <div class="contact-info">
+                            <h3>Informations de contact</h3>
+                            <p>
+                                <i class="pi pi-map-marker"></i>
+                                <strong>Adresse:</strong> {{ selectedAgency.address }}, {{ selectedAgency.postalCode }} {{ selectedAgency.city }}
+                            </p>
+                            <p>
+                                <i class="pi pi-phone"></i>
+                                <strong>Téléphone:</strong> 
+                                <a (click)="callAgency(selectedAgency.phone)" class="clickable">
+                                    {{ selectedAgency.phone }}
+                                </a>
+                            </p>
+                            <p>
+                                <i class="pi pi-envelope"></i>
+                                <strong>Email:</strong> 
+                                <a (click)="emailAgency(selectedAgency.email)" class="clickable">
+                                    {{ selectedAgency.email }}
+                                </a>
+                            </p>
+                            <h3>Horaires d'ouverture</h3>
+                            <ul class="opening-hours">
+                                <li *ngFor="let hour of selectedAgency.hours">
+                                    <i class="pi pi-clock"></i> {{ hour }}
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="manager-info">
+                            <h3>Votre contact principal</h3>
+                            <div class="manager-details">
+                                <div class="manager-photo">
+                                    <img [src]="selectedAgency.manager.photoUrl" [alt]="selectedAgency.manager.name">
+                                </div>
+                                <div class="manager-contact">
+                                    <p><strong>{{ selectedAgency.manager.name }}</strong></p>
+                                    <p>
+                                        <i class="pi pi-phone"></i>
+                                        <a (click)="callAgency(selectedAgency.manager.phone)" class="clickable">
+                                            {{ selectedAgency.manager.phone }}
+                                        </a>
+                                    </p>
+                                    <p>
+                                        <i class="pi pi-envelope"></i>
+                                        <a (click)="emailAgency(selectedAgency.manager.email)" class="clickable">
+                                            {{ selectedAgency.manager.email }}
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-section">
+                        <h3><i class="pi pi-map"></i> Localisation</h3>
+                        <div class="map-container">
+                            <iframe *ngIf="safeMapUrl" [src]="safeMapUrl" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                        <div class="navigation-buttons">
+                            <button pButton pRipple icon="pi pi-map-marker" label="Google Maps" class="p-button-primary" (click)="openGoogleMaps()"></button>
+                            <button pButton pRipple icon="pi pi-compass" label="Waze" class="p-button-info" (click)="openWaze()"></button>
+                            <button pButton pRipple icon="pi pi-map" label="Apple Plans" class="p-button-secondary" (click)="openAppleMaps()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer-widget />
+</div> 

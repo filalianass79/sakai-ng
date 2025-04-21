@@ -72,9 +72,9 @@ export class VehiculeFormComponent implements OnInit {
   ];
   
   transmissions = [
-    { label: 'Manuelle', value: 'MANUELLE' },
-    { label: 'Automatique', value: 'AUTOMATIQUE' },
-    { label: 'Semi-automatique', value: 'SEMI_AUTOMATIQUE' }
+    { label: 'MANUELLE', value: 'MANUELLE' },
+    { label: 'AUTOMATIQUE', value: 'AUTOMATIQUE' },
+    { label: 'Semi-AUTOMATIQUE', value: 'SEMI_AUTOMATIQUE' }
   ];
   
   venduOptions = [

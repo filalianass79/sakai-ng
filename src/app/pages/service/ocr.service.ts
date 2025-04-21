@@ -34,7 +34,7 @@ export class OcrService {
   processDocument(formData: FormData): Observable<OcrResult> {
     const headers = new HttpHeaders({
       // Ne pas définir Content-Type pour les requêtes multipart/form-data
-      // Le navigateur le fera automatiquement avec la boundary correcte
+      // Le navigateur le fera AUTOMATIQUEment avec la boundary correcte
     });
 
     const options = {

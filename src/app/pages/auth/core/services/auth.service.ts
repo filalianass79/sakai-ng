@@ -57,6 +57,10 @@ export class AuthService {
       })
     );
   }
+  // create first user if number of users = 0 
+  createFirstUser(): Observable<any> {
+    return this.http.post(AUTH_API + 'create-admin', {}, httpOptions);
+  }
 
   register(signupRequest: SignupRequest): Observable<any> {
     return this.http.post(AUTH_API + 'signup', signupRequest, httpOptions);

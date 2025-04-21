@@ -24,4 +24,5 @@ export interface Modele {
     isNew?: boolean;
     prix?: number;
     prixJours?: number;
+    detail?:boolean;
 } 

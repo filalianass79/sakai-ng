@@ -1,0 +1,409 @@
+<div class="landing-wrapper overflow-hidden">
+    <topbar-widget class="topbar-wrapper" />
+    
+    <!-- Header de la page -->
+    <div class="header-section">
+        <div class="header-content">
+            <div class="header-text-container">
+                <h1 class="header-title">Notre flotte <span class="highlight">de véhicules</span></h1>
+                <div class="header-divider"></div>
+                <p class="header-description">Découvrez notre sélection de véhicules disponibles à la location dans nos agences au Maroc.</p>
+            </div>
+            <div class="header-image-container">
+                <div class="header-image-wrapper">
+                    <img src="assets/images/image2.png" alt="Flotte de véhicules Perfect Car" class="header-image">
+                    <div class="header-image-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="vehicles-main-content">
+        <div class="vehicles-container">
+            
+            <!-- En-tête avec options d'affichage et bouton de filtres -->
+            <div class="header-actions">
+                <div class="filter-toggle">
+                    <p-button 
+                        [icon]="showFilters ? 'pi pi-filter-slash' : 'pi pi-filter'"     
+                        [label]="showFilters ? 'Annuler Filtre' : 'Filtre Avancé'"
+                        (click)="toggleFilters()"
+                        [badge]="activeFiltersCount > 0 ? activeFiltersCount.toString() : undefined"
+                        pTooltip="Afficher/masquer les filtres avancés">
+                    </p-button>
+                </div>
+                <div class="search-container">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input type="text" pInputText [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Rechercher un véhicule...">
+                    </span>
+                </div>
+                <div class="view-controls">
+                    <p-selectButton [options]="viewOptions" [(ngModel)]="displayMode" optionLabel="label" optionValue="value"></p-selectButton>
+                </div>
+            </div>
+            
+            <!-- Section des filtres avancés -->
+            <div class="filters-section" [class.hidden]="!showFilters">
+                <div class="filters-content">
+                    <!-- Filtres par catégorie -->
+                    <div class="filter-column">
+                        <div class="filter-header">
+                            <i class="pi pi-car"></i>
+                            <h3>Catégories</h3>
+                        </div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item" *ngFor="let category of categoryFilters">
+                                <p-checkbox 
+                                    [inputId]="'category-' + category.code"
+                                    [value]="category"
+                                    [(ngModel)]="selectedCategoryFilters"
+                                    [binary]="false"
+                                    (onChange)="applyFilters()">
+                                </p-checkbox>
+                                <label [for]="'category-' + category.code" class="checkbox-label">{{category.name}}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtres par ville -->
+                    <div class="filter-column">
+                        <div class="filter-header">
+                            <i class="pi pi-map-marker"></i>
+                            <h3>Lieu de retrait</h3>
+                        </div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item" *ngFor="let city of cityFilters">
+                                <p-checkbox 
+                                    [inputId]="'city-' + city.code"
+                                    [value]="city"
+                                    [(ngModel)]="selectedCityFilters"
+                                    [binary]="false"
+                                    (onChange)="applyFilters()">
+                                </p-checkbox>
+                                <label [for]="'city-' + city.code" class="checkbox-label">{{city.name}}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtres additionnels -->
+                    <div class="filter-column">
+                        <div class="filter-header">
+                            <i class="pi pi-cog"></i>
+                            <h3>Options</h3>
+                        </div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <p-checkbox 
+                                    inputId="transmission-auto"
+                                    [(ngModel)]="automaticOnly"
+                                    [binary]="true"
+                                    (onChange)="applyFilters()">
+                                </p-checkbox>
+                                <label for="transmission-auto" class="checkbox-label">Transmission automatique</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <p-checkbox 
+                                    inputId="ac-only"
+                                    [(ngModel)]="acOnly"
+                                    [binary]="true"
+                                    (onChange)="applyFilters()">
+                                </p-checkbox>
+                                <label for="ac-only" class="checkbox-label">Climatisation</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtre de prix -->
+                    <div class="filter-column">
+                        <div class="filter-header">
+                            <i class="pi pi-money-bill"></i>
+                            <h3>Prix par jour (MAD)</h3>
+                        </div>
+                        <div class="price-range-container">
+                            <div class="price-range-labels">
+                                <span>{{ priceRange[0] }} MAD</span>
+                                <span>{{ priceRange[1] }} MAD</span>
+                            </div>
+                            <p-slider [(ngModel)]="priceRange" [range]="true" [min]="0" [max]="maxPrice" (onChange)="applyFilters()"></p-slider>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Boutons d'action des filtres -->
+                <div class="filter-actions flex justify-center gap-4 py-4 px-2 border-t border-gray-200">
+                    <button pButton
+                        class="p-button-outlined p-button-secondary flex-1 max-w-[200px]"
+                        label="EFFACER" 
+                        icon="pi pi-refresh" 
+                        (click)="resetFilters()"
+                        [disabled]="activeFiltersCount === 0">
+                    </button>
+                    <button pButton
+                        class="p-button-warning flex-1 max-w-[200px]"
+                        label="FERMER" 
+                        icon="pi pi-check"  
+                        (click)="toggleFilters()">
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Affichage des véhicules en grille -->
+            <div *ngIf="displayMode === 'grid'" class="vehicles-grid">
+                <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
+                    <div class="availability-badge" [class.available]="vehicle.available" [class.unavailable]="!vehicle.available">
+                        {{ vehicle.available ? 'Disponible' : 'Indisponible' }}
+                    </div>
+                    <div class="vehicle-image">
+                        <img [src]="vehicle.images[0]" [alt]="vehicle.name" (error)="onImageError($event)">
+                        <div class="city-badge">
+                            <i class="pi pi-map-marker"></i>
+                            <span>{{ vehicle.cityLocation }}</span>
+                        </div>
+                    </div>
+                    <div class="vehicle-details">
+                        <div class="vehicle-header">
+                            <div class="vehicle-title">
+                                <h3>{{ vehicle.name }}</h3>
+                                <div class="vehicle-category">
+                                    {{ vehicle.category === 'economy' ? 'Économique' : 
+                                       vehicle.category === 'compact' ? 'Compact' : 
+                                       vehicle.category === 'premium' ? 'Premium' : 
+                                       vehicle.category === 'suv' ? 'SUV' : 'Luxe' }}
+                                </div>
+                            </div>
+                            <div class="vehicle-price">
+                                <div class="price-amount">{{ formatCurrency(vehicle.price.day) }}</div>
+                                <div class="price-period">par jour</div>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-features">
+                            <div class="feature">
+                                <i class="pi pi-users"></i>
+                                <span>{{ vehicle.seats }} places</span>
+                            </div>
+                            <div class="feature">
+                                <i class="pi pi-cog"></i>
+                                <span>{{ vehicle.transmission }}</span>
+                            </div>
+                            <div class="feature">
+                                <i class="pi pi-bolt"></i>
+                                <span>{{ vehicle.fuel }}</span>
+                            </div>
+                            <div class="feature" *ngIf="vehicle.ac">
+                                <i class="pi pi-sun"></i>
+                                <span>Climatisation</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-actions">
+                            <button pButton pRipple type="button" label="Voir détails" class="p-button-outlined details-button" (click)="showDetails(vehicle)"></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- État vide -->
+                <div *ngIf="filteredVehicles.length === 0" class="empty-state">
+                    <i class="pi pi-car"></i>
+                    <h3>Aucun véhicule trouvé</h3>
+                    <p>Aucun véhicule ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
+                    <button pButton pRipple type="button" label="Réinitialiser les filtres" (click)="resetFilters()"></button>
+                </div>
+            </div>
+            
+            <!-- Affichage des véhicules en liste -->
+            <div *ngIf="displayMode === 'list'" class="vehicles-list">
+                <div *ngFor="let vehicle of filteredVehicles" class="vehicle-list-item">
+                    <div class="vehicle-image">
+                        <img [src]="vehicle.images[0]" [alt]="vehicle.name" (error)="onImageError($event)">
+                        <div class="availability-badge" [class.available]="vehicle.available" [class.unavailable]="!vehicle.available">
+                            {{ vehicle.available ? 'Disponible' : 'Indisponible' }}
+                        </div>
+                        <div class="city-badge">
+                            <i class="pi pi-map-marker"></i>
+                            <span>{{ vehicle.cityLocation }}</span>
+                        </div>
+                    </div>
+                    <div class="vehicle-content">
+                        <div class="vehicle-header">
+                            <div class="vehicle-title">
+                                <h3>{{ vehicle.name }}</h3>
+                                <div class="vehicle-category">
+                                    {{ vehicle.category === 'economy' ? 'Économique' : 
+                                       vehicle.category === 'compact' ? 'Compact' : 
+                                       vehicle.category === 'premium' ? 'Premium' : 
+                                       vehicle.category === 'suv' ? 'SUV' : 'Luxe' }}
+                                </div>
+                            </div>
+                            <div class="vehicle-price">
+                                <div class="price-amount">{{ formatCurrency(vehicle.price.day) }}</div>
+                                <div class="price-period">par jour</div>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-description">
+                            {{ vehicle.description }}
+                        </div>
+                        
+                        <div class="vehicle-features">
+                            <div class="feature">
+                                <i class="pi pi-users"></i>
+                                <span>{{ vehicle.seats }} places</span>
+                            </div>
+                            <div class="feature">
+                                <i class="pi pi-cog"></i>
+                                <span>{{ vehicle.transmission }}</span>
+                            </div>
+                            <div class="feature">
+                                <i class="pi pi-bolt"></i>
+                                <span>{{ vehicle.fuel }}</span>
+                            </div>
+                            <div class="feature" *ngIf="vehicle.ac">
+                                <i class="pi pi-sun"></i>
+                                <span>Climatisation</span>
+                            </div>
+                            <!-- Caractéristiques supplémentaires si disponible -->
+                            <div class="feature" *ngFor="let feature of vehicle.features.slice(0, 3)">
+                                <i class="pi pi-check-circle"></i>
+                                <span>{{ feature }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-actions">
+                            <button pButton pRipple type="button" label="Voir détails" class="p-button-outlined" (click)="showDetails(vehicle)"></button>
+                            <button pButton pRipple type="button" label="Réserver" icon="pi pi-calendar-plus" [disabled]="!vehicle.available" (click)="vehicle.available && reserveVehicle(vehicle)"></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- État vide -->
+                <div *ngIf="filteredVehicles.length === 0" class="empty-state">
+                    <i class="pi pi-car"></i>
+                    <h3>Aucun véhicule trouvé</h3>
+                    <p>Aucun véhicule ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
+                    <button pButton pRipple type="button" label="Réinitialiser les filtres" (click)="resetFilters()"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dialog de détails du véhicule -->
+    <p-dialog [(visible)]="showVehicleDetails" [style]="{width: '90vw', maxWidth: '1000px'}" [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true" header="{{ selectedVehicle?.name || 'Détails du véhicule' }}">
+        <div class="vehicle-dialog-content" *ngIf="selectedVehicle">
+            <div class="vehicle-dialog-image">
+                <img [src]="selectedVehicle.images[0]" [alt]="selectedVehicle.name" (error)="onImageError($event)">
+                <div class="availability-badge" [class.available]="selectedVehicle.available" [class.unavailable]="!selectedVehicle.available">
+                    {{ selectedVehicle.available ? 'Disponible' : 'Indisponible' }}
+                </div>
+            </div>
+            
+            <div class="vehicle-dialog-details">
+                <div class="detail-row">
+                    <div class="detail-col">
+                        <h4>Caractéristiques</h4>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <i class="pi pi-tag"></i>
+                                <span class="info-label">Marque</span>
+                                <span class="info-value">{{ selectedVehicle.brand }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-car"></i>
+                                <span class="info-label">Modèle</span>
+                                <span class="info-value">{{ selectedVehicle.model }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-calendar"></i>
+                                <span class="info-label">Année</span>
+                                <span class="info-value">{{ selectedVehicle.year }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-users"></i>
+                                <span class="info-label">Places</span>
+                                <span class="info-value">{{ selectedVehicle.seats }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-cog"></i>
+                                <span class="info-label">Transmission</span>
+                                <span class="info-value">{{ selectedVehicle.transmission }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-bolt"></i>
+                                <span class="info-label">Carburant</span>
+                                <span class="info-value">{{ selectedVehicle.fuel }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-col">
+                        <h4>Informations de location</h4>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <i class="pi pi-map-marker"></i>
+                                <span class="info-label">Disponible à</span>
+                                <span class="info-value">{{ selectedVehicle.cityLocation }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-credit-card"></i>
+                                <span class="info-label">Caution</span>
+                                <span class="info-value">{{ formatCurrency(selectedVehicle.deposit) }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-chart-line"></i>
+                                <span class="info-label">Kilométrage</span>
+                                <span class="info-value">{{ selectedVehicle.mileage === 'unlimited' ? 'Illimité' : selectedVehicle.mileage + ' km' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="pi pi-check-circle" [style.color]="selectedVehicle.available ? '#2ecc71' : '#e74c3c'"></i>
+                                <span class="info-label">Statut</span>
+                                <span class="info-value" [style.color]="selectedVehicle.available ? '#2ecc71' : '#e74c3c'">{{ selectedVehicle.available ? 'Disponible' : 'Indisponible' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="price-section">
+                    <h4>Tarifs de location</h4>
+                    <div class="price-options">
+                        <div class="price-option">
+                            <div class="price-period">Journalier</div>
+                            <div class="price-amount">{{ formatCurrency(selectedVehicle.price.day) }}</div>
+                        </div>
+                        <div class="price-option">
+                            <div class="price-period">Hebdomadaire</div>
+                            <div class="price-amount">{{ formatCurrency(selectedVehicle.price.week) }}</div>
+                        </div>
+                        <div class="price-option">
+                            <div class="price-period">Mensuel</div>
+                            <div class="price-amount">{{ formatCurrency(selectedVehicle.price.month) }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-section">
+                    <h4>Équipements</h4>
+                    <div class="feature-list">
+                        <div class="feature-item" *ngFor="let feature of selectedVehicle.features">
+                            <i class="pi pi-check-circle"></i>
+                            <span>{{ feature }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="description-section">
+                    <h4>Description</h4>
+                    <p>{{ selectedVehicle.description }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <ng-template pTemplate="footer">
+            <button pButton pRipple type="button" label="Fermer" icon="pi pi-times" class="p-button-outlined" (click)="showVehicleDetails=false"></button>
+            <button pButton pRipple type="button" label="Réserver" icon="pi pi-check" [disabled]="!selectedVehicle?.available" (click)="selectedVehicle && selectedVehicle.available && reserveVehicle(selectedVehicle)"></button>
+        </ng-template>
+    </p-dialog>
+    
+    <footer-widget />
+</div> 

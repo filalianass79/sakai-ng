@@ -1,0 +1,239 @@
+<div class="coordonnees-container">
+    <div class="coordonnees-header">
+        <h1>Coordonnées de réservation</h1>
+        <div class="title-underline"></div>
+    </div>
+    
+    <form [formGroup]="reservationForm" class="reservation-form">
+        <div class="form-layout">
+            <!-- Colonne gauche -->
+            <div class="form-column">
+                <div class="section-header">
+                    <h2>Vos données personnelles</h2>
+                </div>
+                
+                <!-- Civilité -->
+                <div class="form-group">
+                    <label class="form-label">Civilité</label>
+                    <p-selectButton [options]="civiliteOptions" formControlName="civilite" styleClass="civilite-buttons">
+                        <ng-template let-item>
+                            {{item.label}}
+                        </ng-template>
+                    </p-selectButton>
+                </div>
+    
+                <!-- Nom et Prénom -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="nom">Nom</label>
+                        <div class="input-container" [class.has-error]="reservationForm.get('nom')?.invalid && reservationForm.get('nom')?.touched">
+                            <i class="pi pi-user"></i>
+                            <input id="nom" type="text" formControlName="nom" placeholder="Votre nom" />
+                            <button type="button" class="clear-button" *ngIf="reservationForm.get('nom')?.value" (click)="clearField('nom')">
+                                <i class="pi pi-times-circle"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" *ngIf="reservationForm.get('nom')?.errors?.['required'] && reservationForm.get('nom')?.touched">
+                            Le nom est requis
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label" for="prenom">Prénom</label>
+                        <div class="input-container" [class.has-error]="reservationForm.get('prenom')?.invalid && reservationForm.get('prenom')?.touched">
+                            <i class="pi pi-user"></i>
+                            <input id="prenom" type="text" formControlName="prenom" placeholder="Votre prénom" />
+                            <button type="button" class="clear-button" *ngIf="reservationForm.get('prenom')?.value" (click)="clearField('prenom')">
+                                <i class="pi pi-times-circle"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" *ngIf="reservationForm.get('prenom')?.errors?.['required'] && reservationForm.get('prenom')?.touched">
+                            Le prénom est requis
+                        </div>
+                    </div>
+                </div>
+                    
+                <!-- Date de naissance -->
+                <div class="form-group">
+                    <label class="form-label">Date de naissance</label>
+                    <div class="input-container date-container" (click)="op.toggle($event)" [class.has-error]="reservationForm.get('dateNaissance')?.invalid && reservationForm.get('dateNaissance')?.touched">
+                        <i class="pi pi-calendar"></i>
+                        <input type="text" 
+                            placeholder="JJ/MM/AAAA" 
+                            [value]="formatDate(reservationForm.get('dateNaissance')?.value)" 
+                            (input)="onManualDateInput($event)"
+                            (keyup.enter)="validateManualDate($event)"
+                            (blur)="validateManualDate($event)"
+                            (click)="op.toggle($event)"
+                        />
+                        <button type="button" class="clear-button" *ngIf="reservationForm.get('dateNaissance')?.value" (click)="clearField('dateNaissance'); $event.stopPropagation()">
+                            <i class="pi pi-times-circle"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" *ngIf="reservationForm.get('dateNaissance')?.errors?.['required'] && reservationForm.get('dateNaissance')?.touched">
+                        La date de naissance est requise
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <div class="input-container" [class.has-error]="reservationForm.get('email')?.invalid && reservationForm.get('email')?.touched">
+                        <i class="pi pi-envelope"></i>
+                        <input id="email" type="email" formControlName="email" placeholder="Votre adresse email" />
+                        <button type="button" class="clear-button" *ngIf="reservationForm.get('email')?.value" (click)="clearField('email')">
+                            <i class="pi pi-times-circle"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" *ngIf="reservationForm.get('email')?.errors?.['required'] && reservationForm.get('email')?.touched">
+                        L'email est requis
+                    </div>
+                    <div class="error-message" *ngIf="reservationForm.get('email')?.errors?.['email'] && reservationForm.get('email')?.touched">
+                        L'email n'est pas valide
+                    </div>
+                </div>
+                
+                <!-- Téléphone et Pays -->
+                <div class="form-row">
+                    <!-- Téléphone -->
+                    <div class="form-group">
+                        <label class="form-label">Téléphone</label>
+                        <div class="phone-input-group" [class.has-error]="reservationForm.get('telephone')?.invalid && reservationForm.get('telephone')?.touched">
+                            <div class="indicatif-select">
+                                <select [(ngModel)]="selectedIndicatif"
+                                    (ngModelChange)="onIndicatifChange($event)" 
+                                    [ngModelOptions]="{standalone: true}">
+                                    <option *ngFor="let option of indicatifsOptions" [ngValue]="option">{{option.label}}</option>
+                                </select>
+                                <div class="selected-indicatif">{{selectedIndicatif?.label || '+212'}}</div>
+                            </div>
+                            <div class="phone-input">
+                                <i class="pi pi-phone"></i>
+                                <input id="telephone" type="text" formControlName="telephone" placeholder="Numéro de téléphone" />
+                            </div>
+                            <button type="button" class="clear-button" *ngIf="reservationForm.get('telephone')?.value" (click)="clearField('telephone')">
+                                <i class="pi pi-times-circle"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" *ngIf="reservationForm.get('telephone')?.errors?.['required'] && reservationForm.get('telephone')?.touched">
+                            Le numéro de téléphone est requis
+                        </div>
+                        <div class="error-message" *ngIf="reservationForm.get('telephone')?.errors?.['pattern'] && reservationForm.get('telephone')?.touched">
+                            Format de numéro invalide
+                        </div>
+                    </div>
+                    
+                    <!-- Pays -->
+                    <div class="form-group">
+                        <label class="form-label">Pays</label>
+                        <div class="input-container">
+                            <i class="pi pi-globe"></i>
+                            <p-select
+                                [options]="paysOptions"
+                                formControlName="pays"
+                                [style]="{'width': '100%'}"
+                                [showClear]="false"
+                                placeholder="Sélectionnez un pays"
+                            ></p-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Colonne droite -->
+            <div class="form-column">
+                <div class="section-header">
+                    <h2>Informations complémentaires</h2>
+                </div>
+                
+                <!-- Adresse -->
+                <div class="form-group">
+                    <label class="form-label" for="adresse">Adresse</label>
+                    <div class="input-container">
+                        <i class="pi pi-map-marker"></i>
+                        <input id="adresse" type="text" formControlName="adresse" placeholder="Votre adresse complète" />
+                        <button type="button" class="clear-button" *ngIf="reservationForm.get('adresse')?.value" (click)="clearField('adresse')">
+                            <i class="pi pi-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Ville et Code postal -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="ville">Ville</label>
+                        <div class="input-container">
+                            <i class="pi pi-building"></i>
+                            <input id="ville" type="text" formControlName="ville" placeholder="Votre ville" />
+                            <button type="button" class="clear-button" *ngIf="reservationForm.get('ville')?.value" (click)="clearField('ville')">
+                                <i class="pi pi-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="codePostal">Code postal</label>
+                        <div class="input-container">
+                            <i class="pi pi-id-card"></i>
+                            <input id="codePostal" type="text" formControlName="codePostal" placeholder="Code postal" />
+                            <button type="button" class="clear-button" *ngIf="reservationForm.get('codePostal')?.value" (click)="clearField('codePostal')">
+                                <i class="pi pi-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Observations -->
+                <div class="form-group">
+                    <label class="form-label" for="observations">Observations</label>
+                    <div class="input-container textarea-container">
+                        <textarea formControlName="observations" rows="5" placeholder="Informations complémentaires concernant votre réservation"></textarea>
+                        <button type="button" class="clear-button" *ngIf="reservationForm.get('observations')?.value" (click)="clearField('observations')">
+                            <i class="pi pi-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Informations sécurité -->
+                <div class="security-info">
+                    <i class="pi pi-shield"></i>
+                    <div>
+                        <h4>Sécurité des données</h4>
+                        <p>Vos informations personnelles sont protégées et ne seront utilisées que dans le cadre de votre réservation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bouton de validation -->
+        <div class="form-actions">
+            <button type="button" (click)="onValideCoordonnees()" [disabled]="!reservationForm.valid" class="submit-button">
+                <span>Enregistrer mes coordonnées</span>
+                <i class="pi pi-check"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Calendar overlay -->
+<p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '320px'}" styleClass="date-range-overlay">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h3>Sélectionnez votre date de naissance</h3>
+        </div>
+        <p-datePicker
+            [(ngModel)]="selectedDate" 
+            [ngModelOptions]="{standalone: true}"
+            [inline]="true"
+            [showWeek]="false"
+            dateFormat="dd/mm/yy"
+            [readonlyInput]="false"
+            [yearRange]="yearRange"
+            [maxDate]="maxDate"
+            styleClass="custom-datepicker"
+            (onSelect)="onDateSelect($event)"
+        ></p-datePicker>
+    </div>
+</p-overlayPanel>
+
+<p-toast position="top-center"></p-toast>

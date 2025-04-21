@@ -1,0 +1,361 @@
+<div class="choix-vehicule-container">
+    <!-- En-tête avec options d'affichage et bouton de filtres -->
+    <div class="header-container"> 
+        <div class="filter-toggle">
+            <p-button 
+                [icon]="showFilters ? 'pi pi-filter-slash' : 'pi pi-filter'"     
+                [label]="showFilters ? 'Annuler Filtre' : 'Filtre Avancé'"
+                (click)="toggleFilters()"
+                [badge]="activeFiltersCount > 0 ? activeFiltersCount.toString() : undefined"
+                pTooltip="showFilters ? 'Annuler Filtre' : 'Filtre Avancé'">
+            </p-button>
+        </div>
+        <div class="display-options">
+            <p-selectButton [options]="options" [(ngModel)]="layout" optionLabel="label" optionValue="value"></p-selectButton>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Section des filtres -->
+    <div class="filters-section" [class.hidden]="!showFilters">
+        <div class="filters-content">
+            <!-- Filtres par catégorie -->
+            <div class="filter-column">
+                <div class="filter-header">
+                    <i class="pi pi-car"></i>
+                    <h3>Catégories</h3>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item" *ngFor="let category of categories">
+                        <p-checkbox 
+                            [inputId]="'category-' + category"
+                            [value]="category"
+                            [(ngModel)]="selectedCategories"
+                            [binary]="false"
+                            (onChange)="filterByCategoriesAndTypeCarburantsAndTypeTransmissions()">
+                        </p-checkbox>
+                        <label [for]="'category-' + category" class="checkbox-label">{{category.nom}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtres par type de carburant -->
+            <div class="filter-column">
+                <div class="filter-header">
+                    <i class="pi pi-flag"></i>
+                    <h3>Type de carburant</h3>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item" *ngFor="let fuel of typesCarburants">
+                        <p-checkbox 
+                            [inputId]="'fuel-' + fuel"
+                            [value]="fuel"
+                            [(ngModel)]="selectedTypeCarburants"
+                            [binary]="false"
+                            (onChange)="filterByCategoriesAndTypeCarburantsAndTypeTransmissions()">
+                        </p-checkbox>
+                        <label [for]="'fuel-' + fuel" class="checkbox-label">{{fuel}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtres par type de transmission -->
+            <div class="filter-column">
+                <div class="filter-header">
+                    <i class="pi pi-cog"></i>
+                    <h3>Type de transmission</h3>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item" *ngFor="let transmission of typeTransmissions">
+                        <p-checkbox 
+                            [inputId]="'transmission-' + transmission"
+                            [value]="transmission"
+                            [(ngModel)]="selectedTypeTransmissions"
+                            [binary]="false"
+                            (onChange)="filterByCategoriesAndTypeCarburantsAndTypeTransmissions()">
+                        </p-checkbox>
+                        <label [for]="'transmission-' + transmission" class="checkbox-label">{{transmission}}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons d'action des filtres -->
+        <div class="filter-actions flex justify-center gap-4 py-4 px-2 border-t border-gray-200">
+            <button pButton
+                class="p-button-outlined p-button-secondary flex-1 max-w-[200px]"
+                label="EFFACER" 
+                icon="pi pi-refresh" 
+                (click)="resetFilters()"
+                [disabled]="activeFiltersCount === 0">
+            </button>
+            <button pButton
+                class="p-button-warning flex-1 max-w-[200px]"
+                label="FERMER" 
+                icon="pi pi-check"  
+                (click)="toggleFilters()"
+                >
+            </button>
+        </div>
+    </div>
+
+    <!-- Section des informations de débogage 
+    <div class="debug-info" *ngIf="showFilters">
+        <h4>Informations de débogage</h4>
+        <p><strong>Catégories sélectionnées:</strong> {{getSelectedCategoriesText()}}</p>
+        <p><strong>Types de carburant sélectionnés:</strong> {{selectedTypeCarburants.length > 0 ? selectedTypeCarburants.join(', ') : 'Aucun'}}</p>
+        <p><strong>Types de transmission sélectionnés:</strong> {{selectedTypeTransmissions.length > 0 ? selectedTypeTransmissions.join(', ') : 'Aucun'}}</p>
+        <p><strong>Nombre total de filtres actifs:</strong> {{activeFiltersCount}}</p>
+        <p><strong>Nombre de modèles affichés:</strong> {{modeles().length}}</p>
+    </div>
+-->
+    <!-- Affichage des véhicules -->
+
+   
+        <p-dataview #dv [value]="modeles()" [layout]="layout" styleClass="modern-dataview">
+            <!-- LIST VIEW TEMPLATE -->
+            <ng-template #list let-items>
+                <div class="grid grid-cols-1 gap-1 px-1 py-1">
+                    <div *ngFor="let item of items"
+                         class="vehicle-list-item flex flex-col md:flex-row gap-1 p-1 md:p-5 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 ease-in-out overflow-hidden group">
+                        <!-- Image Section -->
+                        <div  *ngIf="item.detail===false" class="relative w-full md:w-1/3 h-48 md:h-auto">
+                            <img class="w-full h-full object-contain"
+                                 [src]="getImageUrl(item)"
+                                 [alt]="item.marque?.nom + ' ' + item.nom"
+                                 (error)="onImageError($event)" />
+                            <img *ngIf="item.isNew" 
+                                 src="assets/images/logo.png"
+                                 class="absolute top-1 right-1 w-8 md:w-12 h-auto z-10 drop-shadow-md" 
+                                 alt="Nouveau" />
+                            <div class="absolute bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent w-full p-1 md:p-3">
+                                 <span class="text-xs font-semibold text-yellow-300 uppercase tracking-wider">{{ item.categorie?.nom }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Details Section -->
+                        <div  *ngIf="item.detail===false" class="flex-grow flex flex-col justify-between p-1 md:p-4">
+                            <div>
+                                <div class="flex flex-col sm:flex-row justify-between items-start mb-1">
+                                    <div>
+                                        <span class="text-xs font-semibold text-yellow-600 uppercase tracking-wider">{{ item.categorie.nom }}</span>
+                                        <h3 class="text-base md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 leading-tight">{{ item.marque.nom }} {{ item.nom }}</h3>
+                                    </div>
+                                    <div class="text-left sm:text-right mt-1 sm:mt-0 flex-shrink-0">
+                                        <span class="text-base md:text-xl lg:text-2xl font-bold text-green-700 block">{{ item.prix | number:'1.2-2' }} €</span>
+                                        <p class="text-xs text-gray-500">{{ item.prixJours | number:'1.2-2' }} €/jour</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-x-1 gap-y-1 text-xs md:text-sm text-gray-700 my-1 border-t border-b border-gray-100 py-1">
+                                    <div class="flex items-center gap-1"><i class="pi pi-users text-gray-500 text-xs md:text-base"></i><span>{{ item.nbrePlaces }} places</span></div>
+                                    <div class="flex items-center gap-1"><i class="pi pi-cog text-gray-500 text-xs md:text-base"></i><span>{{ item.typeTransmission }}</span></div>
+                                    <div class="flex items-center gap-1"><i class="pi pi-car text-gray-500 text-xs md:text-base"></i><span>{{ item.typeCarburant }}</span></div>
+                                    <div class="flex items-center gap-1"><i class="pi pi-box text-gray-500 text-xs md:text-base"></i><span>{{ item.nbrePortes }} portes</span></div>
+                                    <div class="flex items-center gap-1"><i class="pi pi-briefcase text-gray-500 text-xs md:text-base"></i><span>{{ item.nbreValises }} valises</span></div>
+                                    <div class="flex items-center gap-1"><i class="pi pi-shopping-bag text-gray-500 text-xs md:text-base"></i><span>{{ item.nbreSacs }} sacs</span></div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-1 mt-1">
+                                 <a href="javascript:void(0)" 
+                                    (click)="showDetail(item)"
+                                    class="text-yellow-700 hover:text-yellow-800 font-medium text-xs hover:underline transition-colors duration-200">
+                                    Voir plus de détails
+                                </a>
+                                 <button pButton
+                                    label="RÉSERVER CE VÉHICULE"
+                                    class="p-button-warning p-button-raised w-full sm:w-auto !py-1"
+                                    icon="pi pi-angle-right" iconPos="right"
+                                    [disabled]="!item.isVisible"
+                                    (click)="onReserverVehicule(item)">
+                                </button>
+                            </div>
+                        </div>
+
+                        <div *ngIf="item.detail===true" class="vehicle-detail-container">
+                            <button pButton 
+                                    icon="pi pi-times" 
+                                    (click)="closeDetail(item)"
+                                    class="p-button-rounded p-button-text p-button-plain">
+                            </button>   
+                    </div>
+                    </div>
+                </div>
+            </ng-template>
+
+            <!-- GRID VIEW TEMPLATE -->
+            <ng-template #grid let-items>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 px-1 py-1">
+                    <div *ngFor="let modele of items"
+                         class="vehicle-grid-item bg-white rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out overflow-hidden flex flex-col group">
+                     
+                             <!-- Image Section -->
+                            <div  *ngIf="modele.detail===false" class="relative w-full h-48">
+                                <img class="w-full h-full object-contain"
+                                    [src]="getImageUrl(modele)"
+                                    [alt]="modele.marque?.nom + ' ' + modele.nom"
+                                    (error)="onImageError($event)" />
+                                <img *ngIf="modele.isNew" 
+                                    src="assets/images/logo.png"
+                                    class="absolute top-1 right-1 w-8 md:w-12 h-auto z-10 drop-shadow-md" 
+                                    alt="Nouveau" />
+                                <div class="absolute bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent w-full p-1 md:p-3">
+                                    <span class="text-xs font-semibold text-yellow-300 uppercase tracking-wider">{{ modele.categorie?.nom }}</span>
+                                </div>
+                            </div>
+                            <!-- Details Section -->
+                            <div *ngIf="modele.detail===false" class="p-1 md:p-4 flex flex-col flex-grow">
+                                <h3 class="text-sm md:text-lg font-bold text-gray-800 mb-1 leading-snug">{{ modele.marque.nom }} {{ modele.nom }}</h3>
+                                <div class="flex justify-between items-center mb-1 md:mb-3">
+                                    <span class="text-sm md:text-lg font-bold text-green-700">{{ modele.prix | number:'1.2-2' }} €</span>
+                                    <span class="text-xs text-gray-500">{{ modele.prixJours | number:'1.2-2' }} €/jour</span>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-x-1 gap-y-1 text-xs md:text-sm text-gray-700 mb-1 md:mb-4 flex-grow">
+                                    <div class="flex items-center gap-1 truncate"><i class="pi pi-users text-gray-500 text-xs md:text-sm"></i><span>{{ modele.nbrePlaces }} places</span></div>
+                                    <div class="flex items-center gap-1 truncate"><i class="pi pi-cog text-gray-500 text-xs md:text-sm"></i><span>{{ modele.typeTransmission }}</span></div>
+                                    <div class="flex items-center gap-1 truncate"><i class="pi pi-car text-gray-500 text-xs md:text-sm"></i><span>{{ modele.typeCarburant }}</span></div>
+                                    <div class="flex items-center gap-1 truncate"><i class="pi pi-box text-gray-500 text-xs md:text-sm"></i><span>{{ modele.nbrePortes }} portes</span></div>
+                                </div>
+
+                                <div class="mt-auto flex flex-col gap-1 pt-1 md:pt-3 border-t border-gray-100">
+                                    <button pButton
+                                        label="RÉSERVER"
+                                        class="p-button-warning p-button-raised w-full !py-1"
+                                        icon="pi pi-angle-right" iconPos="right"
+                                        [disabled]="!modele.isVisible"
+                                        (click)="onReserverVehicule(modele)">
+                                    </button>
+                                    <a href="javascript:void(0)" 
+                                        (click)="showDetail(modele)"
+                                        class="text-center text-yellow-700 hover:text-yellow-800 font-medium text-xs hover:underline transition-colors duration-200">
+                                        Plus de détails
+                                    </a>
+                                </div>
+                            </div>
+                       
+                        <div *ngIf="modele.detail===true" class="vehicle-detail-container">
+                                <button pButton 
+                                        icon="pi pi-times" 
+                                        (click)="closeDetail(modele)"
+                                        class="p-button-rounded p-button-text p-button-plain">
+                                </button>   
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dataview>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+    <p-dataView #dv [value]="filteredVehicles" [layout]="layout">
+        <ng-template pTemplate="header">
+            <div class="p-d-flex p-jc-between p-ai-center">
+                <div class="p-d-flex p-ai-center">
+                    <span class="p-input-icon-left p-mr-2">
+                        <i class="pi pi-search"></i>
+                        <input type="text" pInputText placeholder="Rechercher un véhicule" [(ngModel)]="searchText" (input)="applyFilters()" />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template let-vehicle pTemplate="listItem">
+            <div class="vehicle-list-item" [class.selected]="isVehicleSelected(vehicle)">
+                <div class="vehicle-image">
+                    <img [src]="vehicle.image" [alt]="vehicle.brand + ' ' + vehicle.model">
+                </div>
+                <div class="vehicle-details">
+                    <h3>{{vehicle.brand}} {{vehicle.model}}</h3>
+                    <div class="vehicle-info">
+                        <span><i class="pi pi-users"></i> {{vehicle.seats}} places</span>
+                        <span><i class="pi pi-cog"></i> {{vehicle.transmission}}</span>
+                        <span><i class="pi pi-flag"></i> {{vehicle.fuelType}}</span>
+                    </div>
+                    <div class="vehicle-features">
+                        <span class="feature-tag" *ngFor="let feature of vehicle.features">
+                            {{feature}}
+                        </span>
+                    </div>
+                    <div class="vehicle-price">
+                        <span class="price">{{vehicle.price}}€</span>
+                        <span class="period">/jour</span>
+                    </div>
+                </div>
+                <div class="vehicle-actions">
+                    <p-button 
+                        [icon]="isVehicleSelected(vehicle) ? 'pi pi-check' : 'pi pi-plus'"
+                        [label]="isVehicleSelected(vehicle) ? 'Sélectionné' : 'Sélectionner'"
+                        (onClick)="onVehicleSelect(vehicle)"
+                        [severity]="isVehicleSelected(vehicle) ? 'success' : 'primary'">
+                    </p-button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template let-vehicle pTemplate="gridItem">
+            <div class="vehicle-grid-item" [class.selected]="isVehicleSelected(vehicle)">
+                <div class="vehicle-image">
+                    <img [src]="vehicle.image" [alt]="vehicle.brand + ' ' + vehicle.model">
+                </div>
+                <div class="vehicle-content">
+                    <h3>{{vehicle.brand}} {{vehicle.model}}</h3>
+                    <div class="vehicle-info">
+                        <span><i class="pi pi-users"></i> {{vehicle.seats}} places</span>
+                        <span><i class="pi pi-cog"></i> {{vehicle.transmission}}</span>
+                        <span><i class="pi pi-gas-pump"></i> {{vehicle.fuelType}}</span>
+                    </div>
+                    <div class="vehicle-features">
+                        <span class="feature-tag" *ngFor="let feature of vehicle.features">
+                            {{feature}}
+                        </span>
+                    </div>
+                    <div class="vehicle-price">
+                        <span class="price">{{vehicle.price}}€</span>
+                        <span class="period">/jour</span>
+                    </div>
+                    <div class="vehicle-actions">
+                        <p-button 
+                            [icon]="isVehicleSelected(vehicle) ? 'pi pi-check' : 'pi pi-plus'"
+                            [label]="isVehicleSelected(vehicle) ? 'Sélectionné' : 'Sélectionner'"
+                            (onClick)="onVehicleSelect(vehicle)"
+                            [severity]="isVehicleSelected(vehicle) ? 'success' : 'primary'">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-dataView>
+    -->
+
+    <!-- Panel de détails -->
+ 
+</div>

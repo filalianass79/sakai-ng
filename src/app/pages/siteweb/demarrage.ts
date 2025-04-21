@@ -8,7 +8,7 @@ import { TopbarWidget } from './components/topbarwidget.component';
 import { HeroWidget } from './components/herowidget';
 import { FooterWidget } from './components/footerwidget';
 import { CommonModule } from '@angular/common';
-import { ParcautoWidget } from './components/parcauto';
+import { ParcautoWidget } from './components/parcauto/parcauto.component';
 
 @Component({
     selector: 'app-landing',

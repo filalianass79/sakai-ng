@@ -8,6 +8,8 @@ import { AuthGuard } from './app/pages/auth/core/guards/auth.guard';
 import { AuthGuardLoad } from './app/pages/auth/core/guards/auth.guards.load';
 import { ReservationFormComponent } from './app/pages/reservation/components/reservation-form/reservation-form.component';
 import { CarteGriseComponent } from './app/pages/siteweb/components/carte-grise/carte-grise.component';
+import { NosAgencesComponent } from './app/pages/siteweb/components/nos-agences/nos-agences.component';
+import { NosVehiculesComponent } from './app/pages/siteweb/components/nos-vehicules/nos-vehicules.component';
 export const appRoutes: Routes = [
     { path: '', redirectTo: '/demarrage', pathMatch: 'full' },
    
@@ -37,6 +39,8 @@ export const appRoutes: Routes = [
     { path: 'reservation', component: ReservationFormComponent },
     { path: 'demarrage', component: Demarrage },
     { path: 'parcauto', component: Demarrage, data: { showParcauto: true } },
+    { path: 'nos-agences', component: NosAgencesComponent },
+    { path: 'nos-vehicules', component: NosVehiculesComponent },
     { path: 'notfound', component: Notfound },
     { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
     { path: '**', redirectTo: '/notfound' }

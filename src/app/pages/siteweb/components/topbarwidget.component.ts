@@ -43,10 +43,10 @@ import { SelectModule } from 'primeng/select';
                     <a href="#services" class="menu-link">Services</a>
                 </li>
                 <li class="menu-item">
-                    <a href="#about" class="menu-link">À propos</a>
+                    <a href="/nos-vehicules" class="menu-link">Nos véhicules</a>
                 </li>
                 <li class="menu-item">
-                    <a href="#contact" class="menu-link">Contact</a>
+                    <a href="/nos-agences" class="menu-link">Nos agences</a>
                 </li>
             </ul>
 

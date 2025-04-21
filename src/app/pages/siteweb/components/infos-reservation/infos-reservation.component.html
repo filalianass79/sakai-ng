@@ -1,0 +1,202 @@
+<div class="date-range-container">
+    <form [formGroup]="reservationForm" class="date-range-form">
+        <!-- Ligne des agences -->
+        <div class="form-row">
+            <!-- Agence de départ -->
+            <div class="agency-wrapper" (click)="agenceSelect1.show($event)">
+                <div class="agency-field">
+                    <div class="agency-label">Agence de départ</div>
+                    <div class="agency-value">
+                        <i class="pi pi-map-marker"></i>
+                        <p-select #agenceSelect1
+                            [options]="agences"
+                            formControlName="agenceDepart"
+                            [style]="{'width': '100%'}"
+                            placeholder="Sélectionner"
+                            optionLabel="name"
+                            styleClass="w-full"
+                            [showClear]="false">
+                            <ng-template #selectedItem let-selectedOption>
+                                <div class="flex items-center gap-2">
+                                    <img [src]="'assets/images/icones/' + selectedOption.icone" style="width: 18px" />
+                                    <div>{{ selectedOption.name }}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-agence #item>
+                                <div class="flex items-center gap-2">
+                                    <img [src]="'assets/images/icones/' + agence.icone" style="width: 18px" />
+                                    <div>{{ agence.name }}</div>
+                                </div>
+                            </ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agence de retour -->
+            <div class="agency-wrapper" (click)="agenceSelect2.show($event)">
+                <div class="agency-field">
+                    <div class="agency-label">Agence de retour</div>
+                    <div class="agency-value">
+                        <i class="pi pi-map-marker"></i>
+                        <p-select #agenceSelect2
+                            [options]="agences"
+                            formControlName="agenceRetour"
+                            [style]="{'width': '100%'}"
+                            placeholder="Sélectionner"
+                            optionLabel="name"
+                            styleClass="w-full"
+                            [showClear]="false">
+                            <ng-template #selectedItem let-selectedOption>
+                                <div class="flex items-center gap-2">
+                                    <img [src]="'assets/images/icones/' + selectedOption.icone" style="width: 18px" />
+                                    <div>{{ selectedOption.name }}</div>
+                                </div>
+                            </ng-template>
+                            <ng-template let-agence #item>
+                                <div class="flex items-center gap-2">
+                                    <img [src]="'assets/images/icones/' + agence.icone" style="width: 18px" />
+                                    <div>{{ agence.name }}</div>
+                                </div>
+                            </ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ligne des dates et heures -->
+        <div class="form-row">
+            <!-- Groupe date/heure départ -->
+            <div class="date-time-group">
+                <!-- Date de départ -->
+                <div class="date-picker-wrapper" (click)="op.toggle($event)">
+                    <div class="date-field">
+                        <div class="date-label">Date de départ</div>
+                        <div class="date-value">
+                            <i class="pi pi-calendar"></i>
+                            <span>{{ formatDate(reservationForm.get('dateDepart')?.value) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Heure de départ -->
+                <div class="time-picker-wrapper" (click)="heureSelect1.show($event)">
+                    <div class="time-field">
+                        <div class="time-label">Heure</div>
+                        <div class="time-value">
+                            <i class="pi pi-clock"></i>
+                            <p-select #heureSelect1
+                                [options]="heures"
+                                optionLabel="label"
+                                formControlName="heureDepart"
+                                [style]="{'width': '100%'}"
+                                [showClear]="false"
+                            ></p-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+            <div class="date-time-group">
+                <!-- Date de retour -->
+                <div class="date-picker-wrapper" (click)="op.toggle($event)">
+                    <div class="date-field">
+                        <div class="date-label">Date de retour</div>
+                        <div class="date-value">
+                            <i class="pi pi-calendar"></i>
+                            <span>{{ formatDate(reservationForm.get('dateRetour')?.value) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Heure de retour -->
+                <div class="time-picker-wrapper" (click)="heureSelect2.show($event)">
+                    <div class="time-field">
+                        <div class="time-label">Heure</div>
+                        <div class="time-value">
+                            <i class="pi pi-clock"></i>
+                            <p-select #heureSelect2
+                                [options]="heures"
+                                optionLabel="label"
+                                formControlName="heureRetour"
+                                [style]="{'width': '100%'}"
+                                [showClear]="false"
+                            ></p-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+
+        <!-- Ligne des ages et code promo et bouton chercher -->
+        <div class="form-row">
+            <!-- Age du conducteur -->
+            <div class="age-wrapper">
+                <div class="age-field">
+                    <div class="age-label">Mon âge</div>
+                    <div class="age-value">
+                        <i class="pi pi-user"></i>
+                        <p-inputNumber 
+                            formControlName="age"
+                            [min]="18"
+                            [max]="80"
+                            [showButtons]="false"
+                            placeholder="23 "
+                            [style]="{'width': '100%'}"
+                            [inputStyle]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
+                        ></p-inputNumber>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code promo -->
+            <div class="promo-wrapper">
+                <div class="promo-field">
+                    <div class="promo-label">J'ai un code promo</div>
+                    <div class="promo-value">
+                        <i class="pi pi-ticket"></i>
+                        <input pInputText
+                            formControlName="codePromo"
+                            type="text"
+                            placeholder="Code promo"
+                            [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton rechercher -->
+            <div class="search-wrapper">
+                <button pButton                                   
+                    label="RECHERCHER" 
+                    (click)="ChercherVehicule()"
+                    class="search-button"
+                    [disabled]="!reservationForm.valid">
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Overlay Panel avec le calendrier -->
+    <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '580px'}" styleClass="date-range-overlay">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h3>Sélectionnez vos dates</h3>
+            </div>
+            <p-datePicker
+                [(ngModel)]="selectedDates"
+                selectionMode="range"
+                [inline]="true"
+                [numberOfMonths]="2"
+                [minDate]="minDate"
+                [maxDate]="maxDate"
+                (onSelect)="onDateSelect($event)"
+                [showWeek]="false"
+                dateFormat="dd/mm/yy"
+                [readonlyInput]="true"
+                styleClass="custom-datepicker"
+            ></p-datePicker>
+        </div>
+    </p-overlayPanel>
+</div>

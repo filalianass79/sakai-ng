@@ -72,8 +72,8 @@ export class ModeleFormComponent implements OnInit {
       { label: 'Hybride', value: 'HYBRIDE' }
   ];
   typeTransmissions: any[] = [
-      { label: 'Manuelle', value: 'MANUELLE' },
-      { label: 'Automatique', value: 'AUTOMATIQUE' }
+      { label: 'MANUELLE', value: 'MANUELLE' },
+      { label: 'AUTOMATIQUE', value: 'AUTOMATIQUE' }
   ];
 
   imageEntityType: string = 'modele';

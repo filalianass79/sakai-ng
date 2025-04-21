@@ -1,0 +1,279 @@
+<div class="lines"></div>
+<div id="parcauto" class="landing-hero">
+    <!-- Hero Header -->
+    <div class="hero-header">
+           <!-- <div class="summary-header">
+                <h2>Votre Réservation</h2>
+                <div class="progress-indicator">
+                    <div class="progress-bar" [style.width.%]="(stepValue / 5) * 100"></div>
+                </div>
+            </div>
+            -->
+            <div class="flex flex-row">
+                <!-- AGENCES ET DATES -->
+                <div *ngIf="reservation" [class]="stepValue === 1 ? 'summary-step current' : 'summary-step'" [class.expanded]="expandedStep === -1" [class.current]="stepValue === 1">
+                    <div class="step-header" >
+                        <div class="step-icon">
+                            <span class="step-number">1</span>
+                            <span class="step-title">AGENCES ET DATES</span>
+                        </div>
+                        <div class="step-icon">  
+                            <button pButton icon="pi pi-pencil"  (click)="onModifierReservation()" class="edit-button p-button-text"></button>
+                            <i (click)="toggleStep(0)" class="pi" [class.pi-chevron-down]="expandedStep !== 0" [class.pi-chevron-up]="expandedStep === 0"></i>
+                        </div>
+                    </div>
+                    <div class="step-content">
+                        <div class="detailreservation">
+                            <div class="departure">
+                                <div class="section-label">Départ</div>
+                                <div class="agency">{{reservation.agenceDepart}}</div>
+                                <div class="date">{{formatDate(reservation.dateDepart!)}}</div>
+                                <div class="time">{{reservation.heureDepart}}</div>
+                            </div>
+                            <div class="journey-divider">
+                                <div class="lineshorizontal"></div>
+                                <i class="pi pi-arrow-right journey-icon"></i>
+                            </div>
+                            <div class="return">
+                                <div class="section-label">Retour</div>
+                                <div class="agency">{{reservation.agenceRetour}}</div>
+                                <div class="date">{{formatDate(reservation.dateRetour!)}}</div>
+                                <div class="time">{{reservation.heureRetour}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VEHICULE -->
+                <div *ngIf="reservation?.modele" [class]="stepValue === 2 ? 'summary-step current' : 'summary-step'" [class.expanded]="expandedStep === -1" [class.current]="stepValue === 2">
+                    <div class="step-header" (click)="toggleStep(1)">
+                        <div class="step-icon">
+                            <span class="step-number">2</span>
+                            <span class="step-title">VEHICULE</span>
+                        </div>
+                        <div class="step-icon">  
+                            <button pButton icon="pi pi-pencil"  (click)="onModifierVehicule()" class="edit-button p-button-text"></button>
+                            <i class="pi" [class.pi-chevron-down]="expandedStep !== 1" [class.pi-chevron-up]="expandedStep === 1"></i>
+                        </div>
+                    </div>
+                    <div class="step-content" >
+                        <div class="vehicle-details">
+                            <div class="vehicle-image">
+                                <img [src]="getImageUrl(reservation?.modele)" [alt]="reservation?.modele?.marque?.nom + ' ' + reservation?.modele?.nom" />
+                                <img *ngIf="reservation?.modele?.isNew" src="assets/images/new-badge.png" class="new-badge" alt="Nouveau" />
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-category">{{ reservation?.modele?.categorie?.nom }}</div>
+                                <div class="vehicle-name">{{ reservation?.modele?.marque?.nom }} {{ reservation?.modele?.nom }}</div>
+                                <div class="vehicle-price">
+                                    <div class="price-item">
+                                        <span class="price-label">Prix/jour:</span>
+                                        <span class="price-value">{{ reservation?.prixMoyenParJourTTC }} €</span>
+                                    </div>
+                                    <div class="price-item total">
+                                        <span class="price-label">Total ({{nbreJours}} jours):</span>
+                                        <span class="price-value">{{ reservation?.totalPrixTTC }} €</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OPTIONS -->
+                <div *ngIf="reservation?.options" [class]="stepValue === 3 ? 'summary-step current' : 'summary-step'" [class.expanded]="expandedStep === -1" [class.current]="stepValue === 3">
+                    <div class="step-header" (click)="toggleStep(2)">
+                        <div class="step-icon">
+                            <span class="step-number">3</span>
+                            <span class="step-title">OPTIONS</span>
+                        </div>
+                        <div class="step-icon">  
+                            <button pButton icon="pi pi-pencil"  (click)="onModifierReservation()" class="edit-button p-button-text"></button>
+                            <i class="pi" [class.pi-chevron-down]="expandedStep !== 2" [class.pi-chevron-up]="expandedStep === 2"></i>
+                        </div>
+                    </div>
+                    <div class="step-content">
+                        <!-- Safe check for reservation.options to avoid null/undefined errors -->
+                        <div class="options-list">
+                            <div *ngFor="let option of getGroupedOptions()" class="option-item">
+                                <div class="option-name">
+                                    {{option.title}}
+                                    <span *ngIf="option.count > 1" class="option-count">(x{{option.count}})</span>
+                                </div>
+                                <div class="option-price">{{option.price}} €</div>
+                            </div>
+                            <div class="options-total">
+                                <span class="total-label">Total options:</span>
+                                <span class="total-value">{{getTotalOptions()}} €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gerer ma reservation -->
+                <div *ngIf="reservation" [class]="stepValue === 4 ? 'summary-step current' : 'summary-step'" [class.expanded]="expandedStep === -1" [class.current]="stepValue === 4">
+                    <div class="step-header" (click)="toggleStep(3)">
+                        <div class="step-icon">
+                            <span class="step-number">4</span>
+                            <span class="step-title">Gérer ma réservation</span>
+                        </div>
+                        <div class="reservation-number" *ngIf="getNumeroReservation()">
+                            <i class="pi pi-ticket"></i>
+                            <span>{{getNumeroReservation()}}</span>
+                        </div>
+                        <div class="step-icon">  
+                            <i class="pi" [class.pi-chevron-down]="expandedStep !== 3" [class.pi-chevron-up]="expandedStep === 3"></i>
+                        </div>
+                    </div>
+                    <div class="step-content" *ngIf="reservation">
+                        <div class="recap-section">
+                            <div class="recap-montant">
+                                <div class="recap-line">
+                                    <span class="recap-label">Véhicule:</span>
+                                    <span class="recap-value">{{reservation.totalPrixTTC}} €</span>
+                                </div>
+                               
+                                <div class="recap-line">
+                                    <span class="recap-label">Options:</span>
+                                    <span class="recap-value">{{getTotalOptions()}} €</span>
+                                </div>
+                                <div class="recap-line total">
+                                    <span class="recap-label">Total:</span>
+                                    <span class="recap-value">{{getTotalPrixTTC()}} €</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div class="card flex justify-center">
+        <p-stepper #stepper [value]="stepValue" class="modern-stepper" [linear]="true">
+            <!-- Step List -->
+            <p-step-list class="custom-step-list">
+                <div class="step-container">
+                    <div class="step-item" [class.active]="stepValue >= 1" (click)="goStep1()">
+                        <div class="step-number">1</div>
+                        <div class="step-label">CHANGER L'ITINÉRAIRE</div>
+                    </div>
+                    <div class="step-item" [class.active]="stepValue >= 2" (click)="goStep2()">
+                        <div class="step-number">2</div>
+                        <div class="step-label">CHOISIR UN VÉHICULE</div>
+                    </div>
+                    <div class="step-item" [class.active]="stepValue >= 3" (click)="goStep3()">
+                        <div class="step-number">3</div>
+                        <div class="step-label">CHOISIR DES OPTIONS</div>
+                    </div>
+                    <div class="step-item" [class.active]="stepValue >= 4" (click)="goStep4()">
+                        <div class="step-number">4</div>
+                        <div class="step-label">COORDONNÉES</div>
+                    </div>
+                    <div class="step-item" [class.active]="stepValue >= 5" (click)="goStep5()">
+                        <div class="step-number">5</div>
+                        <div class="step-label">PAIEMENT</div>
+                    </div>
+                </div>
+            </p-step-list>
+            <!-- Step Panels -->
+            <p-step-panels class="step-panels-container">
+                        <!-- Step 1 -->
+                <p-step-panel [value]="1" class="step-panel">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="panel-content">
+                            <div class="flex  justify-end">
+                                <p-button label="Next" styleClass="text-black" icon="pi pi-arrow-right" iconPos="right" (onClick)="goStep2()" />
+                            </div>
+                            <div>
+                                <h3>Infos réservation</h3>
+                                    <div class="flex flex-col gap-12 w-full sm:w-auto">
+                                        <div class="flex flex-col sm:flex-row sm:items-center gap-12">
+                                            <div class="flex-1">
+                                                <app-infos-reservation
+                                                    [minDate]="minDate"
+                                                    [reservation]="reservation"
+                                                    (chercherVehicule)="OnChercheVehicule($event)"
+                                                ></app-infos-reservation>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <!-- Step 2 -->
+                <p-step-panel [value]="2" class="step-panel">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="panel-content">
+                            <div class="flex  justify-between">
+                                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="goStep1()" />
+                                <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="goStep3()" />
+                            </div>
+                            <!-- Contenu du Step 2 -->
+                            <div class="vehicle-selection">
+                                <h3>Sélectionnez un véhicule</h3>
+                                <!-- Ajoutez ici le contenu pour la sélection de véhicule -->
+                                <app-choix-vehicule
+                                    [reservation]="reservation"
+                                    (reserverVehicule)="onReserverVehicule($event)">
+                                </app-choix-vehicule>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <!-- Step 3 -->
+                <p-step-panel [value]="3" class="step-panel">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="panel-content">
+                            <div class="flex  justify-between">
+                                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="goStep2()" />
+                                <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="goStep4()" />
+                            </div>
+                            <app-options-location
+                            [reservation]="reservation"
+                            (selectOptions)="onSelectOptions($event)">
+                            </app-options-location>
+
+                        </div>
+                    </ng-template>
+
+                </p-step-panel>
+                
+                <!-- Step 4 -->
+                <p-step-panel [value]="4" class="step-panel">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="panel-content">
+                            <div class="flex  justify-between">
+                            <p-button label="Back" icon="pi pi-arrow-left" (onClick)="goStep3()" />
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="goStep5()" />
+                        </div>
+                        <app-coordonnees-reservation
+                            (formSubmit)="onCoordonneesSubmit($event)"
+                            [reservation]="reservation"
+                            (valideCoordonnees)="onValideCoordonnees($event)">
+                        ></app-coordonnees-reservation>
+                    </div>
+                </ng-template>
+                </p-step-panel>
+
+                <!-- Step 5 -->
+                <p-step-panel [value]="5" class="step-panel">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="panel-content">
+                            <div class="flex justify-between">
+                                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="goStep4()" />
+                            </div>
+                            <h3>Paiement</h3>
+                            <app-paiement-carte
+                                [montant]="reservation?.totalPrixTTC ?? 0"
+                                (paiementEffectue)="onPaiementEffectue($event)">
+                            </app-paiement-carte>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+    </div>
+</div> 

@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { CalendarModule } from 'primeng/calendar';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputMaskModule } from 'primeng/inputmask';
-import { InputTextarea } from 'primeng/inputtextarea';
 import { TextareaModule } from 'primeng/textarea';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -18,9 +16,13 @@ import { DividerModule } from 'primeng/divider';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { OcrService } from '../../../service/ocr.service';
 import * as Tesseract from 'tesseract.js';
-import { HttpClient } from '@angular/common/http';
-import { UserService } from '../../../auth/core/services/user.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { SelectModule } from 'primeng/select';
+import { DatePicker, DatePickerModule } from 'primeng/datepicker';
+import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
+import { SelectButton } from 'primeng/selectbutton';
+import { InputMask } from 'primeng/inputmask';
+import { Reservation } from '../../../reservation/models/reservation.model';
 
 @Component({
     selector: 'app-coordonnees-reservation',
@@ -31,1019 +33,63 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         ReactiveFormsModule,
         ButtonModule,
         InputTextModule,
-        CalendarModule,
         SelectButtonModule,
         DropdownModule,
         InputMaskModule,
-        InputTextarea,
         TextareaModule,
         FileUploadModule,
         ProgressBarModule,
         CardModule,
         ToastModule,
         DividerModule,
-        ScrollPanelModule
+        ScrollPanelModule,
+        SelectModule,
+        DatePickerModule,
+        OverlayPanelModule,
+        DatePicker,
+        SelectButton
     ],
     providers: [MessageService],
-    template: `
-        <div class="date-range-container">
-            <p-toast></p-toast>
-            <div class="form-sections-wrapper">
-                <!-- Section gauche -->
-                <div class="form-section left-section">
-                    <h3>Vos données de réservation</h3>
-                    
-                    <form [formGroup]="coordonneesForm">
-                        <!-- Civilité -->
-                        <div class="civilite-group">
-                            <p-selectButton [options]="civiliteOptions" formControlName="civilite" optionLabel="label"
-                             [style]="{'display': 'flex', 'gap': '0.5rem'}"
-                                ></p-selectButton>
-                        </div>
-
-                        <!-- Prénom et Nom -->
-                        <div class="form-row">
-                            <div class="promo-wrapper" (click)="focusInput('prenom')">
-                                <div class="promo-field">
-                                    <div class="promo-label">Prénom *</div>
-                                    <div class="promo-value"
-                                    >
-                                        <input pInputText id="prenom" formControlName="prenom" placeholder="Votre prénom"
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="input-wrapper" (click)="focusInput('nom')">
-                                <div class="input-field">
-                                    <div class="input-label">Nom *</div>
-                                    <div class="input-value"
-                                    >
-                                        <input pInputText id="nom" formControlName="nom" placeholder="Votre nom"
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="input-wrapper email-wrapper" (click)="focusInput('email')">
-                            <div class="input-field">
-                                <div class="input-label">Email *</div>
-                                <div class="input-value"
-                                >
-                                    <input pInputText id="email" formControlName="email" type="email" placeholder="Votre email"
-                                    [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pays -->
-                        <div class="input-wrapper pays-wrapper" (click)="focusInput('pays')">
-                            <div class="input-field">
-                                <div class="input-label">Pays *</div>
-                                <div class="input-value"
-                                >
-                                    <p-dropdown id="pays" formControlName="pays" 
-                                        [options]="paysOptions" 
-                                        placeholder="Sélectionnez un pays"
-                                        optionLabel="label"
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        ></p-dropdown>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Adresse -->
-                        <div class="input-wrapper address-wrapper" (click)="focusInput('adresse')">
-                            <div class="input-field">
-                                <div class="input-label">Adresse *</div>
-                                <div class="input-value"
-                                [style]="{'width': '100%', '': 'none', 'background': 'transparent'}"
-                                >
-                                    <input pInputText id="adresse" formControlName="adresse" placeholder="Votre adresse"
-                                    [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Code postal et Ville -->
-                        <div class="form-row">
-                            <div class="input-wrapper" (click)="focusInput('codePostal')">
-                                <div class="input-field">
-                                    <div class="input-label">Code postal *</div>
-                                    <div class="input-value"
-                                    >
-                                        <input pInputText id="codePostal" formControlName="codePostal" 
-                                        placeholder="Code postal"
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="input-wrapper" (click)="focusInput('ville')">
-                                <div class="input-field">
-                                    <div class="input-label">Ville *</div>
-                                    <div class="input-value"
-                                    >
-                                        <input pInputText id="ville" formControlName="ville" placeholder="Ville" 
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Section droite -->
-                <div class="form-section right-section">
-                    <h3>Informations complémentaires</h3>
-                    
-                    <form [formGroup]="coordonneesForm">
-                        <!-- Téléphone -->
-                        <div class="input-wrapper" (click)="focusInput('telephone')">
-                            <div class="input-field">
-                                <div class="input-label">Téléphone *</div>
-                                <div class="input-value"
-                                >
-                                    <p-inputMask id="telephone" formControlName="telephone" 
-                                        mask="999999999999999" placeholder="Votre numéro"
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        ></p-inputMask>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Date de naissance -->
-                        <div class="input-wrapper" (click)="focusInput('dateNaissance')">
-                            <div class="input-field">
-                                <div class="input-label">Date de naissance *</div>
-                                <div class="input-value"
-                                >
-                                    <p-calendar id="dateNaissance" formControlName="dateNaissance" 
-                                        [showIcon]="true" placeholder="JJ/MM/AAAA"
-                                        [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                        ></p-calendar>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="arrival-section">
-                            <h3>VOTRE ARRIVÉE (SI APPLICABLE)</h3>
-                            
-                            <!-- Compagnie -->
-                            <div class="input-wrapper" (click)="focusInput('compagnie')">
-                                <div class="input-field">
-                                    <div class="input-label">Quelle compagnie ?</div>
-                                    <div class="input-value"
-                                    >
-                                        <p-dropdown id="compagnie" formControlName="compagnie" 
-                                            [options]="compagniesOptions" 
-                                            placeholder="Sélectionnez une compagnie"
-                                            [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                            optionLabel="label"></p-dropdown>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- N° de vol -->
-                            <div class="input-wrapper" (click)="focusInput('numeroVol')">
-                                <div class="input-field">
-                                    <div class="input-label">N° de vol</div>
-                                    <div class="input-value"
-                                    >
-                                        <input pInputText id="numeroVol"
-                                         formControlName="numeroVol" placeholder="Numéro de vol"
-                                         [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Observations -->
-                            <div class="input-wrapper" (click)="focusInput('observations')">
-                                <div class="input-field">
-                                    <div class="input-label">Observations</div>
-                                    <div class="input-value"
-                                    >
-                                        <textarea pInputTextarea id="observations" formControlName="observations" 
-                                            rows="3" placeholder="Vos observations"
-                                            [style]="{'width': '100%', 'border': 'none', 'background': 'transparent'}"
-                                            ></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Section OCR -->
-            <div class="ocr-section">
-                <p-divider></p-divider>
-                <h3>Extraction de données par OCR</h3>
-                <div class="grid grid-cols-12 gap-4">
-                    <!-- Upload Section -->
-                    <div class="col-span-12 md:col-span-6 lg:col-span-4">
-                        <p-card header="1. Télécharger un document" styleClass="h-full">
-                            <p-fileUpload #fileUpload 
-                                [showUploadButton]="false"
-                                [showCancelButton]="false"
-                                (onSelect)="onUpload($event)"
-                                accept="image/*,application/pdf"
-                                [maxFileSize]="5000000"
-                                chooseLabel="Sélectionner un fichier"
-                                invalidFileSizeMessageSummary="Fichier trop volumineux"
-                                invalidFileSizeMessageDetail="La taille maximale est de 5MB"
-                                invalidFileTypeMessageSummary="Type de fichier non valide"
-                                invalidFileTypeMessageDetail="Seuls les fichiers PDF et images sont acceptés">
-                            </p-fileUpload>
-                            
-                            <div class="flex justify-between mt-12">
-                                <p-button label="Effacer" icon="pi pi-trash" severity="secondary" (onClick)="clear()"></p-button>
-                            </div>
-                        </p-card>
-                    </div>
-                    
-                    <!-- Preview Section -->
-                    <div class="col-span-12 md:col-span-6 lg:col-span-4">
-                        <p-card header="2. Aperçu du document" styleClass="h-full">
-                            <div *ngIf="imagePreviewUrl" class="flex items-center justify-center">
-                                <!-- Afficher une image si c'est une image -->
-                                <img *ngIf="uploadedFile && uploadedFile.type.startsWith('image/')" 
-                                    #previewImage 
-                                    [src]="imagePreviewUrl" 
-                                    class="w-full max-h-80" 
-                                    alt="Document preview" />
-                                
-                                <!-- Afficher un PDF si c'est un PDF -->
-                                <object *ngIf="uploadedFile && uploadedFile.type === 'application/pdf' && safePdfUrl"
-                                    [data]="safePdfUrl"
-                                    type="application/pdf"
-                                    class="w-full"
-                                    style="height: 300px;">
-                                    <div class="text-center text-surface-500 dark:text-surface-300 p-12">
-                                        <i class="pi pi-file-pdf text-4xl mb-2"></i>
-                                        <p>Impossible d'afficher le PDF directement. <a [href]="safePdfUrl" target="_blank">Ouvrir dans un nouvel onglet</a></p>
-                                    </div>
-                                </object>
-                            </div>
-                            <div *ngIf="!imagePreviewUrl" class="flex items-center justify-center h-80">
-                                <div class="text-center text-surface-500 dark:text-surface-300">
-                                    <i class="pi pi-image text-6xl mb-12"></i>
-                                    <div>Aucun document sélectionné</div>
-                                </div>
-                            </div>
-                        </p-card>
-                    </div>
-                    
-                    <!-- Process Section -->
-                    <div class="col-span-12 md:col-span-6 lg:col-span-4">
-                        <p-card header="3. Traiter le document" styleClass="h-full">
-                            <div class="mb-12">
-                                <p-button label="Traiter avec Tesseract.js" 
-                                    icon="pi pi-search" 
-                                    styleClass="w-full mb-2"
-                                    [disabled]="!uploadedFile || isProcessing || (uploadedFile && uploadedFile.type === 'application/pdf')"
-                                    (onClick)="processWithTesseract()">
-                                </p-button>
-                                
-                                <p-button label="Traiter avec le backend" 
-                                    icon="pi pi-server" 
-                                    styleClass="w-full"
-                                    [disabled]="!uploadedFile || isProcessing"
-                                    (onClick)="processWithBackend()">
-                                </p-button>
-                            </div>
-                            
-                            <div *ngIf="isProcessing" class="mt-12">
-                                <p>Traitement en cours...</p>
-                                <p-progressBar [value]="progress"></p-progressBar>
-                            </div>
-                        </p-card>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `,
-    styles: [`
-        .coordonnees-container {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-        }
-
-        .form-sections-wrapper {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .form-section {
-            flex: 1;
-        }
-
-        .form-section h3 {
-            color: rgb(189, 103, 5);
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 0.15rem;
-            margin-bottom: 0.15rem;
-        }
-
-        .civilite-group {
-            margin-bottom: 1rem;
-            
-           
-        }
-
-        :host ::ng-deep .civilite-select {
-            .p-button {
-                background: orange;
-                border: 8px solid rgb(54, 54, 50);
-                color: #333;
-                transition: all 0.2s;
-                padding: 0.5rem 2rem;
-
-                &:first-child {
-                    background-color: #ffd700;
-                }
-
-                &:hover {
-                    background-color: rgb(252, 225, 189);
-                    border-color: #ec700a;
-                }
-
-                &.p-highlight {
-                    background-color: #ffd700;
-                    border-color: #ffd700;
-                    color: #000;
-                }
-            }
-        }
-
-        .input-wrapper {
-            flex: 1;
-            background: white;
-            border: 2px solid rgb(54, 54, 50);
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            margin-bottom: 0.15rem;
-        }
-
-        .input-wrapper:hover {
-            border-color: #ec700a;
-            background-color: rgb(252, 225, 189);
-        }
-
-        .email-wrapper, .pays-wrapper, .address-wrapper {
-            width: 100%;
-        }
-
-        .input-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.375rem;
-        }
-
-        .input-label {
-            font-size: 0.875rem;
-            color: rgb(189, 103, 5);
-            font-weight: 500;
-        }
-
-        .input-value {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1rem;
-            color: #212529;
-        }
-
-        @media (max-width: 768px) {
-            .form-sections-wrapper {
-                flex-direction: column;
-            }
-
-            .form-row {
-                flex-direction: column;
-            }
-
-            .input-wrapper {
-                width: 100%;
-            }
-        }
-
-
-
-
-//date range picker
-
-
-
-        .date-range-container {
-            display: flex;
-            position: relative;
-            background: #fff;
-            padding: 1.5rem;
-        }
-
-        .date-range-form {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 0.15rem;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 0.15rem;
-            margin-bottom: 0.15rem;
-        }
-
-        .agency-wrapper {
-            flex: 1;
-            background: #fff;
-            border: 2px solid rgb(54, 54, 50);
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .agency-wrapper:hover {
-            border-color: #ec700a;
-            background-color:rgb(240, 243, 215);
-        }
-
-        .agency-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.375rem;
-        }
-
-        .agency-label {
-            font-size: 0.875rem;
-            color: rgb(189, 103, 5);
-            font-weight: 500;
-        }
-
-        .agency-value {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1rem;
-            color: #212529;
-            font-weight: 500;
-        }
-
-        .agency-value i {
-            color: #ec700a;
-            font-size: 1.125rem;
-        }
-
-        .date-time-group {
-            flex: 1;
-            display: flex;
-            gap: 0.15rem;
-        }
-
-        .date-picker-wrapper {
-            flex: 2;
-            cursor: pointer;
-            background: #fff;
-            border: 2px solid rgb(54, 54, 50);
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .date-picker-wrapper:hover {
-            border-color: #ec700a;
-            background-color:rgb(240, 243, 215);
-        }
-
-        .time-picker-wrapper {
-            flex: 1;
-            background: #fff;
-            border: 2px solid rgb(54, 54, 50);
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .time-picker-wrapper:hover {
-            border-color: #ec700a;
-            background-color:rgb(240, 243, 215);
-        }
-
-        .date-field, .time-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.375rem;
-        }
-
-        .date-label, .time-label {
-            font-size: 0.875rem;
-            color: rgb(189, 103, 5);
-            font-weight: 500;
-        }
-
-        .date-value, .time-value {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1rem;
-            color: #212529;
-            font-weight: 500;
-        }
-
-        .date-value i, .time-value i {
-            color: #ec700a;
-            font-size: 1.125rem;
-        }
-
-        :host ::ng-deep {
-            .p-select {
-                width: 100%;
-                background: transparent;
-                border: none;
-                border-radius: 0;
-                transition: all 0.2s ease;
-                box-shadow: none !important;
-
-                &:not(.p-disabled):hover {
-                    border: none;
-                    background: transparent;
-                }
-
-                &.p-focus {
-                    box-shadow: none;
-                    border: none;
-                    outline: none;
-                }
-
-                .p-select-label {
-                    padding: 0;
-                    font-size: 1rem;
-                    color: #212529;
-                    font-weight: 500;
-                }
-
-                .p-select-trigger {
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 50%;
-                    background: #fff;
-                    border: 2px solid #ec700a;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #ec700a;
-                    transition: all 0.2s ease;
-
-                    &:hover {
-                        background: #ec700a;
-                        color: #fff;
-                    }
-
-                    .p-select-trigger-icon {
-                        font-size: 0.8rem;
-                        margin: 0;
-                        transform: translateY(-1px);
-                    }
-                }
-
-                .p-select-panel {
-                    border: none;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                    background: #fff;
-
-                    .p-select-items {
-                        padding: 0.5rem 0;
-
-                        .p-select-item {
-                            padding: 0.75rem 1rem;
-                            color: #212529;
-                            transition: all 0.2s ease;
-
-                            &:hover {
-                                background: rgba(236, 112, 10, 0.1);
-                                color: #ec700a;
-                            }
-
-                            &.p-highlight {
-                                background: #ec700a;
-                                color: #fff;
-                            }
-                        }
-                    }
-                }
-
-                &.p-select-clearable {
-                    .p-select-clear-icon {
-                        color: #ec700a;
-                    }
-                }
-            }
-
-            .p-select-items-wrapper {
-                background: #fff;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-
-            .p-select-header {
-                padding: 0.75rem 1rem;
-                border-bottom: 1px solid #e9ecef;
-            }
-
-            .p-select-footer {
-                padding: 0.75rem 1rem;
-                border-top: 1px solid #e9ecef;
-            }
-
-            .search-button {
-                width: 100%;
-                height: 100%;
-                background-color: #ffd700;
-                border: none;
-                color: #000;
-                font-weight: 600;
-                font-size: 0.875rem;
-                
-                &:hover {
-                    background-color: rgb(182, 77, 17);
-                }
-
-                &:disabled {
-                    background-color: #ccc;
-                    cursor: not-allowed;
-                }
-            }
-
-            .date-range-overlay {
-                .p-overlaypanel-content {
-                    padding: 0;
-                }
-
-                .calendar-container {
-                    padding: 1.5rem;
-                }
-
-                .calendar-header {
-                    margin-bottom: 1.5rem;
-                    
-                    h3 {
-                        margin: 0;
-                        color: #212529;
-                        font-size: 1.25rem;
-                        font-weight: 600;
-                    }
-                }
-
-                .custom-calendar {
-                    .p-datepicker {
-                        border: none;
-                        padding: 0;
-                        width: 100%;
-
-                        .p-datepicker-header {
-                            background: none;
-                            border: none;
-                            padding: 0.75rem 0;
-                            font-weight: 600;
-                            color: #212529;
-
-                            .p-datepicker-title {
-                                .p-datepicker-month,
-                                .p-datepicker-year {
-                                    font-size: 1.1rem;
-                                    font-weight: 600;
-                                    color: #212529;
-                                    margin: 0 0.5rem;
-                                    text-transform: capitalize;
-                                }
-                            }
-
-                            .p-datepicker-prev,
-                            .p-datepicker-next {
-                                width: 2rem;
-                                height: 2rem;
-                                color: #212529;
-                                border: 2px solid #ec700a;
-                                border-radius: 50%;
-                                transition: all 0.2s;
-
-                                &:hover {
-                                    background-color: #ec700a;
-                                    color: #fff;
-                                }
-
-                                span {
-                                    font-size: 0.8rem;
-                                }
-                            }
-                        }
-
-                        table {
-                            font-family: inherit;
-                            border-collapse: separate;
-                            border-spacing: 4px;
-
-                            th {
-                                padding: 0.75rem;
-                                font-weight: 600;
-                                color: #495057;
-                                text-transform: uppercase;
-                                font-size: 0.75rem;
-                            }
-
-                            td {
-                                padding: 0.25rem;
-                                width: 2.5rem;
-                                height: 2.5rem;
-
-                                span {
-                                    width: 100%;
-                                    height: 100%;
-                                    border-radius: 50%;
-                                    transition: all 0.2s;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                }
-
-                                &.p-datepicker-today > span {
-                                    background-color: #ffd700;
-                                    color: #000;
-                                    font-weight: bold;
-                                }
-
-                                &.p-highlight {
-                                    > span {
-                                        background-color: #ffd700;
-                                        color: #000;
-                                    }
-
-                                    &:hover > span {
-                                        background-color: #ffed4a;
-                                    }
-                                }
-
-                                &:not(.p-disabled):not(.p-highlight) {
-                                    &:hover > span {
-                                        background-color: rgba(255, 215, 0, 0.2);
-                                    }
-                                }
-
-                                &.p-datepicker-other-month {
-                                    opacity: 0.5;
-                                }
-                            }
-                        }
-
-                        .p-datepicker-multiple-month {
-                            display: flex;
-                            gap: 1rem;
-
-                            .p-datepicker-group {
-                                flex: 1;
-                                border-right: 1px solid #dee2e6;
-                                padding: 0 1rem;
-
-                                &:last-child {
-                                    border-right: none;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            .p-inputnumber {
-                width: 100%;
-                height: 100%;
-
-                .p-inputnumber-input {
-                    width: 100%;
-                    height: 20px;
-                    border: none !important;
-                    background: transparent;
-                    padding: 0;
-                    font-size: 1rem;
-                    color: #212529;
-                    font-weight: 500;
-                    box-shadow: none !important;
-                    outline: none !important;
-
-                    &:focus {
-                        box-shadow: none !important;
-                        outline: none !important;
-                        border: none !important;
-                    }
-
-                    &::placeholder {
-                        color: #6c757d;
-                    }
-                }
-
-                &:focus-within {
-                    box-shadow: none !important;
-                    outline: none !important;
-                    border: none !important;
-                }
-            }
-
-            .p-inputtext {
-                width: 100%;
-                height: 20px;
-                border: none !important;
-                background: transparent;
-                padding: 0;
-                font-size: 1rem;
-                color: #212529;
-                font-weight: 500;
-                box-shadow: none !important;
-                outline: none !important;
-
-                &:focus {
-                    box-shadow: none !important;
-                    outline: none !important;
-                    border: none !important;
-                }
-
-                &:enabled:focus {
-                    box-shadow: none !important;
-                    outline: none !important;
-                    border: none !important;
-                }
-
-                &::placeholder {
-                    color: #6c757d;
-                }
-            }
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-            }
-
-            .date-time-group {
-                flex-direction: column;
-            }
-
-            :host ::ng-deep .date-range-overlay {
-                width: 100% !important;
-                max-width: 100vw;
-
-                .p-calendar {
-                    .p-datepicker {
-                        .p-datepicker-multiple-month {
-                            flex-direction: column;
-                        }
-                    }
-                }
-            }
-        }
-
-        .age-wrapper, .promo-wrapper {
-            flex: 1;
-            background: #fff;
-            border: 2px solid rgb(54, 54, 50);
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .age-wrapper:hover, .promo-wrapper:hover {
-            border-color: #ec700a;
-            background-color: rgb(240, 243, 215);
-        }
-
-        .age-field, .promo-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.375rem;
-        }
-
-        .age-label, .promo-label {
-            font-size: 0.875rem;
-            color: rgb(189, 103, 5);
-            font-weight: 500;
-        }
-
-        .age-value, .promo-value {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1rem;
-            color: #212529;
-            font-weight: 500;
-        }
-
-        .age-value i, .promo-value i {
-            color: #ec700a;
-            font-size: 1.125rem;
-        }
-
-        .search-wrapper {
-            flex: 1;
-            display: flex;
-            align-items: stretch;
-        }
-
-        .search-button {
-            width: 100%;
-            height: 100%;
-            background-color: #ffd700;
-            border: none;
-            color: #000;
-            font-weight: 600;
-            font-size: 0.875rem;
-            
-            &:hover {
-                background-color: #ffed4a;
-            }
-
-            &:disabled {
-                background-color: #ccc;
-                cursor: not-allowed;
-            }
-        }
-
-        .ocr-section {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-            h3 {
-                color: #333;
-                margin-bottom: 1.5rem;
-                font-size: 1.25rem;
-                font-weight: 600;
-            }
-
-            .grid {
-                display: grid;
-                gap: 1rem;
-            }
-
-            .col-span-12 {
-                grid-column: span 12;
-            }
-
-            @media (min-width: 768px) {
-                .md\:col-span-6 {
-                    grid-column: span 6;
-                }
-            }
-
-            @media (min-width: 1024px) {
-                .lg\:col-span-4 {
-                    grid-column: span 4;
-                }
-            }
-        }
-    `]
+    templateUrl: './coordonnees-reservation.component.html',
+    styleUrls: ['./coordonnees-reservation.component.scss'],
 })
 export class CoordonneesReservationComponent implements OnInit {
     @Input() initialData?: any;
     @Output() formSubmit = new EventEmitter<any>();
+    @Output() valideCoordonnees = new EventEmitter<Reservation>();
+    @Input() reservation: Reservation | null = null;
     @ViewChild('fileUpload') fileUpload: any;
     @ViewChild('previewImage') previewImage!: ElementRef;
+    @ViewChild('op') overlayPanel!: OverlayPanel;
 
-    coordonneesForm: FormGroup;
+
+    reservationForm!: FormGroup;
+    selectedDate: Date | null = null;
+    maxDate: Date = new Date();
+    yearRange: string = '';
+    displayDatePicker: boolean = false;
+
     civiliteOptions = [
-        { label: 'M', value: 'M' },
-        { label: 'MME', value: 'MME' }
+        { label: 'M.', value: 'M' },
+        { label: 'Mme', value: 'MME' }
     ];
 
     paysOptions = [
-        { label: 'Afghanistan', value: 'AF' },
-        { label: 'France', value: 'FR' },
         { label: 'Maroc', value: 'MA' },
-        // Ajoutez d'autres pays selon vos besoins
+        { label: 'France', value: 'FR' },
+        { label: 'Belgique', value: 'BE' },
+        { label: 'Suisse', value: 'CH' },
+        { label: 'Canada', value: 'CA' },
+        { label: 'Espagne', value: 'ES' },
+        { label: 'Italie', value: 'IT' }
     ];
 
     compagniesOptions = [
-        { label: 'Air France', value: 'AIR_FRANCE' },
         { label: 'Royal Air Maroc', value: 'RAM' },
-        { label: 'Air Arabia', value: 'AIR_ARABIA' },
-        { label: 'Ryanair', value: 'RYANAIR' },
-        { label: 'Ryan Air', value: 'RYAN_AIR' },
+        { label: 'Air France', value: 'AF' },
+        { label: 'EasyJet', value: 'EJ' },
+        { label: 'Ryanair', value: 'RYR' },
+        { label: 'Transavia', value: 'TO' },
         { label: 'Autre', value: 'AUTRE' }
     ];
 
@@ -1063,33 +109,73 @@ export class CoordonneesReservationComponent implements OnInit {
         telephone: ''
     };
 
+    // Options d'indicatifs téléphoniques
+    indicatifsOptions = [
+        { label: '+212', value: '+212', flag: 'ma' }, // Maroc
+        { label: '+33', value: '+33', flag: 'fr' },   // France
+        { label: '+32', value: '+32', flag: 'be' },   // Belgique
+        { label: '+41', value: '+41', flag: 'ch' },   // Suisse
+        { label: '+1', value: '+1', flag: 'ca' },     // Canada
+        { label: '+34', value: '+34', flag: 'es' },   // Espagne
+        { label: '+39', value: '+39', flag: 'it' }    // Italie
+    ];
+    
+    selectedIndicatif: any = this.indicatifsOptions[0]; // Default to Maroc (+212)
+
     constructor(
         private fb: FormBuilder,
         private messageService: MessageService,
         private ocrService: OcrService,
         private sanitizer: DomSanitizer
     ) {
-        this.coordonneesForm = this.fb.group({
-            civilite: ['M', Validators.required],
-            prenom: ['', Validators.required],
-            nom: ['', Validators.required],
-            email: ['', [Validators.required, Validators.email]],
-            pays: ['', Validators.required],
-            adresse: ['', Validators.required],
-            codePostal: ['', Validators.required],
-            ville: ['', Validators.required],
-            telephone: ['', Validators.required],
-            dateNaissance: [null, Validators.required],
-            compagnie: [null],
-            numeroVol: [''],
-            observations: ['']
-        });
+        this.initYearRange();
     }
 
     ngOnInit() {
+        this.reservationForm = this.fb.group({
+            civilite: ['M', [Validators.required]],
+            nom: ['', [Validators.required]],
+            prenom: ['', [Validators.required]],
+            dateNaissance: [null, [Validators.required]],
+            indicatif: [this.indicatifsOptions[0].value, [Validators.required]], 
+            telephone: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
+            email: ['', [Validators.required, Validators.email]],
+            pays: ['MA', [Validators.required]],
+            adresse: ['', [Validators.required]],
+            codePostal: ['', [Validators.required]],
+            ville: ['', [Validators.required]],
+            compagnie: [null],
+            observations: ['']
+        });
+
         if (this.initialData) {
-            this.coordonneesForm.patchValue(this.initialData);
+            this.reservationForm.patchValue(this.initialData);
+            
+            // Si un indicatif est présent dans les données initiales
+            if (this.initialData.indicatif) {
+                this.selectedIndicatif = this.indicatifsOptions.find(option => 
+                    option.value === this.initialData.indicatif) || this.indicatifsOptions[0];
+            }
+            
+            // Initialiser selectedDate avec la valeur du form control
+            if (this.initialData.dateNaissance) {
+                this.selectedDate = new Date(this.initialData.dateNaissance);
+            }
         }
+        
+        // Surveiller les changements du FormControl dateNaissance
+        this.reservationForm.get('dateNaissance')?.valueChanges.subscribe(value => {
+            if (value && this.selectedDate !== value) {
+                this.selectedDate = value;
+            }
+        });
+    }
+
+    private initYearRange() {
+        const currentYear = new Date().getFullYear();
+        const minYear = currentYear - 100;
+        this.yearRange = `${minYear}:${currentYear}`;
+        this.maxDate = new Date();
     }
 
     focusInput(inputId: string): void {
@@ -1100,8 +186,26 @@ export class CoordonneesReservationComponent implements OnInit {
     }
 
     onSubmit() {
-        if (this.coordonneesForm.valid) {
-            this.formSubmit.emit(this.coordonneesForm.value);
+        if (this.reservationForm.valid) {
+            // Ajouter le numéro de téléphone complet pour le backend si nécessaire
+            const formValue = {
+                ...this.reservationForm.value,
+                telephoneComplet: this.fullPhoneNumber
+            };
+            
+            this.formSubmit.emit(formValue);
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Succès',
+                detail: 'Vos coordonnées ont été enregistrées avec succès'
+            });
+        } else {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Veuillez remplir tous les champs obligatoires'
+            });
+            this.markFormGroupTouched(this.reservationForm);
         }
     }
 
@@ -1281,8 +385,8 @@ export class CoordonneesReservationComponent implements OnInit {
     fillForm() {
         if (this.extractedFields) {
             Object.keys(this.extractedFields).forEach(key => {
-                if (this.coordonneesForm.contains(key)) {
-                    this.coordonneesForm.get(key)?.setValue(this.extractedFields[key]);
+                if (this.reservationForm.contains(key)) {
+                    this.reservationForm.get(key)?.setValue(this.extractedFields[key]);
                 }
             });
         }
@@ -1304,6 +408,234 @@ export class CoordonneesReservationComponent implements OnInit {
         };
         if (this.fileUpload) {
             this.fileUpload.clear();
+        }
+    }
+
+    onDateSelect(event: Date): void {
+        this.selectedDate = event;
+        this.reservationForm.get('dateNaissance')?.setValue(event);
+        this.reservationForm.get('dateNaissance')?.markAsDirty();
+        this.reservationForm.get('dateNaissance')?.updateValueAndValidity();
+        this.overlayPanel.hide();
+    }
+
+    formatDate(date: Date | null): string {
+        if (!date) return '';
+        return new Intl.DateTimeFormat('fr-FR').format(date);
+    }
+
+    onManualDateInput(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        let value = input.value;
+        
+        // Supprimer tous les caractères non numériques et non slash
+        let cleaned = value.replace(/[^\d\/]/g, '');
+        
+        // Conserver seulement les chiffres pour traitement
+        let digits = cleaned.replace(/\//g, '');
+        
+        // Limiter à 8 chiffres (JJ/MM/AAAA)
+        if (digits.length > 8) {
+            digits = digits.substring(0, 8);
+        }
+        
+        // Reconstruire le format avec slashes
+        let formatted = '';
+        if (digits.length > 0) {
+            // Ajouter les deux premiers chiffres pour le jour
+            formatted = digits.substring(0, Math.min(2, digits.length));
+            
+            // Ajouter un slash et les deux chiffres suivants pour le mois
+            if (digits.length > 2) {
+                formatted += '/' + digits.substring(2, Math.min(4, digits.length));
+                
+                // Ajouter un slash et jusqu'à 4 chiffres pour l'année
+                if (digits.length > 4) {
+                    formatted += '/' + digits.substring(4, 8);
+                }
+            }
+        }
+        
+        // Si la valeur a changé, mettre à jour l'input
+        if (formatted !== value) {
+            input.value = formatted;
+            
+            // Correction de la position du curseur après formatage
+            const cursorPos = this.getCursorPosition(value, formatted);
+            setTimeout(() => {
+                input.setSelectionRange(cursorPos, cursorPos);
+            }, 0);
+        }
+    }
+    
+    // Fonction utilitaire pour calculer la position du curseur après formatage
+    private getCursorPosition(oldValue: string, newValue: string): number {
+        // Compter le nombre de slashes avant la position du curseur dans l'ancienne valeur
+        const cursorPos = (document.activeElement as HTMLInputElement)?.selectionStart || 0;
+        const slashesBeforeCursor = (oldValue.substring(0, cursorPos).match(/\//g) || []).length;
+        const digitsBeforeCursor = oldValue.substring(0, cursorPos).replace(/\//g, '').length;
+        
+        // Calculer la nouvelle position en tenant compte des slashes ajoutés
+        let newPos = digitsBeforeCursor;
+        if (newPos > 2) newPos++; // Ajouter 1 pour le premier slash
+        if (newPos > 4) newPos++; // Ajouter 1 pour le deuxième slash
+        
+        return Math.min(newPos, newValue.length);
+    }
+
+    validateManualDate(event: Event): void {
+        try {
+            const input = event.target as HTMLInputElement;
+            const dateValue = input.value;
+            
+            if (!dateValue || dateValue.trim() === '') {
+                // Si le champ est vide, on supprime la date
+                this.reservationForm.patchValue({ dateNaissance: null });
+                return;
+            }
+            
+            // Format attendu: JJ/MM/AAAA
+            const dateParts = dateValue.split('/');
+            if (dateParts.length !== 3) {
+                throw new Error('Format de date invalide');
+            }
+            
+            // Vérifier la longueur des parties
+            if (dateParts[0].length !== 2 || dateParts[1].length !== 2 || dateParts[2].length !== 4) {
+                throw new Error('Format de date invalide (JJ/MM/AAAA)');
+            }
+            
+            const day = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10) - 1; // Les mois en JS commencent à 0
+            const year = parseInt(dateParts[2], 10);
+            
+            if (isNaN(day) || isNaN(month) || isNaN(year)) {
+                throw new Error('Format de date invalide');
+            }
+            
+            // Vérifier les bornes des valeurs
+            if (day < 1 || day > 31) {
+                throw new Error('Le jour doit être entre 1 et 31');
+            }
+            
+            if (month < 0 || month > 11) {
+                throw new Error('Le mois doit être entre 01 et 12');
+            }
+            
+            const date = new Date(year, month, day);
+            
+            // Vérifier si la date est valide (ex: 30/02/2023 n'existe pas)
+            if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
+                throw new Error('Date invalide pour ce mois');
+            }
+            
+            // Vérifier si la date est dans la plage autorisée
+            if (date > this.maxDate) {
+                throw new Error('La date doit être dans le passé');
+            }
+            
+            const currentYear = new Date().getFullYear();
+            const minYear = currentYear - 100;
+            if (year < minYear || year > currentYear) {
+                throw new Error(`L'année doit être entre ${minYear} et ${currentYear}`);
+            }
+            
+            // Date valide, mettre à jour le formulaire
+            this.selectedDate = date;
+            this.reservationForm.patchValue({ dateNaissance: date });
+            
+        } catch (error: any) {
+            // Restaurer la date précédente
+            const currentDate = this.reservationForm.get('dateNaissance')?.value;
+            const input = event.target as HTMLInputElement;
+            input.value = currentDate ? this.formatDate(currentDate) : '';
+            
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: error.message || 'Format de date invalide. Utilisez le format JJ/MM/AAAA.'
+            });
+        }
+    }
+
+    private markFormGroupTouched(formGroup: FormGroup) {
+        Object.values(formGroup.controls).forEach(control => {
+            control.markAsTouched();
+            if (control instanceof FormGroup) {
+                this.markFormGroupTouched(control);
+            }
+        });
+    }
+
+    // Synchronise les changements d'indicatif téléphonique
+    onIndicatifChange(event: any) {
+        this.selectedIndicatif = event;
+        this.reservationForm.patchValue({ indicatif: event.value });
+        console.log('Indicatif sélectionné:', this.selectedIndicatif);
+    }
+
+    // Récupère le numéro de téléphone complet (indicatif + numéro)
+    get fullPhoneNumber(): string {
+        const indicatif = this.reservationForm.get('indicatif')?.value || '';
+        const telephone = this.reservationForm.get('telephone')?.value || '';
+        return `${indicatif}${telephone}`;
+    }
+
+    /**
+     * Efface le contenu d'un champ spécifique du formulaire
+     * @param fieldName - Nom du champ à vider
+     */
+    clearField(fieldName: string): void {
+        // Pour le champ téléphone, on conserve l'indicatif
+        if (fieldName === 'telephone') {
+            this.reservationForm.get(fieldName)?.setValue('');
+            this.reservationForm.get(fieldName)?.markAsPristine();
+        } 
+        // Pour la date de naissance, il faut aussi mettre à jour selectedDate
+        else if (fieldName === 'dateNaissance') {
+            this.reservationForm.get(fieldName)?.setValue(null);
+            this.reservationForm.get(fieldName)?.markAsPristine();
+            this.selectedDate = null;
+        }
+        // Pour tous les autres champs
+        else {
+            this.reservationForm.get(fieldName)?.setValue('');
+            this.reservationForm.get(fieldName)?.markAsPristine();
+        }
+    }
+
+    onValideCoordonnees() {
+        if (this.reservationForm.valid && this.reservation) {
+            this.reservation.email = this.reservationForm.value.email;
+            this.reservation.nom = this.reservationForm.value.nom;
+            this.reservation.prenom = this.reservationForm.value.prenom;
+            this.reservation.dateNaissance = this.reservationForm.value.dateNaissance;
+            this.reservation.indicatif = this.reservationForm.value.indicatif;
+            this.reservation.telephone = this.reservationForm.value.telephone;
+            this.reservation.civilite = this.reservationForm.value.civilite;
+            this.reservation.compagnie = this.reservationForm.value.compagnie;
+            this.reservation.adresse = this.reservationForm.value.adresse;
+            this.reservation.codePostal = this.reservationForm.value.codePostal;
+            this.reservation.ville = this.reservationForm.value.ville;
+            this.reservation.pays = this.reservationForm.value.pays;
+            this.valideCoordonnees.emit(this.reservation);
+            
+            // Afficher un message de succès
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Succès',
+                detail: 'Vos coordonnées ont été enregistrées avec succès'
+            });
+        } else {
+            // Marquer tous les champs comme touchés pour afficher les erreurs
+            this.markFormGroupTouched(this.reservationForm);
+            
+            // Afficher un message d'erreur
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Veuillez remplir correctement tous les champs obligatoires'
+            });
         }
     }
 } 

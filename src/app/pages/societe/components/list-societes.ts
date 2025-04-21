@@ -463,7 +463,7 @@ archiveSelectedSocietes() {
         this.messageService.add({
           severity: 'info',
           summary: 'Information',
-          detail: 'Une société de test a été créée automatiquement',
+          detail: 'Une société de test a été créée AUTOMATIQUEment',
           life: 3000
         });
         this.loadSocietes();
