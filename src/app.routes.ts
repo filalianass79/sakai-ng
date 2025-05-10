@@ -10,6 +10,8 @@ import { ReservationFormComponent } from './app/pages/reservation/components/res
 import { CarteGriseComponent } from './app/pages/siteweb/components/carte-grise/carte-grise.component';
 import { NosAgencesComponent } from './app/pages/siteweb/components/nos-agences/nos-agences.component';
 import { NosVehiculesComponent } from './app/pages/siteweb/components/nos-vehicules/nos-vehicules.component';
+import { LocationLongueDureeComponent } from './app/pages/siteweb/components/location-longue-duree/location-longue-duree.component';
+import { GestionReservationsComponent } from './app/pages/siteweb/components/gestion-reservations/gestion-reservations.component';
 export const appRoutes: Routes = [
     { path: '', redirectTo: '/demarrage', pathMatch: 'full' },
    
@@ -32,7 +34,8 @@ export const appRoutes: Routes = [
             { path: 'carte-grise', component: CarteGriseComponent },
             { path: 'reservations', loadChildren: () => import('./app/pages/reservation/reservation.routes') },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
-            { path: 'parametragesiteweb', loadChildren: () => import('./app/pages/parametragesiteweb/parametragesiteweb.routes') }
+            { path: 'parametragesiteweb', loadChildren: () => import('./app/pages/parametragesiteweb/parametragesiteweb.routes') },
+            { path: 'parametrageapplications', loadChildren: () => import('./app/pages/parametrageapplication/parametrageapplication.routes') }
         ]
     },
     { path: 'landing', component: Landing },
@@ -41,6 +44,8 @@ export const appRoutes: Routes = [
     { path: 'parcauto', component: Demarrage, data: { showParcauto: true } },
     { path: 'nos-agences', component: NosAgencesComponent },
     { path: 'nos-vehicules', component: NosVehiculesComponent },
+    { path: 'location-longue-duree', component: LocationLongueDureeComponent },
+    { path: 'gestion-reservations', component: GestionReservationsComponent },
     { path: 'notfound', component: Notfound },
     { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
     { path: '**', redirectTo: '/notfound' }

@@ -1,0 +1,222 @@
+<p-toast></p-toast>
+
+<div class="bg-surface-50 dark:bg-surface-900 p-2 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+    <p-card styleClass="shadow">
+      <!-- En-tête avec navigation et titre -->
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center">
+          <button pButton 
+            icon="pi pi-arrow-left" 
+            class="p-button-rounded p-button-outlined mr-12" 
+            (click)="goBack()"
+            pTooltip="Retour à la liste"
+          ></button>
+          <h1 class="text-primary-900 dark:text-primary-200 font-bold text-3xl lg:text-4xl m-0">
+            {{isEditMode ? 'Modifier' : 'Créer'}} une agence
+          </h1>
+        </div>
+      </div>
+
+      <form [formGroup]="agenceForm" (ngSubmit)="onSubmit()" class="space-y-2">
+        <!-- Section Informations générales -->
+        <p-panel styleClass="mb-2">
+          <ng-template pTemplate="header">
+            <div class="flex items-center">
+              <i class="pi pi-info-circle mr-2 text-primary-500"></i>
+              <span class="text-primary-800 dark:text-primary-300 font-medium text-xl">Informations générales</span>
+            </div>
+          </ng-template>
+          
+          <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+              <p-card styleClass="mb-2 shadow-sm">
+                <ng-template pTemplate="header">
+                  <div class="flex items-center mb-2">
+                    <i class="pi pi-image mr-2 text-primary-500"></i>
+                    <span class="text-primary-700 font-medium">Logo</span>
+                  </div>
+                </ng-template>
+                  <app-image-upload *ngIf="agence.id || !isEditMode"
+                  [entityType]="'agence'" 
+                  [entityId]="agence.id!" 
+                  [imageName]="'logo'" 
+                  [currentImage]="agence.logo" 
+                  [autoUpload]="true"
+                  (onImageSelected)="onLogoSelected($event)"
+                  (onUploadComplete)="onLogoUploaded($event)"
+                  (onImageDeleted)="onLogoDeleted()"
+                  class="w-full">
+                </app-image-upload>
+              </p-card>
+            </div>
+
+            <div class="col-span-12 md:col-span-6 lg:col-span-8">
+              <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+                <div class="col-span-12">
+                  <div class="field">
+                    <label for="nom" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Agence *</label>
+                    <input id="nom" type="text" pInputText formControlName="nom" class="w-full p-inputtext-lg">
+                    <small *ngIf="agenceForm.get('nom')?.hasError('required') && agenceForm.get('nom')?.touched" 
+                           class="p-error block mt-1">Le nom est requis</small>
+                  </div>
+                  <!-- Manager -->
+                  <div class="field">
+                    <label for="manager" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Manager *</label>
+                      <p-select id="manager" [options]="managers" formControlName="manager" [filter]="true" filterBy="manager.name"
+                              placeholder="Sélectionner une manager" label="manager.name"  optionLabel="name"
+                              class="w-full"></p-select>
+                    
+                  </div>
+                 
+                  <!-- iswebagence -->
+                  <div class="field">
+                    <label for="iswebagence" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Agence web *</label>
+                    <p-checkbox id="iswebagence" formControlName="iswebagence" [binary]="true"></p-checkbox>
+                  </div>
+                  <!-- isappagence -->
+                  <div class="field">
+                    <label for="isappagence" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Agence app *</label>
+                    <p-checkbox id="isappagence" formControlName="isappagence" [binary]="true"></p-checkbox>
+                  </div>
+                   <!-- mapUrl -->
+                   <div class="field"> 
+                    <label for="mapUrl" class="text-primary-800 dark:text-primary-400 font-medium mb-2 block">Map URL *</label>
+                    <textarea id="mapUrl" pInputTextarea formControlName="mapUrl" class="w-full"></textarea>
+                  </div>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+               
+                  <!-- Coordonnées -->
+                  <div class="card">
+                      <h5>Coordonnées</h5>
+                      <div class="grid grid-cols-12 gap-4">
+                          <div class="col-span-4">
+                              <div class="field">
+                                  <label for="telephone">Téléphone*</label>
+                                  <p-inputNumber id="telephone" formControlName="telephone" [min]="0"
+                                              class="w-full"></p-inputNumber>
+                              </div>
+                          </div>
+                          <div class="col-span-4">
+                              <div class="field">
+                                  <label for="fixe">Fixe*</label>
+                                  <p-inputNumber id="fixe" formControlName="fixe" [min]="0"
+                                              class="w-full"></p-inputNumber>
+                              </div>
+                          </div>
+                          <div class="col-span-4">
+                              <div class="field">
+                                  <label for="fax">Fax*</label>
+                                  <p-inputNumber id="fax" formControlName="fax" [min]="0"
+                                              class="w-full"></p-inputNumber>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-12">
+                            <div class="field">
+                                <label for="email">Email*</label>
+                                <input id="email" type="email" pInputText formControlName="email" class="w-full p-inputtext-lg">
+                            </div>
+                        </div>
+                        <div class="col-span-12">
+                            <div class="field">
+                                <label for="adresse">adresse*</label>
+                                <input id="adresse" type="text" pInputText formControlName="adresse" class="w-full p-inputtext-lg">
+                            </div>
+                        </div>
+                        <div class="col-span-6">
+                            <div class="field">
+                                <label for="ville">ville*</label>
+                                <input id="ville" type="text" pInputText formControlName="ville" class="w-full p-inputtext-lg">
+                            </div>
+                        </div>
+                        <div class="col-span-6">
+                            <div class="field">
+                                <label for="postalCode">Code postal*</label>
+                                <input id="postalCode" type="text" pInputText formControlName="postalCode" class="w-full p-inputtext-lg">
+                            </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Maintenance -->
+                  <div class="card">
+                      <h5>Maintenance</h5>
+                      <div class="grid grid-cols-12 gap-4">
+                          <div class="col-span-6">
+                              
+
+
+
+
+                          </div>
+                          <div class="col-span-6">
+                              
+
+
+
+                          </div>
+                      </div>
+
+                      <div class="grid grid-cols-12 gap-4">
+                          <div class="col-span-6">
+                              
+
+
+
+
+
+                          </div>
+                          <div class="col-span-2">
+                              
+
+
+
+                            </div>
+                          </div>
+                          <div class="col-span-4">
+                              
+
+
+
+                          </div>
+                      </div>
+          </div>
+               
+
+           
+         
+      
+        </p-panel>
+
+
+
+        <!-- Boutons d'action -->
+        <div class="flex justify-end gap-2 pt-12">
+          <button pButton 
+                  type="button" 
+                  label="Annuler" 
+                  class="p-button-outlined"
+                  (click)="goBack()">
+          </button>
+          <button pButton 
+                  type="submit" 
+                  label="Enregistrer" 
+                  [disabled]="!agenceForm.valid"
+                  class="p-button-primary">
+          </button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>

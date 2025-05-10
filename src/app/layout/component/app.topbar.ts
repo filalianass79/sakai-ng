@@ -58,7 +58,7 @@ import { AuthService } from '../../pages/auth/core/services/auth.service';
                     >
                         <i class="pi pi-palette"></i>
                     </button>
-                    <app-configurator />
+                    <app-configurator/>
                 </div>
             </div>
 

@@ -8,6 +8,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
+import { CardModule } from 'primeng/card';
+import { Reservation } from '../../../reservation/models/reservation.model';
 
 @Component({
   selector: 'app-paiement-carte',
@@ -21,7 +23,8 @@ import { DividerModule } from 'primeng/divider';
     InputMaskModule,
     DropdownModule,
     ToastModule,
-    DividerModule
+    DividerModule,
+    CardModule
   ],
   providers: [MessageService],
   templateUrl: './paiement-carte.component.html',
@@ -29,6 +32,7 @@ import { DividerModule } from 'primeng/divider';
 })
 export class PaiementCarteComponent implements OnInit {
   @Input() montant: number = 0;
+  @Input() reservation: Reservation | null = null;
   @Output() paiementEffectue = new EventEmitter<any>();
   
   paiementForm!: FormGroup;
@@ -36,9 +40,9 @@ export class PaiementCarteComponent implements OnInit {
   activeField: string | null = null;
   
   typesCartes = [
-    { label: 'Visa', value: 'VISA', icon: 'pi pi-credit-card' },
-    { label: 'Mastercard', value: 'MASTERCARD', icon: 'pi pi-credit-card' },
-    { label: 'American Express', value: 'AMEX', icon: 'pi pi-credit-card' }
+    { label: 'Visa', value: 'VISA', icon: 'pi pi-credit-card', pattern: /^4[0-9]{12}(?:[0-9]{3})?$/ },
+    { label: 'Mastercard', value: 'MASTERCARD', icon: 'pi pi-credit-card', pattern: /^5[1-5][0-9]{14}$/ },
+    { label: 'American Express', value: 'AMEX', icon: 'pi pi-credit-card', pattern: /^3[47][0-9]{13}$/ }
   ];
 
   moisExpiration = Array.from({ length: 12 }, (_, i) => {
@@ -100,19 +104,50 @@ export class PaiementCarteComponent implements OnInit {
 
   // Amélioration: détecter automatiquement le type de carte
   detectCardType(cardNumber: string): string | null {
+    const cleanNumber = cardNumber.replace(/\s/g, '');
+    
     // Visa commence par 4
-    if (/^4/.test(cardNumber)) {
+    if (/^4/.test(cleanNumber)) {
       return 'VISA';
     }
     // Mastercard commence par 51-55 ou séries 2221-2720
-    else if (/^5[1-5]/.test(cardNumber) || /^2[2-7][0-9]{2}/.test(cardNumber)) {
+    else if (/^5[1-5]/.test(cleanNumber) || /^2[2-7][0-9]{2}/.test(cleanNumber)) {
       return 'MASTERCARD';
     }
     // American Express commence par 34 ou 37
-    else if (/^3[47]/.test(cardNumber)) {
+    else if (/^3[47]/.test(cleanNumber)) {
       return 'AMEX';
     }
     return null;
+  }
+
+  // Amélioration: validation du numéro de carte selon le type
+  validateCardNumber(cardNumber: string, cardType: string): boolean {
+    const cleanNumber = cardNumber.replace(/\s/g, '');
+    const cardTypeObj = this.typesCartes.find(type => type.value === cardType);
+    
+    if (!cardTypeObj) return false;
+    
+    // Validation Luhn
+    let sum = 0;
+    let isEven = false;
+    
+    // Parcourir de droite à gauche
+    for (let i = cleanNumber.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleanNumber.charAt(i));
+      
+      if (isEven) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+      
+      sum += digit;
+      isEven = !isEven;
+    }
+    
+    return sum % 10 === 0 && cardTypeObj.pattern.test(cleanNumber);
   }
 
   // Amélioration: formater le numéro de carte pour l'aperçu
@@ -217,23 +252,42 @@ export class PaiementCarteComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\s/g, '');
     
-    if (value.length > 16) {
-      value = value.substr(0, 16);
+    // Limiter la longueur selon le type de carte
+    const maxLength = this.paiementForm.get('typeCarte')?.value === 'AMEX' ? 15 : 16;
+    if (value.length > maxLength) {
+      value = value.substr(0, maxLength);
     }
     
-    // Ajouter des espaces tous les 4 chiffres
+    // Formater avec des espaces
     const parts = [];
-    for (let i = 0; i < value.length; i += 4) {
-      parts.push(value.substring(i, i + 4));
+    if (this.paiementForm.get('typeCarte')?.value === 'AMEX') {
+      // Format AMEX: XXXX XXXXXX XXXXX
+      parts.push(value.substring(0, 4));
+      parts.push(value.substring(4, 10));
+      parts.push(value.substring(10, 15));
+    } else {
+      // Format standard: XXXX XXXX XXXX XXXX
+      for (let i = 0; i < value.length; i += 4) {
+        parts.push(value.substring(i, i + 4));
+      }
     }
     
-    // Mise à jour du champ et détection automatique du type de carte
     input.value = parts.join(' ');
     
-    // Détection automatique du type de carte basé sur les 4-6 premiers chiffres
+    // Détection automatique du type de carte
     const detectedType = this.detectCardType(value);
     if (detectedType && !this.paiementForm.get('typeCarte')?.value) {
       this.selectCardType(detectedType);
+    }
+    
+    // Validation du numéro de carte
+    if (value.length >= 13) {
+      const isValid = this.validateCardNumber(value, this.paiementForm.get('typeCarte')?.value);
+      if (!isValid) {
+        this.paiementForm.get('numeroCarte')?.setErrors({ 'invalidCard': true });
+      } else {
+        this.paiementForm.get('numeroCarte')?.setErrors(null);
+      }
     }
   }
 
@@ -245,5 +299,37 @@ export class PaiementCarteComponent implements OnInit {
   // Retour à la page précédente
   goBack(): void {
     window.history.back();
+  }
+
+  // Méthodes utilitaires pour les détails de réservation
+  getDureeLocation(): number {
+    if (!this.reservation?.dateDepart || !this.reservation?.dateRetour) {
+      return 0;
+    }
+    const debut = new Date(this.reservation.dateDepart);
+    const fin = new Date(this.reservation.dateRetour);
+    const diffTime = Math.abs(fin.getTime() - debut.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  getPrixOptions(): number {
+    if (!this.reservation?.options) {
+      return 0;
+    }
+    return this.reservation.options.reduce((total, option) => total + (option.price || 0), 0);
+  }
+
+  getFraisService(): number {
+    if (!this.reservation?.prixMoyenParJourTTC) {
+      return 0;
+    }
+    return this.montant - this.reservation.prixMoyenParJourTTC;
+  }
+
+  getNomVehicule(): string {
+    if (!this.reservation?.modele) {
+      return '';
+    }
+    return `${this.reservation.modele.marque?.nom || ''} ${this.reservation.modele.nom || ''}`.trim();
   }
 }

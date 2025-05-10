@@ -24,6 +24,17 @@ export class AppMenu {
                 label: 'Home',
                 items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
             },
+        //gestion RH
+            {
+                label: 'Gestion RH',
+                items: [
+                        { label: 'Salariés', icon: 'pi pi-fw pi-user', routerLink: ['/dashboard/parametrageapplications/salaries/list-salaries'] }
+                ]
+            },   
+
+
+
+
             {
                 label: 'UI Components',
                 items: [
@@ -211,12 +222,37 @@ export class AppMenu {
                 ]
             },
             {
-                label: 'Get Raramétrage Site Web',
+                label: 'Paramétrage Site Web',
                 items: [
                     {
                         label: 'Définir les saisons',
                         icon: 'pi pi-fw pi-book',
                         routerLink: ['/dashboard/parametragesiteweb/saisons']
+                    },
+                    {
+                        label: 'définir les tarifs',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/parametragesiteweb/tarifs']
+                    },
+                    {
+                        label: 'les choisir les modèles',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/parametragesiteweb/modeles']
+                    },
+                    {
+                        label: 'carte grise',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/carte-grise']
+                    }
+                ]
+            },
+            {
+                label: 'Paramétrage Applications',
+                items: [
+                    {
+                        label: 'Gestion des agences',
+                        icon: 'pi pi-fw pi-book',
+                        routerLink: ['/dashboard/parametrageapplications/agences']
                     },
                     {
                         label: 'définir les tarifs',

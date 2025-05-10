@@ -11,5 +11,8 @@ module.exports = {
             '2xl': '1920px'
         }
     },
-    plugins: []
+    plugins: [
+        require('@tailwindcss/forms'),
+        require('@tailwindcss/typography')
+    ]
 };

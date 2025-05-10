@@ -24,5 +24,5 @@ export interface Modele {
     isNew?: boolean;
     prix?: number;
     prixJours?: number;
-    detail?:boolean;
+    detail?:boolean; //pour savoir si le modele est visible dans la liste des modeles
 } 

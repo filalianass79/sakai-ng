@@ -1,189 +1,315 @@
 <div class="payment-container">
-    <div class="payment-header">
-        <h1>Paiement sécurisé</h1>
-        <div class="secure-badge">
-            <i class="pi pi-lock"></i>
-            <span>SSL Sécurisé</span>
-        </div>
-    </div>
-    
-    <!-- Card Preview with Dynamic Styling -->
-    <div class="card-preview" [ngClass]="paiementForm.get('typeCarte')?.value || 'default'">
-        <div class="card-chip"></div>
-        <div class="card-number">
-            {{ paiementForm.get('numeroCarte')?.value ? formatPreviewCardNumber(paiementForm.get('numeroCarte')?.value) : 'XXXX XXXX XXXX XXXX' }}
-        </div>
-        <div class="card-details">
-            <div class="card-holder">
-                <div class="details-label">Titulaire</div>
-                <div class="details-value">{{ paiementForm.get('nomTitulaire')?.value ? paiementForm.get('nomTitulaire')?.value.toUpperCase() : 'NOM DU TITULAIRE' }}</div>
-            </div>
-            <div class="card-expiry">
-                <div class="details-label">Expire</div>
-                <div class="details-value">
-                    {{ paiementForm.get('moisExpiration')?.value || 'MM' }}/{{ paiementForm.get('anneeExpiration')?.value ? (paiementForm.get('anneeExpiration')?.value | slice:-2) : 'AA' }}
-                </div>
-            </div>
-        </div>
-        <div class="card-brand" *ngIf="paiementForm.get('typeCarte')?.value">
-            <i [class]="getCardIcon(paiementForm.get('typeCarte')?.value)"></i>
-        </div>
-    </div>
-
-    <!-- Amount Summary -->
-    <div class="amount-summary">
-        <div class="amount-label">Montant à payer</div>
-        <div class="amount-value">{{montant | number:'1.2-2'}} €</div>
-    </div>
-    
-    <!-- Payment Form with improved UX -->
-    <form [formGroup]="paiementForm" class="payment-form">
-        <!-- Card Types with better selection feedback -->
-        <div class="form-group card-types">
-            <label class="form-label">Type de carte</label>
-            <div class="type-options">
-                <div *ngFor="let type of typesCartes" 
-                     class="type-option" 
-                     [class.selected]="paiementForm.get('typeCarte')?.value === type.value"
-                     (click)="selectCardType(type.value)">
-                    <i [class]="getCardIcon(type.value)"></i>
-                    <span>{{type.label}}</span>
-                </div>
-            </div>
-            <div class="error-message" *ngIf="paiementForm.get('typeCarte')?.errors?.['required'] && paiementForm.get('typeCarte')?.touched">
-                Veuillez sélectionner un type de carte
-            </div>
-        </div>
-        
-        <!-- Card Number with auto-formatting -->
-        <div class="form-group">
-            <label class="form-label" for="numeroCarte">Numéro de carte</label>
-            <div class="input-container" [class.has-error]="paiementForm.get('numeroCarte')?.invalid && paiementForm.get('numeroCarte')?.touched">
-                <i class="pi pi-credit-card"></i>
-                <input id="numeroCarte" 
-                       type="text" 
-                       formControlName="numeroCarte"
-                       placeholder="1234 5678 9012 3456"
-                       (input)="formatCardNumber($event)"
-                       maxlength="19"
-                       autocomplete="cc-number"
-                       (focus)="focusField('numeroCarte')"
-                />
-                <i *ngIf="paiementForm.get('numeroCarte')?.value" 
-                   class="pi pi-times-circle" 
-                   style="cursor: pointer; margin-left: 0.5rem;" 
-                   (click)="clearField('numeroCarte')"></i>
-            </div>
-            <div class="error-message" *ngIf="paiementForm.get('numeroCarte')?.errors?.['required'] && paiementForm.get('numeroCarte')?.touched">
-                Le numéro de carte est requis
-            </div>
-            <div class="error-message" *ngIf="paiementForm.get('numeroCarte')?.errors?.['pattern'] && paiementForm.get('numeroCarte')?.touched">
-                Numéro de carte invalide
-            </div>
-        </div>
-        
-        <!-- Card Holder with improved feedback -->
-        <div class="form-group">
-            <label class="form-label" for="nomTitulaire">Nom du titulaire</label>
-            <div class="input-container" [class.has-error]="paiementForm.get('nomTitulaire')?.invalid && paiementForm.get('nomTitulaire')?.touched">
-                <i class="pi pi-user"></i>
-                <input id="nomTitulaire" 
-                       type="text" 
-                       formControlName="nomTitulaire"
-                       placeholder="Nom tel qu'il apparaît sur la carte"
-                       autocomplete="cc-name"
-                       (focus)="focusField('nomTitulaire')"
-                />
-                <i *ngIf="paiementForm.get('nomTitulaire')?.value" 
-                   class="pi pi-times-circle" 
-                   style="cursor: pointer; margin-left: 0.5rem;" 
-                   (click)="clearField('nomTitulaire')"></i>
-            </div>
-            <div class="error-message" *ngIf="paiementForm.get('nomTitulaire')?.errors?.['required'] && paiementForm.get('nomTitulaire')?.touched">
-                Le nom du titulaire est requis
-            </div>
-        </div>
-        
-        <!-- Expiration and CVV in same row -->
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Date d'expiration</label>
-                <div class="expiry-container">
-                    <div class="expiry-select" [class.has-error]="paiementForm.get('moisExpiration')?.invalid && paiementForm.get('moisExpiration')?.touched">
-                        <select formControlName="moisExpiration" autocomplete="cc-exp-month">
-                            <option value="" disabled selected>MM</option>
-                            <option *ngFor="let mois of moisExpiration" [value]="mois.value">{{mois.label}}</option>
-                        </select>
-                    </div>
-                    <div class="expiry-separator">/</div>
-                    <div class="expiry-select" [class.has-error]="paiementForm.get('anneeExpiration')?.invalid && paiementForm.get('anneeExpiration')?.touched">
-                        <select formControlName="anneeExpiration" autocomplete="cc-exp-year">
-                            <option value="" disabled selected>AAAA</option>
-                            <option *ngFor="let annee of anneesExpiration" [value]="annee.value">{{annee.label}}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="error-message" *ngIf="(paiementForm.get('moisExpiration')?.errors?.['required'] || paiementForm.get('anneeExpiration')?.errors?.['required']) && 
-                                 (paiementForm.get('moisExpiration')?.touched || paiementForm.get('anneeExpiration')?.touched)">
-                    La date d'expiration est requise
+    <div class="payment-content">
+        <div class="payment-left">
+            <div class="payment-header">
+                <h1>Paiement sécurisé</h1>
+                <div class="secure-badge">
+                    <i class="pi pi-lock"></i>
+                    <span>SSL Sécurisé</span>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label class="form-label" for="cvv">Code de sécurité (CVV)</label>
-                <div class="input-container cvv-container" [class.has-error]="paiementForm.get('cvv')?.invalid && paiementForm.get('cvv')?.touched">
-                    <i class="pi pi-shield"></i>
-                    <input id="cvv" 
-                           type="password" 
-                           formControlName="cvv"
-                           placeholder="XXX"
-                           maxlength="4"
-                           autocomplete="cc-csc"
-                           (focus)="focusField('cvv')"
-                    />
-                    <i *ngIf="paiementForm.get('cvv')?.value" 
-                       class="pi pi-times-circle" 
-                       style="cursor: pointer; margin-left: 0.5rem;" 
-                       (click)="clearField('cvv')"></i>
-                    <div class="cvv-tooltip">
-                        <i class="pi pi-question-circle"></i>
-                        <span class="tooltip-text">Le code à 3 chiffres au dos de votre carte (4 chiffres pour American Express)</span>
+            <!-- Card Preview with Dynamic Styling -->
+            <div class="card-preview" [ngClass]="paiementForm.get('typeCarte')?.value || 'default'">
+                <div class="card-chip"></div>
+                <div class="card-number">
+                    {{ paiementForm.get('numeroCarte')?.value ? formatPreviewCardNumber(paiementForm.get('numeroCarte')?.value) : 'XXXX XXXX XXXX XXXX' }}
+                </div>
+                <div class="card-details">
+                    <div class="card-holder">
+                        <div class="details-label">Titulaire</div>
+                        <div class="details-value">{{ paiementForm.get('nomTitulaire')?.value ? paiementForm.get('nomTitulaire')?.value.toUpperCase() : 'NOM DU TITULAIRE' }}</div>
+                    </div>
+                    <div class="card-expiry">
+                        <div class="details-label">Expire</div>
+                        <div class="details-value">
+                            {{ paiementForm.get('moisExpiration')?.value || 'MM' }}/{{ paiementForm.get('anneeExpiration')?.value ? (paiementForm.get('anneeExpiration')?.value | slice:-2) : 'AA' }}
+                        </div>
                     </div>
                 </div>
-                <div class="error-message" *ngIf="paiementForm.get('cvv')?.errors?.['required'] && paiementForm.get('cvv')?.touched">
-                    Le code de sécurité est requis
-                </div>
-                <div class="error-message" *ngIf="paiementForm.get('cvv')?.errors?.['pattern'] && paiementForm.get('cvv')?.touched">
-                    Code de sécurité invalide
+                <div class="card-brand" *ngIf="paiementForm.get('typeCarte')?.value">
+                    <i [class]="getCardIcon(paiementForm.get('typeCarte')?.value)"></i>
                 </div>
             </div>
-        </div>
-        
-        <!-- Enhanced Security Info -->
-        <div class="security-info">
-            <i class="pi pi-shield"></i>
-            <div>
-                <h4>Paiement 100% sécurisé</h4>
-                <p>Vos informations de paiement sont cryptées et protégées par notre système de sécurité SSL. Aucune information n'est conservée sur nos serveurs.</p>
+
+            <!-- Amount Summary -->
+            <div class="amount-summary">
+                <div class="amount-label">Montant à payer</div>
+                <div class="amount-value">{{montant | number:'1.2-2'}} €</div>
             </div>
+            
+            <!-- Payment Form with improved UX -->
+            <form [formGroup]="paiementForm" class="payment-form">
+                <!-- Card Types with better selection feedback -->
+                <div class="form-group card-types">
+                    <label class="form-label">Type de carte</label>
+                    <div class="type-options">
+                        <div *ngFor="let type of typesCartes" 
+                             class="type-option" 
+                             [class.selected]="paiementForm.get('typeCarte')?.value === type.value"
+                             (click)="selectCardType(type.value)">
+                            <i [class]="getCardIcon(type.value)"></i>
+                            <span>{{type.label}}</span>
+                        </div>
+                    </div>
+                    <div class="error-message" *ngIf="paiementForm.get('typeCarte')?.errors?.['required'] && paiementForm.get('typeCarte')?.touched">
+                        Veuillez sélectionner un type de carte
+                    </div>
+                </div>
+                
+                <!-- Card Number with auto-formatting -->
+                <div class="form-group">
+                    <label class="form-label" for="numeroCarte">Numéro de carte</label>
+                    <div class="input-container" [class.has-error]="paiementForm.get('numeroCarte')?.invalid && paiementForm.get('numeroCarte')?.touched">
+                        <i class="pi pi-credit-card"></i>
+                        <input id="numeroCarte" 
+                               type="text" 
+                               formControlName="numeroCarte"
+                               placeholder="1234 5678 9012 3456"
+                               (input)="formatCardNumber($event)"
+                               maxlength="19"
+                               autocomplete="cc-number"
+                               (focus)="focusField('numeroCarte')"
+                        />
+                        <i *ngIf="paiementForm.get('numeroCarte')?.value" 
+                           class="pi pi-times-circle" 
+                           style="cursor: pointer; margin-left: 0.5rem;" 
+                           (click)="clearField('numeroCarte')"></i>
+                    </div>
+                    <div class="error-message" *ngIf="paiementForm.get('numeroCarte')?.errors?.['required'] && paiementForm.get('numeroCarte')?.touched">
+                        Le numéro de carte est requis
+                    </div>
+                    <div class="error-message" *ngIf="paiementForm.get('numeroCarte')?.errors?.['pattern'] && paiementForm.get('numeroCarte')?.touched">
+                        Numéro de carte invalide
+                    </div>
+                    <div class="error-message" *ngIf="paiementForm.get('numeroCarte')?.errors?.['invalidCard'] && paiementForm.get('numeroCarte')?.touched">
+                        Numéro de carte invalide pour le type sélectionné
+                    </div>
+                </div>
+                
+                <!-- Card Holder with improved feedback -->
+                <div class="form-group">
+                    <label class="form-label" for="nomTitulaire">Nom du titulaire</label>
+                    <div class="input-container" [class.has-error]="paiementForm.get('nomTitulaire')?.invalid && paiementForm.get('nomTitulaire')?.touched">
+                        <i class="pi pi-user"></i>
+                        <input id="nomTitulaire" 
+                               type="text" 
+                               formControlName="nomTitulaire"
+                               placeholder="Nom tel qu'il apparaît sur la carte"
+                               autocomplete="cc-name"
+                               (focus)="focusField('nomTitulaire')"
+                        />
+                        <i *ngIf="paiementForm.get('nomTitulaire')?.value" 
+                           class="pi pi-times-circle" 
+                           style="cursor: pointer; margin-left: 0.5rem;" 
+                           (click)="clearField('nomTitulaire')"></i>
+                    </div>
+                    <div class="error-message" *ngIf="paiementForm.get('nomTitulaire')?.errors?.['required'] && paiementForm.get('nomTitulaire')?.touched">
+                        Le nom du titulaire est requis
+                    </div>
+                </div>
+                
+                <!-- Expiration and CVV in same row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Date d'expiration</label>
+                        <div class="expiry-container">
+                            <div class="expiry-select" [class.has-error]="paiementForm.get('moisExpiration')?.invalid && paiementForm.get('moisExpiration')?.touched">
+                                <select formControlName="moisExpiration" autocomplete="cc-exp-month">
+                                    <option value="" disabled selected>MM</option>
+                                    <option *ngFor="let mois of moisExpiration" [value]="mois.value">{{mois.label}}</option>
+                                </select>
+                            </div>
+                            <div class="expiry-separator">/</div>
+                            <div class="expiry-select" [class.has-error]="paiementForm.get('anneeExpiration')?.invalid && paiementForm.get('anneeExpiration')?.touched">
+                                <select formControlName="anneeExpiration" autocomplete="cc-exp-year">
+                                    <option value="" disabled selected>AAAA</option>
+                                    <option *ngFor="let annee of anneesExpiration" [value]="annee.value">{{annee.label}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="error-message" *ngIf="(paiementForm.get('moisExpiration')?.errors?.['required'] || paiementForm.get('anneeExpiration')?.errors?.['required']) && 
+                                         (paiementForm.get('moisExpiration')?.touched || paiementForm.get('anneeExpiration')?.touched)">
+                            La date d'expiration est requise
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="cvv">Code de sécurité (CVV)</label>
+                        <div class="input-container cvv-container" [class.has-error]="paiementForm.get('cvv')?.invalid && paiementForm.get('cvv')?.touched">
+                            <i class="pi pi-shield"></i>
+                            <input id="cvv" 
+                                   type="password" 
+                                   formControlName="cvv"
+                                   placeholder="XXX"
+                                   maxlength="4"
+                                   autocomplete="cc-csc"
+                                   (focus)="focusField('cvv')"
+                            />
+                            <i *ngIf="paiementForm.get('cvv')?.value" 
+                               class="pi pi-times-circle" 
+                               style="cursor: pointer; margin-left: 0.5rem;" 
+                               (click)="clearField('cvv')"></i>
+                            <div class="cvv-tooltip">
+                                <i class="pi pi-question-circle"></i>
+                                <span class="tooltip-text">Le code à 3 chiffres au dos de votre carte (4 chiffres pour American Express)</span>
+                            </div>
+                        </div>
+                        <div class="error-message" *ngIf="paiementForm.get('cvv')?.errors?.['required'] && paiementForm.get('cvv')?.touched">
+                            Le code de sécurité est requis
+                        </div>
+                        <div class="error-message" *ngIf="paiementForm.get('cvv')?.errors?.['pattern'] && paiementForm.get('cvv')?.touched">
+                            Code de sécurité invalide
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Security Info -->
+                <div class="security-info">
+                    <i class="pi pi-shield"></i>
+                    <div>
+                        <h4>Paiement 100% sécurisé</h4>
+                        <p>Vos informations de paiement sont cryptées et protégées par notre système de sécurité SSL. Aucune information n'est conservée sur nos serveurs.</p>
+                    </div>
+                </div>
+                
+                <!-- Form Actions with better feedback -->
+                <div class="form-actions">
+                    <button type="button" class="pay-button" (click)="goBack()">
+                        <i class="pi pi-arrow-left"></i>
+                        <span>Retour</span>
+                    </button>
+                    <button type="button" 
+                            (click)="onSubmit()" 
+                            [disabled]="!paiementForm.valid || isSubmitting" 
+                            class="pay-button">
+                        <span *ngIf="!isSubmitting">Payer {{montant | number:'1.2-2'}} €</span>
+                        <span *ngIf="isSubmitting">Traitement en cours...</span>
+                        <i class="pi" [ngClass]="isSubmitting ? 'pi-spin pi-spinner' : 'pi-chevron-right'"></i>
+                    </button>
+                </div>
+            </form>
         </div>
-        
-        <!-- Form Actions with better feedback -->
-        <div class="form-actions">
-            <button type="button" class="pay-button" (click)="goBack()" style="background: #e9ecef; color: #333;">
-                <i class="pi pi-arrow-left"></i>
-                <span>Retour</span>
-            </button>
-            <button type="button" 
-                    (click)="onSubmit()" 
-                    [disabled]="!paiementForm.valid || isSubmitting" 
-                    class="pay-button">
-                <span *ngIf="!isSubmitting">Payer {{montant | number:'1.2-2'}} €</span>
-                <span *ngIf="isSubmitting">Traitement en cours...</span>
-                <i class="pi" [ngClass]="isSubmitting ? 'pi-spin pi-spinner' : 'pi-chevron-right'"></i>
-            </button>
+
+        <!-- Détails de la réservation -->
+        <div class="reservation-details">
+            <p-card header="Détails de votre réservation">
+                <div class="reservation-content">
+                    <!-- Informations de location -->
+                    <div class="reservation-section">
+                        <h3 class="section-title">
+                            <i class="pi pi-calendar"></i>
+                            Informations de location
+                        </h3>
+                        <div class="reservation-item">
+                            <div class="item-details">
+                                <span class="item-label">Période de location</span>
+                                <span class="item-value">{{reservation?.dateDepart | date:'dd/MM/yyyy'}} - {{reservation?.dateRetour | date:'dd/MM/yyyy'}}</span>
+                                <span class="item-subtitle">Durée: {{getDureeLocation()}} jour{{getDureeLocation() > 1 ? 's' : ''}}</span>
+                            </div>
+                        </div>
+                        <div class="reservation-item">
+                            <div class="item-details">
+                                <span class="item-label">Lieu de départ</span>
+                                <span class="item-value">{{reservation?.agenceDepart || 'Non spécifié'}}</span>
+                            </div>
+                        </div>
+                        <div class="reservation-item">
+                            <div class="item-details">
+                                <span class="item-label">Lieu de retour</span>
+                                <span class="item-value">{{reservation?.agenceRetour || 'Non spécifié'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations du véhicule -->
+                    <div class="reservation-section">
+                        <h3 class="section-title">
+                            <i class="pi pi-car"></i>
+                            Informations du véhicule
+                        </h3>
+                        <div class="reservation-item">
+                            <div class="item-details">
+                                <span class="item-label">Véhicule</span>
+                                <span class="item-value">{{getNomVehicule()}}</span>
+                            </div>
+                        </div>
+                        <div class="vehicle-features">
+                            <div class="feature-item" *ngIf="reservation?.modele?.typeCarburant">
+                                <i class="pi pi-gas-pump"></i>
+                                <span>{{reservation?.modele?.typeCarburant}}</span>
+                            </div>
+                            <div class="feature-item" *ngIf="reservation?.modele?.typeTransmission">
+                                <i class="pi pi-cog"></i>
+                                <span>{{reservation?.modele?.typeTransmission}}</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="pi pi-users"></i>
+                                <span>{{reservation?.modele?.nbrePlaces || 0}} places</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="pi pi-briefcase"></i>
+                                <span>{{reservation?.modele?.nbreSacs || 0}} sac{{(reservation?.modele?.nbreSacs || 0) > 1 ? 's' : ''}}</span>
+                            </div>
+                            <div class="feature-item" *ngIf="reservation?.modele?.typeTransmission">
+                                <i class="pi pi-snowflake"></i>
+                                <span>Climatisation</span>
+                            </div>
+                            <div class="feature-item" *ngIf="reservation?.modele?.typeCarburant">
+                                <i class="pi pi-map-marker"></i>
+                                <span>GPS</span>
+                            </div>
+                            <div class="feature-item" *ngIf="reservation?.modele?.typeTransmission">
+                                <i class="pi pi-bluetooth"></i>
+                                <span>Bluetooth</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Options sélectionnées -->
+                    <div class="reservation-section" *ngIf="reservation?.options">
+                        <h3 class="section-title">
+                            <i class="pi pi-list"></i>
+                            Options sélectionnées
+                        </h3>
+                        <div class="options-list">
+                            <div class="option-item" *ngFor="let option of reservation?.options">
+                                <i class="pi pi-check"></i>
+                                <span>{{option.title || option}}</span>
+                                <span class="option-price" *ngIf="option.price">+{{option.price | number:'1.2-2'}} €</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Résumé des coûts -->
+                    <div class="reservation-section">
+                        <h3 class="section-title">
+                            <i class="pi pi-euro"></i>
+                            Résumé des coûts
+                        </h3>
+                        <div class="cost-summary">
+                            <div class="summary-item">
+                                <span>Prix de base ({{getDureeLocation()}} jour{{getDureeLocation() > 1 ? 's' : ''}})</span>
+                                <span>{{reservation?.prixMoyenParJourTTC | number:'1.2-2'}} €</span>
+                            </div>
+                            <div class="summary-item" *ngIf="getPrixOptions() > 0">
+                                <span>Options</span>
+                                <span>+{{getPrixOptions() | number:'1.2-2'}} €</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Frais de service</span>
+                                <span>+{{getFraisService() | number:'1.2-2'}} €</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>Total à payer</span>
+                                <span>{{montant | number:'1.2-2'}} €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p-card>
         </div>
-    </form>
+    </div>
 </div>
 
 <p-toast position="top-center"></p-toast>

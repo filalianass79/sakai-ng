@@ -97,19 +97,52 @@ import { InfosReservationComponent } from './infos-reservation/infos-reservation
                             <div class="card-icon">
                                 <i class="pi pi-calendar"></i>
                             </div>
-                            <h2 class="text-yellow-500">Réserver un Véhicule</h2>
+                            <h2 class="text-yellow-500">Espace entreprise LLD</h2>
                         </div>
                         
-                        <div class="card-body">
+                       
+                              
+                           
+                            <div class="card-body">
+                            <p class="card-description">
+                                Découvrez notre flotte de 1200 véhicules de toutes catégories.
+                            </p>
                             <div class="card-image">
                                 <img src="/assets/images/image2.png" alt="Notre flotte de véhicules" class="car-image" />
                             </div>
-                            <app-infos-reservation
-                                [minDate]="minDate"
-                                [reservation]="reservation"
-                                (chercherVehicule)="onChercherVehicule($event)">
-                            </app-infos-reservation>
+                           
+                            <div class="features-grid">
+                                <div class="feature-item">
+                                    <i class="pi pi-check"></i>
+                                    <span>Kilométrage illimité</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="pi pi-check"></i>
+                                    <span>2ème conducteur offert</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="pi pi-check"></i>
+                                    <span>Sans caution</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="pi pi-check"></i>
+                                    <span>Option retour ville différente</span>
+                                </div>
+                            </div>
+
+                            <button pButton pRipple 
+                                label="Location longue durée" 
+                                class="p-button explore-button" 
+                                  (click)="navigateTo('/location-longue-duree')">
+                            </button>
                         </div>
+                    
+
+
+
+
+
+
                     </div>
                 </div>
             </div>

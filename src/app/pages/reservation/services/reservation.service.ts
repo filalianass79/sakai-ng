@@ -25,6 +25,13 @@ export class ReservationService {
   getReservationById(id: number): Observable<Reservation> {
     return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
   }
+  getReservationsByEmail(email: string): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(`${this.apiUrl}/by-email/${email}`);
+  }
+  getReservationsByNumeroReservation(numeroReservation: string): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(`${this.apiUrl}/by-numero-reservation/${numeroReservation}`);
+  }
+  
 
   /**
    * Crée une nouvelle réservation

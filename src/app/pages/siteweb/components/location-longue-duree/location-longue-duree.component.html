@@ -1,0 +1,220 @@
+<div class="landing-wrapper overflow-hidden">
+    <topbar-widget class="topbar-wrapper" />
+<!-- Section Hero -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1>Location Longue Durée pour Entreprises</h1>
+    <p class="subtitle">Optimisez la gestion de votre flotte automobile avec nos solutions de location longue durée adaptées aux entreprises</p>
+    <div class="hero-buttons">
+      <p-button label="Demander un devis" icon="pi pi-calculator" (click)="scrollToForm()"></p-button>
+      <p-button label="Découvrir nos offres" icon="pi pi-info-circle" styleClass="p-button-outlined" (click)="scrollToAvantages()"></p-button>
+    </div>
+  </div>
+</section>
+
+<!-- Section Avantages -->
+<section id="avantages" class="avantages-section">
+  <div class="section-header">
+    <h2>Les avantages de la location longue durée</h2>
+    <p>Découvrez pourquoi la location longue durée est la solution idéale pour votre entreprise</p>
+  </div>
+  
+  <div class="avantages-grid">
+    <div class="avantage-card" *ngFor="let avantage of avantages">
+      <i [class]="avantage.icon"></i>
+      <h3>{{ avantage.titre }}</h3>
+      <p>{{ avantage.description }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Section Témoignages -->
+<section class="temoignages-section">
+  <div class="section-header">
+    <h2>Ce que nos clients disent</h2>
+    <p>Découvrez les retours d'expérience de nos clients entreprises</p>
+  </div>
+  
+  <div class="temoignages-grid">
+    <p-card *ngFor="let temoignage of temoignages" class="temoignage-card">
+      <ng-template pTemplate="header">
+        <img [src]="temoignage.image" [alt]="temoignage.nom" class="temoignage-image">
+      </ng-template>
+      <ng-template pTemplate="content">
+        <div class="temoignage-content">
+          <p class="temoignage-text">{{ temoignage.commentaire }}</p>
+          <div class="temoignage-author">
+            <h4>{{ temoignage.nom }}</h4>
+            <p>{{ temoignage.role }}</p>
+            <p class="entreprise">{{ temoignage.entreprise }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</section>
+
+<!-- Section FAQ -->
+<section class="faq-section">
+  <div class="section-header">
+    <h2>Questions fréquentes</h2>
+    <p>Tout ce que vous devez savoir sur la location longue durée</p>
+  </div>
+  
+  <div class="faq-container">
+    <p-card *ngFor="let faq of faqs" class="faq-card">
+      <ng-template pTemplate="header">
+        <h3>{{ faq.question }}</h3>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p>{{ faq.reponse }}</p>
+      </ng-template>
+    </p-card>
+  </div>
+</section>
+
+<!-- Section Formulaire de demande -->
+<section id="formulaire" class="formulaire-section">
+  <div class="section-header">
+    <h2>Demandez un devis personnalisé</h2>
+    <p>Remplissez le formulaire ci-dessous pour recevoir une proposition adaptée à vos besoins</p>
+  </div>
+  
+  <div class="form-container">
+    <form [formGroup]="demandeForm" (ngSubmit)="onSubmit()" class="demande-form">
+      <!-- Informations personnelles -->
+      <div class="form-section">
+        <h3>Informations personnelles</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="nom">Nom *</label>
+            <input pInputText id="nom" formControlName="nom" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('nom')}">
+            <small class="p-error" *ngIf="isFieldInvalid('nom')">{{ getErrorMessage('nom') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="prenom">Prénom *</label>
+            <input pInputText id="prenom" formControlName="prenom" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('prenom')}">
+            <small class="p-error" *ngIf="isFieldInvalid('prenom')">{{ getErrorMessage('prenom') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="email">Email *</label>
+            <input pInputText id="email" type="email" formControlName="email" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('email')}">
+            <small class="p-error" *ngIf="isFieldInvalid('email')">{{ getErrorMessage('email') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="telephone">Téléphone *</label>
+            <input pInputText id="telephone" formControlName="telephone" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('telephone')}">
+            <small class="p-error" *ngIf="isFieldInvalid('telephone')">{{ getErrorMessage('telephone') }}</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Informations entreprise -->
+      <div class="form-section">
+        <h3>Informations entreprise</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="entreprise">Nom de l'entreprise *</label>
+            <input pInputText id="entreprise" formControlName="entreprise" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('entreprise')}">
+            <small class="p-error" *ngIf="isFieldInvalid('entreprise')">{{ getErrorMessage('entreprise') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="typeEntreprise">Type d'entreprise *</label>
+            <p-select id="typeEntreprise" [options]="typesEntreprise" formControlName="typeEntreprise" 
+                        [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('typeEntreprise')}"></p-select>
+            <small class="p-error" *ngIf="isFieldInvalid('typeEntreprise')">{{ getErrorMessage('typeEntreprise') }}</small>
+          </div>
+          
+          <div class="form-field full-width">
+            <label for="adresse">Adresse *</label>
+            <input pInputText id="adresse" formControlName="adresse" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('adresse')}">
+            <small class="p-error" *ngIf="isFieldInvalid('adresse')">{{ getErrorMessage('adresse') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="codePostal">Code postal *</label>
+            <input pInputText id="codePostal" formControlName="codePostal" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codePostal')}">
+            <small class="p-error" *ngIf="isFieldInvalid('codePostal')">{{ getErrorMessage('codePostal') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="ville">Ville *</label>
+            <input pInputText id="ville" formControlName="ville" [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('ville')}">
+            <small class="p-error" *ngIf="isFieldInvalid('ville')">{{ getErrorMessage('ville') }}</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Besoins de location -->
+      <div class="form-section">
+        <h3>Vos besoins de location</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="nombreVehicules">Nombre de véhicules souhaité *</label>
+            <p-select id="nombreVehicules" [options]="nombreVehicules" formControlName="nombreVehicules" 
+                        [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('nombreVehicules')}"></p-select>
+            <small class="p-error" *ngIf="isFieldInvalid('nombreVehicules')">{{ getErrorMessage('nombreVehicules') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="dureeLocation">Durée de location souhaitée *</label>
+            <p-select id="dureeLocation" [options]="dureesLocation" formControlName="dureeLocation" 
+                        [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('dureeLocation')}"></p-select>
+            <small class="p-error" *ngIf="isFieldInvalid('dureeLocation')">{{ getErrorMessage('dureeLocation') }}</small>
+          </div>
+          
+          <div class="form-field">
+            <label for="dateDebut">Date de début souhaitée *</label>
+            <p-datePicker id="dateDebut" formControlName="dateDebut" [showIcon]="true" dateFormat="dd/mm/yy" 
+                        [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('dateDebut')}"></p-datePicker>
+            <small class="p-error" *ngIf="isFieldInvalid('dateDebut')">{{ getErrorMessage('dateDebut') }}</small>
+          </div>
+          
+          <div class="form-field full-width">
+            <label for="categoriesVehicules">Catégories de véhicules recherchées *</label>
+            <p-select id="categoriesVehicules" [options]="categoriesVehicules" formControlName="categoriesVehicules" 
+                        [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('categoriesVehicules')}"></p-select>
+            <small class="p-error" *ngIf="isFieldInvalid('categoriesVehicules')">{{ getErrorMessage('categoriesVehicules') }}</small>
+          </div>
+          
+          <div class="form-field full-width">
+            <label for="commentaire">Commentaires ou besoins spécifiques</label>
+            <textarea pInputTextarea id="commentaire" formControlName="commentaire" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Consentements -->
+      <div class="form-section">
+        <div class="consentements">
+          <div class="checkbox-field">
+            <p-checkbox formControlName="accepteContact" [binary]="true" inputId="accepteContact"></p-checkbox>
+            <label for="accepteContact">J'accepte d'être contacté par téléphone pour discuter de ma demande</label>
+          </div>
+          
+          <div class="checkbox-field">
+            <p-checkbox formControlName="accepteCGV" [binary]="true" inputId="accepteCGV" 
+                        [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('accepteCGV')}"></p-checkbox>
+            <label for="accepteCGV">J'accepte les conditions générales de vente *</label>
+            <small class="p-error" *ngIf="isFieldInvalid('accepteCGV')">{{ getErrorMessage('accepteCGV') }}</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Boutons d'action -->
+      <div class="form-actions">
+        <p-button type="submit" label="Envoyer ma demande" icon="pi pi-send" 
+                  [loading]="isSubmitting" [disabled]="isSubmitting || demandeForm.invalid"></p-button>
+        <p-button type="button" label="Réinitialiser" icon="pi pi-refresh" styleClass="p-button-outlined" 
+                  (click)="resetForm()" [disabled]="isSubmitting"></p-button>
+      </div>
+    </form>
+  </div>
+</section>
+</div>
+<!-- Message de confirmation -->
+<p-toast></p-toast> 

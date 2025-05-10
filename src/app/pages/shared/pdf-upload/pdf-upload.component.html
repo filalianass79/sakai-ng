@@ -1,0 +1,88 @@
+<div class="pdf-upload-container" [ngClass]="styleClass">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+  
+  <!-- Aperçu du PDF -->
+  <div *ngIf="pdfUrl && showPreview" class="pdf-preview" [style]="{'width': previewWidth, 'height': previewHeight}">
+    <div class="pdf-controls" *ngIf="isLoaded">
+      <button pButton 
+              type="button" 
+              icon="pi pi-chevron-left" 
+              class="p-button-text"
+              [disabled]="page === 1"
+              (click)="page = page - 1">
+      </button>
+      <span>{{page}} / {{totalPages}}</span>
+      <button pButton 
+              type="button" 
+              icon="pi pi-chevron-right" 
+              class="p-button-text"
+              [disabled]="page === totalPages"
+              (click)="page = page + 1">
+      </button>
+    </div>
+    <pdf-viewer 
+      [src]="pdfUrl"
+      [page]="page"
+      [render-text]="true"
+      [original-size]="false"
+      [show-all]="false"
+      [zoom]="1"
+      (after-load-complete)="onLoadComplete($event)"
+      style="display: block;"
+      [style.width]="'100%'"
+      [style.height]="'100%'">
+    </pdf-viewer>
+  </div>
+  
+  
+  <!-- Indicateur de chargement -->
+  <div *ngIf="loading" class="loading-spinner">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="4"></p-progressSpinner>
+  </div>
+  
+  <!-- Zone de glisser-déposer -->
+  <div class="drop-zone" 
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)"
+       [class.drag-over]="isDragging">
+    <div class="drop-zone-content">
+      <i class="pi pi-upload"></i>
+      <p>Glissez-déposez votre fichier PDF ici</p>
+      <p class="drop-zone-hint">ou</p>
+      <p-fileUpload 
+        #fileUpload 
+        mode="basic" 
+        name="files[]"  
+        accept="application/pdf"   
+        [auto]="true"
+        chooseLabel="Sélectionner un fichier"
+        icon="pi pi-plus"
+        [customUpload]="true"
+        [maxFileSize]="2000000"
+        invalidFileSizeMessageSummary="problème de taille"
+        invalidFileSizeMessageDetail="le fichier doit être < 2Mb"
+        (uploadHandler)="onUpload($event,fileUpload)">
+      </p-fileUpload>
+    </div>
+  </div>
+
+  <!-- Boutons d'action -->
+  <div class="action-buttons" *ngIf="pdfUrl">
+    <button 
+      pButton
+      type="button"
+      icon="pi pi-trash"
+      class="p-button-danger"
+      (click)="$event.stopPropagation(); clearSelection()"
+    ></button>
+    <button 
+      pButton
+      type="button"
+      icon="pi pi-download"
+      class="p-button-info"
+      (click)="$event.stopPropagation(); download()"
+    ></button>
+  </div>
+</div> 

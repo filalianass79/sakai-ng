@@ -68,6 +68,10 @@ import { SelectModule } from 'primeng/select';
         
         <!-- Right Side Actions -->
         <div class="actions-area">
+            <div class="topbar-right">
+            <button pButton icon="pi pi-calendar" label="Mes réservations" 
+                    class="p-button-text" (click)="navigateToReservations()"></button>
+            </div> 
             <!-- Language Selector -->
             <p-select [options]="languageOptions" [(ngModel)]="selectedLanguage" optionLabel="name" placeholder="Select a language" class="w-full md:w-56" (onChange)="onLanguageChange($event)">
                 <ng-template #selectedItem let-selectedOption>
@@ -555,4 +559,7 @@ export class TopbarWidget {
         // Recharger la page pour appliquer la nouvelle langue
         window.location.reload();
     }
+    navigateToReservations(): void {
+        this.router.navigate(['/gestion-reservations']);
+      }
 }

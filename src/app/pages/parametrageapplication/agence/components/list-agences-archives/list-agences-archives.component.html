@@ -1,0 +1,233 @@
+<p-toast position="top-center"></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="bg-surface-50 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20 min-h-screen">
+  <div class="card p-0 shadow">
+    <div class="bg-surface-0 dark:bg-surface-950 px-6 py-8 md:px-12 rounded-t">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+        <span class="text-3xl font-medium text-surface-900 dark:text-surface-0 mb-4 md:mb-0">
+          Agences archivées
+          <p-tag severity="danger" value="Archives" class="ml-2"></p-tag>
+        </span>
+        <div class="flex items-center">
+          <span class="p-input-icon-left mr-4">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText [(ngModel)]="globalFilter" (ngModelChange)="dt.filterGlobal($event, 'contains')" placeholder="Rechercher..."  class="p-inputtext-sm"/>
+
+          </span>
+          <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
+          <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+        </div>
+      </div>
+    </div>
+
+    <p-divider class="m-0"></p-divider>
+
+    <div class="bg-surface-0 dark:bg-surface-950 p-6">
+      <div class="flex flex-wrap gap-2 mb-6">
+        <p-button 
+          label="Retour aux agences" 
+          icon="pi pi-arrow-left" 
+          styleClass="p-button-sm p-button-outlined"
+          (onClick)="navigateToAgences()"
+        ></p-button>
+        <p-button 
+          severity="danger" 
+          label="Supprimer définitivement" 
+          icon="pi pi-trash" 
+          styleClass="p-button-sm"
+          [outlined]="true"
+          (onClick)="deleteSelectedagences()" 
+          [disabled]="!selectedagences || !selectedagences.length"
+        ></p-button>
+        
+        <div class="grow"></div>
+        
+        <p-splitButton 
+          label="Exporter" 
+          icon="pi pi-download" 
+          [model]="exportItems" 
+          styleClass="p-button-sm p-button-outlined"
+        ></p-splitButton>
+      </div>
+
+      <p-table 
+        #dt
+        [value]="agences" 
+        [lazy]="true"
+        [paginator]="true" 
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '60rem' }"
+        [(selection)]="selectedagences"
+        [rowHover]="true"
+        dataKey="id"
+        [loading]="loading"
+        [globalFilterFields]="['nom', 'ville', 'email', 'telephone']"
+        currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords} agences archivées"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-sm p-datatable-gridlines"
+        [reorderableColumns]="true"
+        [resizableColumns]="true"
+        stateStorage="local"
+        stateKey="agences-archives-table-state"
+        responsiveLayout="stack"
+      >
+        <ng-template pTemplate="caption">
+          <div class="flex flex-wrap justify-between gap-2">
+            <p-button 
+              icon="pi pi-filter-slash" 
+              label="Effacer les filtres" 
+              styleClass="p-button-text p-button-sm"
+              (click)="clear(dt)"
+            ></p-button>
+            
+            <div class="flex items-center gap-2">
+              <p-multiSelect
+                [options]="cols"
+                [(ngModel)]="selectedColumns"
+                optionLabel="header"
+                selectedItemsLabel="{0} colonnes"
+                [style]="{ width: '15rem' }"
+                placeholder="Colonnes"
+                styleClass="p-inputtext-sm"
+              ></p-multiSelect>
+              
+              <p-inputSwitch [(ngModel)]="checked" inputId="filter-switch"></p-inputSwitch>
+              <label for="filter-switch" class="ml-2 text-sm">Filtres avancés</label>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th style="width: 5rem">Logo</th>
+            <th *ngFor="let col of selectedColumns" 
+                [pSortableColumn]="col.field"
+                pResizableColumn>
+              <div class="flex items-center">
+                <span>{{ col.header }}</span>
+                <p-sortIcon [field]="col.field"></p-sortIcon>
+                <p-columnFilter
+                  *ngIf="checked"
+                  [type]="col.type"
+                  [field]="col.field"
+                  display="menu"
+                  [showMatchModes]="true"
+                  [showOperator]="true"
+                  [showAddButton]="true"
+                  class="ml-auto"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="width: 7rem">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-agence>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="agence"></p-tableCheckbox>
+            </td>
+            <td>
+              <div class="relative">
+                <p-avatar 
+                  [image]="getImageUrl(agence) || 'assets/images/logo.png'"
+                  shape="circle"
+                  size="large"
+                  [style]="{'background-color': '#f1f5f9'}"
+                ></p-avatar>
+                <p-tag 
+                  value="Archivée" 
+                  severity="danger"
+                  [rounded]="true"
+                  styleClass="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2"
+                ></p-tag>
+              </div>
+            </td>
+            <td *ngFor="let col of selectedColumns" [ngClass]="{'text-right': col.type === 'number' || col.type === 'decimal' || col.type === 'percent'}">
+              <span class="p-column-title">{{col.header}}</span>
+              <div *ngIf="col.type === 'text'" class="text-left">
+                <ng-container *ngIf="col.field === 'marque'">
+                  {{ agence.marque?.nom }}
+                </ng-container>
+                <ng-container *ngIf="col.field === 'categorie'">
+                  {{ agence.categorie?.nom }}
+                </ng-container>
+                <ng-container *ngIf="col.field !== 'marque' && col.field !== 'categorie'">
+                  {{ agence[col.field] }}
+                </ng-container>
+              </div>
+              <div *ngIf="col.type === 'time'" class="text-right">
+                {{ agence[col.field] }}
+              </div>
+              <div *ngIf="col.type === 'date'" class="text-right">
+                {{ agence[col.field] | date: 'dd/MM/yyyy' }}
+              </div>
+              <div *ngIf="col.type === 'decimal'" class="text-right">
+                {{ agence[col.field] | number: "1.2-2" }}
+              </div>
+              <div *ngIf="col.type === 'integer'" class="text-right">
+                {{ agence[col.field] | number: "1.0-0" }}
+              </div>
+              <div *ngIf="col.type === 'percent'" class="text-center">
+                {{ agence[col.field] | percent: '1.2-2'}}
+              </div>
+              <div *ngIf="col.type === 'boolean'" class="text-center">
+                <p-tag 
+                  [value]="agence[col.field] ? 'Oui' : 'Non'" 
+                  [severity]="agence[col.field] ? 'success' : 'danger'"
+                  [rounded]="true"
+                ></p-tag>
+              </div>
+            </td>
+            <td>
+              <div class="flex gap-1 justify-center">
+                <button 
+                  pButton 
+                  pRipple 
+                  icon="pi pi-undo" 
+                  class="p-button-rounded p-button-text p-button-success"
+                  (click)="activeAgence(agence)"
+                  pTooltip="Restaurer"
+                ></button>
+                <button 
+                  pButton 
+                  pRipple 
+                  icon="pi pi-trash" 
+                  class="p-button-rounded p-button-text p-button-danger"
+                  (click)="deleteAgence(agence)"
+                  pTooltip="Supprimer définitivement"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8" class="text-center p-8">
+              <div class="flex flex-col items-center">
+                <i class="pi pi-inbox text-6xl text-surface-400 dark:text-surface-400 mb-4"></i>
+                <span class="text-xl text-surface-600 dark:text-surface-200">Aucune agence archivée</span>
+                <p-button 
+                  label="Retour aux agences" 
+                  icon="pi pi-arrow-left"
+                  styleClass="mt-4"
+                  (onClick)="navigateToAgences()"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="paginatorleft">
+          <div class="text-sm text-surface-500 dark:text-surface-300">
+            Total: {{ agences ? agences.length : 0 }} agences archivées
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

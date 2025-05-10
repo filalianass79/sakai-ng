@@ -31,7 +31,8 @@ export class ModeleService {
    */
   getActivesModeles(): Observable<Modele[]> {
     const options = {
-      withCredentials: true
+      withCredentials: true  // Cette option permet d'envoyer les cookies d'authentification avec la requête HTTP,
+                            // assurant ainsi que l'utilisateur est authentifié lors de l'appel à l'API
     };
 
     return this.http.get<Modele[]>(`${this.apiUrl}/actives`, options);

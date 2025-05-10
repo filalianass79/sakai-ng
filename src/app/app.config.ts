@@ -5,12 +5,18 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpDebugInterceptor } from './pages/service/http-debug.interceptor';
 import { appRoutes } from '../app.routes';
 import { CoreModule } from './pages/auth/core/core.module';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(appRoutes),
         provideAnimations(),
-        provideHttpClient(withInterceptors([HttpDebugInterceptor])),
+        provideHttpClient(
+            withInterceptors([
+                HttpDebugInterceptor,
+                authInterceptor
+            ])
+        ),
         importProvidersFrom(CoreModule)
     ]
 }; 

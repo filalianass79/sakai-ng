@@ -14,7 +14,11 @@ export interface Image {
   updatedAt: string;
   entityType: string;
   entityId: number;
+  
 }
+
+
+
 
 @Injectable({
   providedIn: 'root'

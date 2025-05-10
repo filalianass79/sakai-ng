@@ -68,6 +68,7 @@ export class ImageUploadComponent implements OnInit {
     // Charger l'image existante si entityType et entityId sont définis
     if (this.entityType && this.entityId) {
       this.loadExistingImage();
+
     }
   }
   
@@ -94,14 +95,7 @@ export class ImageUploadComponent implements OnInit {
   /**
    * Gère la sélection d'un fichier
    */
-  onSelect(event: any): void {
-    this.selectedFile = event.files[0];
-    this.onImageSelected.emit(this.selectedFile);
-    if (this.autoUpload && this.selectedFile ) {
-      this.uploadImage();
-     //this.onUpload(this.selectedFile, this.fileUpload)
-    }
-  }
+ 
   
   /**
    * Télécharge l'image sélectionnée
@@ -252,9 +246,7 @@ export class ImageUploadComponent implements OnInit {
    */
 
     uploadedFiles: any[] = [];
-   // debug: string = '';
-   // fileBuffer: string = '';
-    //image: any;
+
 
 onUpload(event: { files: any }, fileUpload: any) {
   this.uploadedFiles = [];
@@ -264,17 +256,10 @@ onUpload(event: { files: any }, fileUpload: any) {
   }
   fileUpload.clear();
   if (this.uploadedFiles[0]) {
-    //  this.image = this.uploadedFiles[0];
       this.onImageSelected.emit(this.uploadedFiles[0]);
   }
 
   this.readFile(this.uploadedFiles[0]);
-  //this.debug = this.uploadedFiles[0].name + '----' + this.fileBuffer;
-  //this.messageService.add({
-   //   severity: 'info',
-   //   summary: 'File Uploaded',
-    //  detail: '',
-  //});
 }
 readFile(image: File) {
   var reader = new FileReader();
@@ -285,7 +270,7 @@ readFile(image: File) {
 }
 
 download() {
-  const fileName = this.selectedFile?.name || 'image.jpg';
+  const fileName = this.uploadedImage?.originalFilename || 'image.jpg';
   if (this.imageUrl) {
     this.downloadImages(this.imageUrl, fileName);
   }

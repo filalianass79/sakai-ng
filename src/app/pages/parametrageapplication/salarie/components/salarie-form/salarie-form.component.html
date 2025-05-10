@@ -1,0 +1,641 @@
+  <p-toast></p-toast>
+
+  <div class="bg-surface-50 dark:bg-surface-900 p-2 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      <p-card styleClass="shadow">
+        <!-- En-tête avec navigation et titre -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <button pButton 
+              icon="pi pi-arrow-left" 
+              class="p-button-rounded p-button-outlined mr-12" 
+              (click)="goBack()"
+              pTooltip="Retour à la liste"
+            ></button>
+            <h1 class="text-primary-900 dark:text-primary-200 font-bold text-3xl lg:text-4xl m-0">
+              {{isEditMode ? 'Modifier' : 'Créer'}} un salarie
+            </h1>
+          </div>
+        </div>
+        <form [formGroup]="salarieForm" (ngSubmit)="onSubmit()" class="space-y-2">
+          <!-- Section Informations générales -->
+
+            <p-tabs value="0" scrollable>
+                <p-tablist>
+                    <ng-template #previcon>
+                        <i class="pi pi-minus"></i>
+                    </ng-template>
+                    <p-tab value="0" class="flex items-center !gap-2">
+                        <p-avatar image="assets/images/avatar/salarie.png" shape="circle"/>
+                        <span class="font-bold whitespace-nowrap">Informations Salarié</span>
+                    </p-tab>
+                    <p-tab value="1" class="flex items-center !gap-2">
+                        <p-avatar image="assets/images/avatar/document.png" shape="circle" />
+                        <span class="font-bold whitespace-nowrap">Documents</span>
+                    </p-tab>
+
+                    <p-tab value="2" class="flex items-center !gap-2">
+                      <p-avatar image="assets/images/avatar/document.png" shape="circle" />
+                      <span class="font-bold whitespace-nowrap">facture</span>
+                  </p-tab>
+                    
+                    <ng-template #nexticon>
+                        <i class="pi pi-plus"></i>
+                    </ng-template>
+                </p-tablist>
+                <p-tabpanels>
+                    <p-tabpanel value="0">
+                        <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+                          <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                            <p-card styleClass="mb-2 shadow-sm">
+                              <ng-template pTemplate="header">
+                                <div class="flex items-center mb-2">
+                                  <i class="pi pi-image mr-2 text-primary-500"></i>
+                                  <span class="text-primary-700 font-medium">Photo</span>
+                                </div>
+                              </ng-template>
+                                <app-image-upload *ngIf="salarie.id || !isEditMode"
+                                [entityType]="'salarie'" 
+                                [entityId]="salarie.id!" 
+                                [imageName]="'photo'" 
+                                [currentImage]="salarie.photo" 
+                                [autoUpload]="true"
+                                (onImageSelected)="onPhotoSelected($event)"
+                                (onUploadComplete)="onPhotoUploaded($event)"
+                                (onImageDeleted)="onPhotoDeleted()"
+                                class="w-full">
+                              </app-image-upload>
+                            </p-card>
+                          </div>
+            
+                          <div class="col-span-12 md:col-span-6 lg:col-span-8">
+                            <div class="grid grid-cols-12 gap-4">
+            
+                              <!-- immatriculation-->
+                              <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="immatriculation" type="text" pInputText formControlName="immatriculation" class="w-full p-inputtext-lg">
+                                    <label for="immatriculation">Immatriculation</label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- nom-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">  
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="nom" type="text" pInputText formControlName="nom" class="w-full p-inputtext-lg">
+                                    <label for="nom">Nom <span class="text-red-500">*</span></label>
+                                  </p-floatlabel>
+                                    <small *ngIf="salarieForm.get('nom')?.hasError('required') && salarieForm.get('nom')?.touched" 
+                                    class="p-error text-danger mt-1">Le nom est requis</small>
+                                </div>
+                              </div>
+            
+                              <!-- prenom-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="prenom" type="text" pInputText formControlName="prenom" class="w-full p-inputtext-lg">
+                                    <label for="prenom">Prénom <span class="text-red-500">*</span></label>
+                                  </p-floatlabel>
+                                    <small *ngIf="salarieForm.get('prenom')?.hasError('required') && salarieForm.get('prenom')?.touched" 
+                                    class="p-error text-danger mt-1">Le prénom est requis</small>
+                                </div>
+                              </div>
+            
+                              <!-- cin-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="cin" type="text" pInputText formControlName="cin" class="w-full p-inputtext-lg">
+                                    <label for="cin">N° CIN</label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+                              <!-- datedenaissance-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                              <div class="field">
+                                <p-floatlabel variant="on"> 
+                                  <p-datepicker 
+                                  class="w-full p-inputtext-lg"
+                                    inputId="dateNaissance"
+                                    formControlName="dateNaissance" 
+                                    dateFormat="dd/mm/yy"
+                                    showIcon iconDisplay="input" 
+                                    class="w-full">
+                                  </p-datepicker>
+                                  <label for="dateNaissance">Date de naissance </label>
+                                </p-floatlabel>
+                              </div>
+                              </div>
+                
+                              <!-- cnss-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="cnss" type="text" pInputText formControlName="cnss" class="w-full p-inputtext-lg">
+                                    <label for="cnss">N° CNSS </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- datedeclarationcnss-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <p-datepicker 
+                                    class="w-full p-inputtext-lg"
+                                      inputId="dateDeclarationCnss"
+                                      formControlName="dateDeclarationCnss" 
+                                      dateFormat="dd/mm/yy"
+                                      showIcon iconDisplay="input" 
+                                      class="w-full">
+                                    </p-datepicker>
+                                    <label for="dateDeclarationCnss">Date de déclaration CNSS </label>
+                                  </p-floatlabel>
+                                </div>
+                                </div>
+                              <!-- situation familiale -->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <p-select id="situationFamiliale" [options]="situationFamiliales" formControlName="situationFamiliale"
+                                     class="w-full"
+                                     size="large"></p-select>
+                                    <label for="situationFamiliale">situation Familiale </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- type contrat -->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <p-select id="typeContrat" [options]="typeContrats" formControlName="typeContrat"
+                                     class="w-full"
+                                     size="large"></p-select> 
+                                    <label for="typeContrat">Type de contrat </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>        
+            
+                              <!-- qualite salarie -->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <p-select id="qualite" [options]="qualites" formControlName="qualite"
+                                     class="w-full"
+                                     size="large"></p-select>   
+                                    <label for="qualite">Qualité de salarie </label> 
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- fonction -->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <p-select id="fonction" [options]="fonctions" formControlName="fonction"
+                                     class="w-full"
+                                     size="large"></p-select>   
+                                    <label for="fonction">Fonction </label> 
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+                              
+                            </div>
+               
+                          </div>
+                        </div>
+                        
+                             
+                     <!-- coordonnées     -->
+                          <div class="grid grid-cols-12 gap-4">
+                               <!-- gsm-->
+                               <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="gsm" type="text" pInputText formControlName="gsm" class="w-full p-inputtext-lg">
+                                    <label for="gsm">GSM </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- gsmp-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="gsmp" type="text" pInputText formControlName="gsmp" class="w-full p-inputtext-lg">
+                                    <label for="gsmp">GSM Professionnel </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- fixe-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="fixe" type="text" pInputText formControlName="fixe" class="w-full p-inputtext-lg">
+                                    <label for="fixe">Fixe </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+            
+                              <!-- email-->
+                              <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="email" type="text" pInputText formControlName="email" class="w-full p-inputtext-lg">
+                                    <label for="email">Email </label>
+                                  </p-floatlabel>
+                                  <small *ngIf="salarieForm.get('email')?.hasError('email') && salarieForm.get('email')?.touched" 
+                                    class="p-error text-danger mt-1">L'email est invalide</small>
+                                </div>
+                              </div>
+            
+                              <!-- adresse-->
+                              <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <textarea id="adresse" type="text" pTextarea formControlName="adresse" class="w-full p-inputtextarea-lg"></textarea>
+                                    <label for="adresse">Adresse </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                              <!-- ville-->
+                              <div class="col-span-12 md:col-span-6 lg:col-span-6">
+                                <div class="field">
+                                  <p-floatlabel variant="on"> 
+                                    <input id="ville" type="text" pInputText formControlName="ville" class="w-full p-inputtext-lg">
+                                    <label for="ville">Ville </label>
+                                  </p-floatlabel>
+                                </div>
+                              </div>
+            
+                          </div>
+                      <!-- Affectation -->
+                          <div class="grid grid-cols-12 gap-4">
+                            <!-- agence-->
+                            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                             <div class="field">
+                                <p-floatlabel variant="on"> 
+                                  <p-select id="agence" [options]="agences"
+                                   formControlName="agence"
+                                   optionLabel="nom"
+                                   class="w-full"
+                                   size="large"></p-select>   
+                                  <label for="agence">Agence </label> 
+                                </p-floatlabel>
+                              </div>  
+                            </div>
+            
+                            <!-- entreprise-->
+                            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                             <div class="field">
+                                <p-floatlabel variant="on"> 
+                                  <p-select id="entreprise" [options]="companys"
+                                   formControlName="company"
+                                   optionLabel="raisonSociale"
+                                   class="w-full"
+                                   size="large"></p-select>   
+                                  <label for="entreprise">Entreprise </label> 
+                                </p-floatlabel>
+                              </div>
+                            </div>             
+                          </div>
+                    </p-tabpanel>
+                    <p-tabpanel value="1">
+                                   
+                      <div class="grid grid-cols-12 gap-4 grid-cols-12 gap-6 grid-cols-12 gap-12">
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">CV</span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!" 
+                              [pdfName]="'cv'" 
+                              [currentPdf]="salarie.cv" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfCvSelected($event)"
+                              (onUploadComplete)="onPdfUploadedCv($event)"
+                              (onPdfDeleted)="onPdfDeletedCv()"
+                              class="w-full">
+                            </app-pdf-upload>
+                          </p-card>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Contrat  </span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!" 
+                              [pdfName]="'contrat'" 
+                              [currentPdf]="salarie.contrat" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfContratSelected($event)"
+                              (onUploadComplete)="onPdfUploadedContrat($event)"
+                              (onPdfDeleted)="onPdfDeletedContrat()"
+                              class="w-full">
+                            </app-pdf-upload>
+                          </p-card>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Diplôme </span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!"  
+                              [pdfName]="'diplome'" 
+                              [currentPdf]="salarie.diplome" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfDiplomeSelected($event)"
+                              (onUploadComplete)="onPdfUploadedDiplome($event)"
+                              (onPdfDeleted)="onPdfDeletedDiplome()"
+                              class="w-full">
+                              </app-pdf-upload>
+                          </p-card>
+                        </div>
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Carte Nationale Recto </span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!"  
+                              [pdfName]="'cartenationaleR'" 
+                              [currentPdf]="salarie.cartenationaleR" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfCarteNationaleRSelected($event)"
+                              (onUploadComplete)="onPdfUploadedCarteNationaleR($event)"
+                              (onPdfDeleted)="onPdfDeletedCarteNationaleR()"
+                              class="w-full">
+                              </app-pdf-upload>
+                          </p-card>
+                        </div>
+                       
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Carte Nationale Verso </span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!"  
+                              [pdfName]="'cartenationaleV'" 
+                              [currentPdf]="salarie.cartenationaleV" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfCarteNationaleVSelected($event)"
+                              (onUploadComplete)="onPdfUploadedCarteNationaleV($event)"
+                              (onPdfDeleted)="onPdfDeletedCarteNationaleV()"
+                              class="w-full">
+                              </app-pdf-upload>
+                          </p-card>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Permis Recto </span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!"  
+                              [pdfName]="'permisR'" 
+                              [currentPdf]="salarie.permisR" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfPermisRSelected($event)"
+                              (onUploadComplete)="onPdfUploadedPermisR($event)"
+                              (onPdfDeleted)="onPdfDeletedPermisR()"
+                              class="w-full">
+                              </app-pdf-upload>
+                          </p-card>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Permis Verso </span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!"  
+                              [pdfName]="'permisV'" 
+                              [currentPdf]="salarie.permisV" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onPdfPermisVSelected($event)"
+                              (onUploadComplete)="onPdfUploadedPermisV($event)"
+                              (onPdfDeleted)="onPdfDeletedPermisV()"
+                              class="w-full">
+                              </app-pdf-upload>
+                          </p-card>
+                        </div>
+                      </div>
+                    </p-tabpanel>
+
+                    <p-tabpanel value="2">
+                      <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                          <h5>Document PDF</h5>
+                          <button pButton 
+                                  type="button" 
+                                  icon="pi pi-plus" 
+                                  label="Ajouter un Document"
+                                  class="p-button-primary"
+                                  (click)="showAddDocumentDialog()">
+                          </button>
+                        </div>
+
+                        <p-table [value]="documents" 
+                                [paginator]="true" 
+                                [rows]="10"
+                                [showCurrentPageReport]="true"
+                                currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} documents"
+                                [rowsPerPageOptions]="[10,25,50]"
+                                styleClass="p-datatable-sm">
+                          <ng-template pTemplate="header">
+                            <tr>
+                              
+                              <th>Date d'ajout</th>
+                              <th>Actions</th>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-document>
+                            <tr>
+                             
+                              <td>{{document.dateAjout | date:'dd/MM/yyyy'}}</td>
+                              <td>
+                                <div class="flex gap-2">
+                                  <button pButton 
+                                          type="button" 
+                                          icon="pi pi-eye" 
+                                          class="p-button-info p-button-sm"
+                                          (click)="previewDocument(document)">
+                                  </button>
+                                  <button pButton 
+                                          type="button" 
+                                          icon="pi pi-download" 
+                                          class="p-button-success p-button-sm"
+                                          (click)="downloadDocument(document)">
+                                  </button>
+                                  <button pButton 
+                                          type="button" 
+                                          icon="pi pi-pencil" 
+                                          class="p-button-warning p-button-sm"
+                                          (click)="editDocument(document)">
+                                  </button>
+                                  <button pButton 
+                                          type="button" 
+                                          icon="pi pi-trash" 
+                                          class="p-button-danger p-button-sm"
+                                          (click)="deleteDocument(document)">
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="emptymessage">
+                            <tr>
+                              <td colspan="4" class="text-center p-4">
+                                Aucun document de paie disponible
+                              </td>
+                            </tr>
+                          </ng-template>
+                        </p-table>
+                      </div>
+
+                      <!-- Dialog pour ajouter/modifier un document -->
+                      <p-dialog [(visible)]="documentDialog" 
+                               [style]="{width: '450px'}" 
+                               [header]="isEditDocument ? 'Modifier le document' : 'Ajouter un document'"
+                               [modal]="true" 
+                               styleClass="p-fluid">
+                        <div class="field">
+                          <p-card styleClass="mb-2 shadow-sm">
+                            <ng-template pTemplate="header">
+                              <div class="flex items-center mb-2">
+                                <i class="pi pi-pdf mr-2 text-primary-500"></i>
+                                <span class="text-primary-700 font-medium">Document</span>
+                              </div>
+                            </ng-template>
+                              <app-pdf-upload *ngIf="salarie.id || !isEditMode"
+                              [entityType]="'salarie'" 
+                              [entityId]="salarie.id!" 
+                              [pdfName]="'document'" 
+                              [currentPdf]="salarie.cv" 
+                              [autoUpload]="true"
+                              (onPdfSelected)="onDocumentFileSelect($event)"
+                              (onUploadComplete)="onPdfUploaded($event)"
+                              (onPdfDeleted)="onPdfDeleted()"
+                              class="w-full">
+                            </app-pdf-upload>
+                          </p-card>
+                        </div>
+
+                       
+                        <ng-template pTemplate="footer">
+                          <button pButton 
+                                  type="button" 
+                                  label="Annuler" 
+                                  icon="pi pi-times" 
+                                  class="p-button-text"
+                                  (click)="hideDocumentDialog()">
+                          </button>
+                          <button pButton 
+                                  type="button" 
+                                  label="Enregistrer" 
+                                  icon="pi pi-check" 
+                                  class="p-button-text"
+                                  (click)="saveDocument()">
+                          </button>
+                        </ng-template>
+                      </p-dialog>
+
+                      <!-- Dialog pour prévisualiser le document -->
+                      <p-dialog [(visible)]="previewDialog" 
+                               [style]="{width: '90vw', height: '90vh'}" 
+                               header="Prévisualisation du document"
+                               [modal]="true" 
+                               styleClass="p-fluid">
+                        <pdf-viewer *ngIf="previewUrl"
+                                  [src]="previewUrl"
+                                  [render-text]="true"
+                                  [original-size]="false"
+                                  [show-all]="true"
+                                  style="display: block; height: 100%;">
+                        </pdf-viewer>
+                      </p-dialog>
+                    </p-tabpanel>
+                  
+                </p-tabpanels>
+            </p-tabs>
+
+
+
+
+         
+
+
+
+          <!-- Boutons d'action -->
+          <div class="flex justify-end gap-2 pt-12">
+            <button pButton 
+                    type="button" 
+                    label="Annuler" 
+                    class="p-button-outlined"
+                    (click)="goBack()">
+            </button>
+            <button pButton 
+                    type="submit" 
+                    label="Enregistrer" 
+                    [disabled]="!salarieForm.valid"
+                    class="p-button-primary">
+            </button>
+          </div>
+        </form>
+
+
+
+
+
+
+
+
+
+
+      </p-card>
+    </div>
+  </div>

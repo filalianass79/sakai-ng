@@ -22,11 +22,7 @@ export interface Company {
     logo?: Image;
     entete?: Image;
     pied?: Image;
-    creerPar?: string;
     isVisible?: boolean;
-    modifierPar?: string;
-    archiverPar?: string;
-    createdAt?: string;
-    updatedAt?: string;
+   
 
 } 

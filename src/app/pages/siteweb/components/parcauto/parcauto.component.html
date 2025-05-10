@@ -267,6 +267,7 @@
                             </div>
                             <h3>Paiement</h3>
                             <app-paiement-carte
+                                [reservation]="reservation"
                                 [montant]="reservation?.totalPrixTTC ?? 0"
                                 (paiementEffectue)="onPaiementEffectue($event)">
                             </app-paiement-carte>
